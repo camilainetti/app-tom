@@ -2,12 +2,8 @@ package com.allaboutee.httphelper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -27,14 +23,12 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static android.net.wifi.WifiManager.*;
-
 public class HomeActivity extends Activity implements View.OnClickListener {
 
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
     // declare buttons and text inputs
-    private Button buttonPin11,buttonPin12,buttonPin13;
+    private Button button_ON,button_OFF;
     private EditText editTextIPAddress, editTextPortNumber;
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -50,18 +44,18 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         editor = sharedPreferences.edit();
 
         // assign buttons
-        buttonPin11 = (Button)findViewById(R.id.buttonPin11);
-        buttonPin12 = (Button)findViewById(R.id.buttonPin12);
-        buttonPin13 = (Button)findViewById(R.id.buttonPin13);
+        button_ON = (Button)findViewById(R.id.button_ON);
+        button_OFF = (Button)findViewById(R.id.button_OFF);
+
 
         // assign text inputs
-        editTextIPAddress = (EditText)findViewById(R.id.editTextIPAddress);
-        editTextPortNumber = (EditText)findViewById(R.id.editTextPortNumber);
+        editTextIPAddress = (EditText)findViewById(R.id.eg_IP_address);
+        editTextPortNumber = (EditText)findViewById(R.id.eg_port_number);
 
         // set button listener (this class)
-        buttonPin11.setOnClickListener(this);
-        buttonPin12.setOnClickListener(this);
-        buttonPin13.setOnClickListener(this);
+        button_ON.setOnClickListener(this);
+        button_OFF.setOnClickListener(this);
+
 
         // get the IP address and port number from the last time the user used the app,
         // put an empty string "" is this is the first time.
@@ -87,18 +81,15 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         editor.commit(); // save the IP and PORT
 
         // get the pin number from the button that was clicked
-        if(view.getId()==buttonPin11.getId())
+        if(view.getId()==button_ON.getId())
         {
-            parameterValue = "11";
-        }
-        else if(view.getId()==buttonPin12.getId())
-        {
-            parameterValue = "12";
+            parameterValue = "OFF2";
         }
         else
         {
-            parameterValue = "13";
+            parameterValue = "ON2";
         }
+
 
 
 
@@ -126,6 +117,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
+            //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
             URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
@@ -240,4 +232,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         }
 
     }
+
+
+
+
 }

@@ -4,5 +4,11 @@
     <string name="app_name">HTTP Helper</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="IP_address">IP Address:</string>
+    <string name="port_number">Port Number:</string>
+    <string name="eg_port_number">eg. 80</string>
+    <string name="eg_IP_address">e.g. 192.168.0.10</string>
+    <string name="button_OFF">OFF</string>
+    <string name="button_ON">ON</string>
 
 </resources>
