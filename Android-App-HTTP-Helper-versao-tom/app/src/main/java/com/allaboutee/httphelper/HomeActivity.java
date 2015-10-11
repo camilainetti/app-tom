@@ -3,12 +3,15 @@ package com.allaboutee.httphelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,6 +25,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import android.net.wifi.WifiManager;
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
 
 public class HomeActivity extends Activity implements View.OnClickListener {
 
@@ -34,6 +42,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     // type them next time he/she opens the app.
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
+    private StringBuilder sb = new StringBuilder();
+    private TextView tv;
+    List<ScanResult> scanList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS",Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        tv= (TextView)findViewById(R.id.txtWifiNetworks);
+        getWifiNetworksList();
 
         // assign buttons
         button_ON = (Button)findViewById(R.id.button_ON);
@@ -231,6 +245,30 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             }
         }
 
+    }
+    private void getWifiNetworksList(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        final WifiManager wifiManager =
+                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);;
+        registerReceiver(new BroadcastReceiver(){
+
+            @SuppressLint("UseValueOf") @Override
+            public void onReceive(Context context, Intent intent) {
+                sb = new StringBuilder();
+                scanList = wifiManager.getScanResults();
+                sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
+                for(int i = 0; i < scanList.size(); i++){
+                    sb.append(new Integer(i+1).toString() + ". ");
+                    sb.append((scanList.get(i)).toString());
+                    sb.append("\n\n");
+                }
+
+                tv.setText(sb);
+            }
+
+        },filter);
+        wifiManager.startScan();
     }
 
 
