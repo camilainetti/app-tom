@@ -5,9 +5,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,13 +34,14 @@ import android.net.wifi.WifiManager;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.Context;
 
 public class HomeActivity extends Activity implements View.OnClickListener {
 
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
     // declare buttons and text inputs
-    private Button button_ON,button_OFF;
+    private Button button_ON,button_OFF,button_Con;
     private EditText editTextIPAddress, editTextPortNumber;
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -51,11 +56,16 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS",Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-        tv= (TextView)findViewById(R.id.txtWifiNetworks);
-        getWifiNetworksList();
+
+        button_Con = (Button)findViewById(R.id.button_Con);
+
+        button_Con.setOnClickListener(this);
+
+        //tv= (TextView)findViewById(R.id.txtWifiNetworks);
+        //getWifiNetworksList();
+        //tv.setText(getInfoWifi(4));
 
         // assign buttons
         button_ON = (Button)findViewById(R.id.button_ON);
@@ -80,38 +90,41 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
-        // get the pin number
-        String parameterValue = "";
-        // get the ip address
-        String ipAddress = editTextIPAddress.getText().toString().trim();
-        // get the port number
-        String portNumber = editTextPortNumber.getText().toString().trim();
-
-
-        // save the IP address and port for the next time the app is used
-        editor.putString(PREF_IP,ipAddress); // set the ip address value to save
-        editor.putString(PREF_PORT,portNumber); // set the port number to save
-        editor.commit(); // save the IP and PORT
-
-        // get the pin number from the button that was clicked
-        if(view.getId()==button_ON.getId())
-        {
-            parameterValue = "OFF2";
-        }
-        else
-        {
-            parameterValue = "ON2";
-        }
-
-
-
-
-        // execute HTTP request
-        if(ipAddress.length()>0 && portNumber.length()>0) {
+        if (view.getId() == button_Con.getId()) {
+            connWifiNetwork();
+            // execute HTTP request
             new HttpRequestAsyncTask(
-                    view.getContext(), parameterValue, ipAddress, portNumber, "pin"
-            ).execute();
+                        view.getContext(), "", "", "", "httpbin.org/ip"
+                ).execute();
+        }
+        else {
+            // get the pin number
+            String parameterValue = "";
+            // get the ip address
+            String ipAddress = editTextIPAddress.getText().toString().trim();
+            // get the port number
+            String portNumber = editTextPortNumber.getText().toString().trim();
+
+            editor = sharedPreferences.edit();
+            // save the IP address and port for the next time the app is used
+            editor.putString(PREF_IP, ipAddress); // set the ip address value to save
+            editor.putString(PREF_PORT, portNumber); // set the port number to save
+            editor.commit(); // save the IP and PORT
+
+            // get the pin number from the button that was clicked
+            if (view.getId() == button_ON.getId()) {
+                parameterValue = "OFF2";
+            } else {
+                parameterValue = "ON2";
+            }
+
+
+            // execute HTTP request
+            if (ipAddress.length() > 0 && portNumber.length() > 0) {
+                new HttpRequestAsyncTask(
+                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?pin"
+                ).execute();
+            }
         }
     }
 
@@ -132,7 +145,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
-            URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
+            URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request
@@ -143,6 +156,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                     content
             ));
             serverResponse = in.readLine();
+            //serverResponse = in.readLine();
             // Close the connection
             content.close();
         } catch (ClientProtocolException e) {
@@ -246,32 +260,120 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         }
 
     }
-    private void getWifiNetworksList(){
+    private void connWifiNetwork(){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         final WifiManager wifiManager =
                 (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);;
-        registerReceiver(new BroadcastReceiver(){
+        registerReceiver(new BroadcastReceiver() {
 
-            @SuppressLint("UseValueOf") @Override
+            @SuppressLint("UseValueOf")
+            @Override
             public void onReceive(Context context, Intent intent) {
-                sb = new StringBuilder();
-                scanList = wifiManager.getScanResults();
-                sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
-                for(int i = 0; i < scanList.size(); i++){
-                    sb.append(new Integer(i+1).toString() + ". ");
-                    sb.append((scanList.get(i)).toString());
-                    sb.append("\n\n");
-                }
+                //sb = new StringBuilder();
+                Context tmpContext = getApplicationContext();
+                WifiManager tmpManager =
+                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                if (!tmpManager.isWifiEnabled()) {
+                    wifiManager.setWifiEnabled(true);
+                    scanList = wifiManager.getScanResults();
+                    //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
+                    for (int i = 0; i < scanList.size(); i++) {
+                        //sb.append(new Integer(i+1).toString() + ". ");
+                        //sb.append((scanList.get(i)).toString());
+                        //sb.append("\n\n");
+                        if (scanList.get(i).SSID.equals("Our Network")) {
+                            //tv.setText(scanList.get(i).SSID);
+                            WifiConfiguration config = new WifiConfiguration();
+                            config.SSID = "\"" + scanList.get(i).SSID + "\"";
+                            config.BSSID = scanList.get(i).BSSID;
+                            config.priority = 1;
+                            config.preSharedKey = "\"" + "eutinhaumagalinhaquechamavamariloo2011" + "\"";
+                            config.status = WifiConfiguration.Status.ENABLED;
+                            int id = wifiManager.addNetwork(config);
+                            wifiManager.enableNetwork(id, true);
+                            try{
+                                Thread.sleep((long)10000);
+                            }
+                            catch(Exception e){
+                                e.getLocalizedMessage();
+                            }
+                            //wifiManager.saveConfiguration();
 
-                tv.setText(sb);
+                        }
+
+
+                    }
+                }
+                //tv.setText(sb);
             }
 
         },filter);
         wifiManager.startScan();
+
     }
+    public String getInfoWifi(int iInformationType){
+        // Get context variable
+        Context tmpContext = getApplicationContext();
+        //getContexteApplication();
+        //And WIFI manager object
+        WifiManager tmpManager =
+                (WifiManager)tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+        //Init variable to store current network information for processing
+        WifiInfo tmpInfo = tmpManager.getConnectionInfo();
+        //Init variable to store DHCP information
+        DhcpInfo tmpDHCP = null;
+        if (tmpInfo != null)
+        {
+            switch(iInformationType)
+            {
+                // BSSID
+                case 1:
+                    if (tmpInfo.getBSSID() != null)
+                        return tmpInfo.getBSSID();
+                    else
+                        return "";
+                // SSID
+                case 2:
+                    if (tmpInfo.getSSID() != null)
+                        return tmpInfo.getSSID();
+                    else
+                        return "";
+                // MAC Address
+                case 3:
+                    if(tmpInfo.getMacAddress() != null)
+                        return tmpInfo.getMacAddress();
+                    else
+                        return "";
+                // IP Address
+                case 4:
+                    tmpDHCP = tmpManager.getDhcpInfo();
+                    if(tmpDHCP != null)
+                        return String.valueOf(tmpDHCP.ipAddress);
+                    else
+                        return "";
+                // Gateway
+                case 5:
+                    tmpDHCP = tmpManager.getDhcpInfo();
+                    if(tmpDHCP != null)
+                        return String.valueOf(tmpDHCP.gateway);
+                    else
+                        return "";
+                // Net Mask
+                case 6:
+                    tmpDHCP = tmpManager.getDhcpInfo();
+                    if(tmpDHCP != null)
+                        return String.valueOf(tmpDHCP.netmask);
+                    else
+                        return "";
+                default :
+                    return "";
+            }
+        }
+        else {
+            return "";
+        }
 
-
-
+    }
 
 }
