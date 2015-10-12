@@ -14,6 +14,11 @@
             android:layout_height="match_parent"
             android:text="@string/button_Con"
             android:id="@+id/button_Con" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/button_SET"
+            android:id="@+id/button_SET" />
 
         <TextView
         android:layout_width="match_parent"

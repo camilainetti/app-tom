@@ -35,13 +35,14 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.Context;
+import android.util.Log;
 
 public class HomeActivity extends Activity implements View.OnClickListener {
-
+    private static final String TAG = "HomeActivity";
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
     // declare buttons and text inputs
-    private Button button_ON,button_OFF,button_Con;
+    private Button button_ON,button_OFF,button_Con,button_SET;
     private EditText editTextIPAddress, editTextPortNumber;
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -60,8 +61,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
 
         button_Con = (Button)findViewById(R.id.button_Con);
-
+        button_SET = (Button)findViewById(R.id.button_SET);
         button_Con.setOnClickListener(this);
+        button_SET.setOnClickListener(this);
 
         //tv= (TextView)findViewById(R.id.txtWifiNetworks);
         //getWifiNetworksList();
@@ -92,6 +94,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == button_Con.getId()) {
             connWifiNetwork();
+        }
+        else if (view.getId() == button_SET.getId()) {
             // execute HTTP request
             new HttpRequestAsyncTask(
                         view.getContext(), "", "", "", "httpbin.org/ip"
@@ -292,12 +296,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                             config.status = WifiConfiguration.Status.ENABLED;
                             int id = wifiManager.addNetwork(config);
                             wifiManager.enableNetwork(id, true);
-                            try{
-                                Thread.sleep((long)10000);
-                            }
-                            catch(Exception e){
-                                e.getLocalizedMessage();
-                            }
+
                             //wifiManager.saveConfiguration();
 
                         }
