@@ -12,5 +12,7 @@
     <string name="button_ON">ON</string>
     <string name="button_Con">Configurar</string>
     <string name="button_SET">Enviar</string>
+    <string name="ssid">SSID</string>
+    <string name="senha">Senha</string>
 
 </resources>

@@ -42,7 +42,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
     // declare buttons and text inputs
-    private Button button_ON,button_OFF,button_Con,button_SET;
+    private Button button_ON,button_OFF,button_Con;
     private EditText editTextIPAddress, editTextPortNumber;
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -51,6 +51,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     private StringBuilder sb = new StringBuilder();
     private TextView tv;
     List<ScanResult> scanList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +63,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
 
         button_Con = (Button)findViewById(R.id.button_Con);
-        button_SET = (Button)findViewById(R.id.button_SET);
+
         button_Con.setOnClickListener(this);
-        button_SET.setOnClickListener(this);
+
 
         //tv= (TextView)findViewById(R.id.txtWifiNetworks);
         //getWifiNetworksList();
@@ -94,12 +96,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == button_Con.getId()) {
             connWifiNetwork();
-        }
-        else if (view.getId() == button_SET.getId()) {
-            // execute HTTP request
-            new HttpRequestAsyncTask(
-                        view.getContext(), "", "", "", "httpbin.org/ip"
-                ).execute();
+            Intent intent = new Intent(this, ConfigConn.class);
+            startActivity(intent);
         }
         else {
             // get the pin number
@@ -141,7 +139,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      * @param parameterName
      * @return The ip address' reply text, or an ERROR message is it fails to receive one
      */
-    public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
+        public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
         String serverResponse = "ERROR";
 
         try {
@@ -150,6 +148,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
             URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
+            Log.v(TAG, "http://"+ipAddress+portNumber+parameterName+parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request
@@ -185,7 +184,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      * An AsyncTask is needed to execute HTTP requests in the background so that they do not
      * block the user interface.
      */
-    private class HttpRequestAsyncTask extends AsyncTask<Void, Void, Void> {
+    public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Void> {
 
         // declare variables needed
         private String requestReply,ipAddress, portNumber;
@@ -247,6 +246,11 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             {
                 alertDialog.show(); // show dialog
             }
+            final WifiManager wifiManager =
+                    (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if(wifiManager.getConnectionInfo().getSSID().contains("Our")){
+                wifiManager.disconnect();
+            }
         }
 
         /**
@@ -268,9 +272,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         final WifiManager wifiManager =
-                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);;
+                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
-
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -291,7 +294,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                             WifiConfiguration config = new WifiConfiguration();
                             config.SSID = "\"" + scanList.get(i).SSID + "\"";
                             config.BSSID = scanList.get(i).BSSID;
-                            config.priority = 1;
+                            //config.priority = 0;
                             config.preSharedKey = "\"" + "eutinhaumagalinhaquechamavamariloo2011" + "\"";
                             config.status = WifiConfiguration.Status.ENABLED;
                             int id = wifiManager.addNetwork(config);
