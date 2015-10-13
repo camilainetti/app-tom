@@ -38,16 +38,20 @@ import android.content.Context;
 import android.util.Log;
 
 public class HomeActivity extends Activity implements View.OnClickListener {
+
     private static final String TAG = "HomeActivity";
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
+
     // declare buttons and text inputs
     private Button button_ON,button_OFF,button_Con;
     private EditText editTextIPAddress, editTextPortNumber;
+
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
+
     private StringBuilder sb = new StringBuilder();
     private TextView tv;
     List<ScanResult> scanList;
@@ -248,7 +252,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             }
             final WifiManager wifiManager =
                     (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(wifiManager.getConnectionInfo().getSSID().contains("Our")){
+            if(wifiManager.getConnectionInfo().getSSID().contains("ESP")){
                 wifiManager.disconnect();
             }
         }
@@ -271,6 +275,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     private void connWifiNetwork(){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+
         final WifiManager wifiManager =
                 (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
@@ -289,22 +294,19 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                         //sb.append(new Integer(i+1).toString() + ". ");
                         //sb.append((scanList.get(i)).toString());
                         //sb.append("\n\n");
-                        if (scanList.get(i).SSID.equals("Our Network")) {
+                        if (scanList.get(i).SSID.equals("ESP1")) {
                             //tv.setText(scanList.get(i).SSID);
                             WifiConfiguration config = new WifiConfiguration();
                             config.SSID = "\"" + scanList.get(i).SSID + "\"";
                             config.BSSID = scanList.get(i).BSSID;
                             //config.priority = 0;
-                            config.preSharedKey = "\"" + "eutinhaumagalinhaquechamavamariloo2011" + "\"";
+                            config.preSharedKey = "\"" + "12345678" + "\"";
                             config.status = WifiConfiguration.Status.ENABLED;
                             int id = wifiManager.addNetwork(config);
                             wifiManager.enableNetwork(id, true);
-
                             //wifiManager.saveConfiguration();
 
                         }
-
-
                     }
                 }
                 //tv.setText(sb);
@@ -317,7 +319,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public String getInfoWifi(int iInformationType){
         // Get context variable
         Context tmpContext = getApplicationContext();
-        //getContexteApplication();
+        //getContextApplication();
         //And WIFI manager object
         WifiManager tmpManager =
                 (WifiManager)tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
