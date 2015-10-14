@@ -1,20 +1,29 @@
 package com.allaboutee.httphelper;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
+import android.os.Handler;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
@@ -30,22 +39,19 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import android.net.wifi.WifiManager;
-import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.Context;
-import android.util.Log;
+import java.util.ArrayList;
 
-public class HomeActivity extends Activity implements View.OnClickListener {
+
+public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "HomeActivity";
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
 
     // declare buttons and text inputs
-    private Button button_ON,button_OFF,button_Con;
-    private EditText editTextIPAddress, editTextPortNumber;
+    private Button button_find, button_connect;
+    //private EditText editTextIPAddress, editTextPortNumber;
+    private ListView listEsp;
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -56,81 +62,42 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     private TextView tv;
     List<ScanResult> scanList;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_list_esp);
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
+        button_find = (Button)findViewById(R.id.button_find);
+        button_find.setOnClickListener(this);
 
-        button_Con = (Button)findViewById(R.id.button_Con);
+        button_connect = (Button)findViewById(R.id.button_connect);
+        button_connect.setOnClickListener(this);
 
-        button_Con.setOnClickListener(this);
-
-
-        //tv= (TextView)findViewById(R.id.txtWifiNetworks);
+        tv= (TextView)findViewById(R.id.txtWifiESP);
         //getWifiNetworksList();
-        //tv.setText(getInfoWifi(4));
-
-        // assign buttons
-        button_ON = (Button)findViewById(R.id.button_ON);
-        button_OFF = (Button)findViewById(R.id.button_OFF);
-
 
         // assign text inputs
-        editTextIPAddress = (EditText)findViewById(R.id.eg_IP_address);
-        editTextPortNumber = (EditText)findViewById(R.id.eg_port_number);
-
-        // set button listener (this class)
-        button_ON.setOnClickListener(this);
-        button_OFF.setOnClickListener(this);
-
+        //editTextIPAddress = (EditText)findViewById(R.id.eg_IP_address);
+        //editTextPortNumber = (EditText)findViewById(R.id.eg_port_number);
 
         // get the IP address and port number from the last time the user used the app,
         // put an empty string "" is this is the first time.
-        editTextIPAddress.setText(sharedPreferences.getString(PREF_IP,""));
-        editTextPortNumber.setText(sharedPreferences.getString(PREF_PORT,""));
+        //editTextIPAddress.setText(sharedPreferences.getString(PREF_IP,""));
+        //editTextPortNumber.setText(sharedPreferences.getString(PREF_PORT,""));
     }
 
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == button_Con.getId()) {
+        if (view.getId() == button_connect.getId()) {
             connWifiNetwork();
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
         }
         else {
-            // get the pin number
-            String parameterValue = "";
-            // get the ip address
-            String ipAddress = editTextIPAddress.getText().toString().trim();
-            // get the port number
-            String portNumber = editTextPortNumber.getText().toString().trim();
-
-            editor = sharedPreferences.edit();
-            // save the IP address and port for the next time the app is used
-            editor.putString(PREF_IP, ipAddress); // set the ip address value to save
-            editor.putString(PREF_PORT, portNumber); // set the port number to save
-            editor.commit(); // save the IP and PORT
-
-            // get the pin number from the button that was clicked
-            if (view.getId() == button_ON.getId()) {
-                parameterValue = "ON";
-            } else {
-                parameterValue = "OFF";
-            }
-
-
-            // execute HTTP request
-            if (ipAddress.length() > 0 && portNumber.length() > 0) {
-                new HttpRequestAsyncTask(
-                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?pin"
-                ).execute();
-            }
+            tv.setText(getInfoWifi(4));
         }
     }
 
@@ -143,7 +110,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
      * @param parameterName
      * @return The ip address' reply text, or an ERROR message is it fails to receive one
      */
-        public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
+    public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
         String serverResponse = "ERROR";
 
         try {
@@ -282,34 +249,34 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
-                //sb = new StringBuilder();
+                sb = new StringBuilder();
                 Context tmpContext = getApplicationContext();
                 WifiManager tmpManager =
                         (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
                 if (!tmpManager.isWifiEnabled()) {
                     wifiManager.setWifiEnabled(true);
                     scanList = wifiManager.getScanResults();
-                    //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
+                    sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
                     for (int i = 0; i < scanList.size(); i++) {
-                        //sb.append(new Integer(i+1).toString() + ". ");
-                        //sb.append((scanList.get(i)).toString());
-                        //sb.append("\n\n");
+                        sb.append(new Integer(i+1).toString() + ". ");
+                        sb.append((scanList.get(i)).toString());
+                        sb.append("\n\n");
                         if (scanList.get(i).SSID.equals("ESP1")) {
-                            //tv.setText(scanList.get(i).SSID);
+                            tv.setText(scanList.get(i).SSID);
                             WifiConfiguration config = new WifiConfiguration();
                             config.SSID = "\"" + scanList.get(i).SSID + "\"";
                             config.BSSID = scanList.get(i).BSSID;
-                            //config.priority = 0;
+                            config.priority = 0;
                             config.preSharedKey = "\"" + "12345678" + "\"";
                             config.status = WifiConfiguration.Status.ENABLED;
                             int id = wifiManager.addNetwork(config);
                             wifiManager.enableNetwork(id, true);
-                            //wifiManager.saveConfiguration();
+                            wifiManager.saveConfiguration();
 
                         }
                     }
                 }
-                //tv.setText(sb);
+                tv.setText(sb);
             }
 
         },filter);
@@ -337,33 +304,33 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                         return tmpInfo.getBSSID();
                     else
                         return "";
-                // SSID
+                    // SSID
                 case 2:
                     if (tmpInfo.getSSID() != null)
                         return tmpInfo.getSSID();
                     else
                         return "";
-                // MAC Address
+                    // MAC Address
                 case 3:
                     if(tmpInfo.getMacAddress() != null)
                         return tmpInfo.getMacAddress();
                     else
                         return "";
-                // IP Address
+                    // IP Address
                 case 4:
                     tmpDHCP = tmpManager.getDhcpInfo();
                     if(tmpDHCP != null)
                         return String.valueOf(tmpDHCP.ipAddress);
                     else
                         return "";
-                // Gateway
+                    // Gateway
                 case 5:
                     tmpDHCP = tmpManager.getDhcpInfo();
                     if(tmpDHCP != null)
                         return String.valueOf(tmpDHCP.gateway);
                     else
                         return "";
-                // Net Mask
+                    // Net Mask
                 case 6:
                     tmpDHCP = tmpManager.getDhcpInfo();
                     if(tmpDHCP != null)

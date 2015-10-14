@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">HTTP Helper</string>
+    <string name="app_name">Teste</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="IP_address">IP Address:</string>
@@ -9,10 +9,15 @@
     <string name="eg_port_number">eg. 80</string>
     <string name="eg_IP_address">e.g. 192.168.0.10</string>
     <string name="button_OFF">OFF</string>
-    <string name="button_ON">ON</string>
+    <string name="button_ON">ON2</string>
+    <string name="button_find">Procurar</string>
+    <string name="button_connect">Conectar</string>
     <string name="button_Con">Configurar</string>
     <string name="button_SET">Enviar</string>
     <string name="ssid">SSID</string>
     <string name="senha">Senha</string>
+    <string name="lista">Para encontrar redes, clique no botão Procurar</string>
+    <string name="title_activity_list_esp">ListESP</string>
+    <string name="help">Selecione o dispositivo que você deseja conectar</string>
 
 </resources>
