@@ -16,6 +16,10 @@
     <string name="button_SET">Enviar</string>
     <string name="ssid">SSID</string>
     <string name="senha">Senha</string>
+    <string name="nome">Nome do dispositivo inteligente</string>
+    <string name="eg_nome">Ex: Lâmpada da cozinha</string>
+    <string name="info_conn">Insira o SSID (nome) da rede Wifi da sua casa e a senha.
+        Também escolha um nome para o dispositivo inteligente que você está configurando.</string>
     <string name="lista">Para encontrar redes, clique no botão Procurar</string>
     <string name="title_activity_list_esp">ListESP</string>
     <string name="help">Selecione o dispositivo que você deseja conectar</string>

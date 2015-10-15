@@ -13,6 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="20dp"
+            android:hint="@string/info_conn"
+            android:id="@+id/info_conn" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
             android:hint="@string/ssid"
             android:id="@+id/ssid" />
 
@@ -31,6 +39,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/eg_senha" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/nome"
+            android:id="@+id/nome" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/eg_nome"
+            android:id="@+id/eg_nome" />
 
         <Button
             android:layout_width="match_parent"
