@@ -51,7 +51,9 @@ public class ListESP extends Activity implements View.OnClickListener {
     // declare buttons and text inputs
     private Button button_find, button_connect, button_teste;
     //private EditText editTextIPAddress, editTextPortNumber;
-    private ListView listEsp;
+    private ListView listWeb;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> arrayList;
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -78,7 +80,9 @@ public class ListESP extends Activity implements View.OnClickListener {
         button_teste = (Button)findViewById(R.id.button_teste);
         button_teste.setOnClickListener(this);
 
-        tv= (TextView)findViewById(R.id.txtWifiESP);
+        listWeb = (ListView)findViewById(R.id.listWeb);
+
+        //tv= (TextView)findViewById(R.id.txtWifiESP);
         //getWifiNetworksList();
 
         // assign text inputs
@@ -103,7 +107,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             Intent intent2 = new Intent(this, HomeActivity.class);
             startActivity(intent2);
         }
-        else {
+        if (view.getId() == button_find.getId()) {
             connWifiNetwork();
         }
     }
@@ -250,40 +254,52 @@ public class ListESP extends Activity implements View.OnClickListener {
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
+
         final WifiManager wifiManager =
                 (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.i("debug", "dentro");
                 sb = new StringBuilder();
                 Context tmpContext = getApplicationContext();
-                WifiManager tmpManager =
-                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-                if (!tmpManager.isWifiEnabled()) {
+
+                ArrayList<String> arrayList = new ArrayList<String>();
+
+                adapter = new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.wifi_list_item,
+                        arrayList);
+
+                listWeb.setAdapter(adapter);
+
+                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+
+                if (!tmpManager.isWifiEnabled())
                     wifiManager.setWifiEnabled(true);
-                    scanList = wifiManager.getScanResults();
-                    sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
-                    for (int i = 0; i < scanList.size(); i++) {
-                        sb.append(new Integer(i+1).toString() + ". ");
-                        sb.append((scanList.get(i).SSID).toString());
-                        sb.append("\n\n");
-//                        if (scanList.get(i).SSID.equals("ESP1")) {
-//                            tv.setText(scanList.get(i).SSID);
-//                            WifiConfiguration config = new WifiConfiguration();
-//                            config.SSID = "\"" + scanList.get(i).SSID + "\"";
-//                            config.BSSID = scanList.get(i).BSSID;
-//                            config.priority = 0;
-//                            config.preSharedKey = "\"" + "12345678" + "\"";
-//                            config.status = WifiConfiguration.Status.ENABLED;
-//                            int id = wifiManager.addNetwork(config);
-//                            wifiManager.enableNetwork(id, true);
-//                            wifiManager.saveConfiguration();
-//
-//                        }
-                    }
+
+                scanList = wifiManager.getScanResults();
+                //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
+                for (int i = 0; i < scanList.size(); i++) {
+                    //sb.append(new Integer(i+1).toString() + ". ");
+                    //sb.append((scanList.get(i).SSID).toString());
+                    //sb.append("\n\n");
+                    arrayList.add((scanList.get(i).SSID));
+
+//                  if (scanList.get(i).SSID.equals("ESP1")) {
+//                      tv.setText(scanList.get(i).SSID);-
+//                      WifiConfiguration config = new WifiConfiguration();
+//                      config.SSID = "\"" + scanList.get(i).SSID + "\"";
+//                      config.BSSID = scanList.get(i).BSSID;
+//                      config.priority = 0;
+//                      config.preSharedKey = "\"" + "12345678" + "\"";
+//                      config.status = WifiConfiguration.Status.ENABLED;
+//                      int id = wifiManager.addNetwork(config);
+//                      wifiManager.enableNetwork(id, true);
+//                      wifiManager.saveConfiguration();
+//                  }
                 }
-                tv.setText(sb);
+                //tv.setText(sb);
             }
 
         },filter);
