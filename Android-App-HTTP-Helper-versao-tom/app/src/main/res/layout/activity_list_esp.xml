@@ -24,7 +24,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-        android:layout_width="380dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/button_find"
         android:id="@+id/button_find" />
@@ -35,6 +35,14 @@
             android:text="@string/button_connect"
             android:id="@+id/button_connect"
             android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Teste"
+            android:id="@+id/button_teste"
+            android:layout_gravity="center_horizontal" />
+
     </LinearLayout>
 
 

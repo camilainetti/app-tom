@@ -39,11 +39,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/eg_senha" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/nome"
-            android:id="@+id/nome" />
+            android:hint="@string/ip"
+            android:id="@+id/ip" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/eg_ip"
+            android:id="@+id/eg_ip" />
 
         <EditText
             android:layout_width="match_parent"

@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".ConfigConn" >
         </activity>
+        <activity android:name=".HomeActivity" >
+            +        </activity>
     </application>
 
 </manifest>
