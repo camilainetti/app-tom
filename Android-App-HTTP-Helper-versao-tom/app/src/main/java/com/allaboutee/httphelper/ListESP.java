@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,7 +51,7 @@ public class ListESP extends Activity implements View.OnClickListener {
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
 
     // declare buttons and text inputs
-    private Button button_find, button_connect, button_access, button_teste;
+    private Button button_find, button_config, button_access, button_teste;
     //private EditText editTextIPAddress, editTextPortNumber;
     private ListView listWeb;
     private ArrayAdapter<String> adapter;
@@ -61,8 +62,6 @@ public class ListESP extends Activity implements View.OnClickListener {
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
 
-    private StringBuilder sb = new StringBuilder();
-    private TextView tv;
     List<ScanResult> scanList;
 
     @Override
@@ -75,13 +74,15 @@ public class ListESP extends Activity implements View.OnClickListener {
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
 
-        button_connect = (Button)findViewById(R.id.button_connect);
-        button_connect.setOnClickListener(this);
+        button_config = (Button)findViewById(R.id.button_config);
+        button_config.setOnClickListener(this);
 
         button_teste = (Button)findViewById(R.id.button_teste);
         button_teste.setOnClickListener(this);
 
         listWeb = (ListView)findViewById(R.id.listWeb);
+        listWeb.setItemsCanFocus(true);
+        //listWeb.setOnItemClickListener(this);
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
@@ -98,24 +99,38 @@ public class ListESP extends Activity implements View.OnClickListener {
         //editTextPortNumber.setText(sharedPreferences.getString(PREF_PORT,""));
     }
 
+/*    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        Log.i("HelloListView", "You clicked Item: " + id + " at position:" + position);
+        // Then you start a new Activity via Intent
+        Intent intent = new Intent();
+        //intent.setClass(this, ListItemDetail.class);
+        intent.putExtra("position", position);
+        // Or / And
+        intent.putExtra("id", id);
+        startActivity(intent);
+    }*/
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == button_connect.getId()) {
+        //Botão procurar: abre rotina de busca e exibicao de rede
+        if (view.getId() == button_find.getId())
             connWifiNetwork();
+
+        //Botão configurar: configura o esp ao qual o dispositivo está conectado
+        if (view.getId() == button_config.getId()) {
+
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
         }
+
         if (view.getId() == button_access.getId()) {
             Intent intent2 = new Intent(this, AccessActivity.class);
             startActivity(intent2);
         }
+
         if (view.getId() == button_teste.getId()) {
             Intent intent2 = new Intent(this, HomeActivity.class);
             startActivity(intent2);
-        }
-        if (view.getId() == button_find.getId()) {
-            connWifiNetwork();
         }
     }
 
@@ -261,15 +276,14 @@ public class ListESP extends Activity implements View.OnClickListener {
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
-
         final WifiManager wifiManager =
                 (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
+
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("debug", "dentro");
-                sb = new StringBuilder();
+
                 Context tmpContext = getApplicationContext();
 
                 ArrayList<String> arrayList = new ArrayList<String>();
@@ -286,33 +300,21 @@ public class ListESP extends Activity implements View.OnClickListener {
                     wifiManager.setWifiEnabled(true);
 
                 scanList = wifiManager.getScanResults();
-                //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
-                for (int i = 0; i < scanList.size(); i++) {
-                    //sb.append(new Integer(i+1).toString() + ". ");
-                    //sb.append((scanList.get(i).SSID).toString());
-                    //sb.append("\n\n");
-                    arrayList.add((scanList.get(i).SSID));
 
-//                  if (scanList.get(i).SSID.equals("ESP1")) {
-//                      tv.setText(scanList.get(i).SSID);-
-//                      WifiConfiguration config = new WifiConfiguration();
-//                      config.SSID = "\"" + scanList.get(i).SSID + "\"";
-//                      config.BSSID = scanList.get(i).BSSID;
-//                      config.priority = 0;
-//                      config.preSharedKey = "\"" + "12345678" + "\"";
-//                      config.status = WifiConfiguration.Status.ENABLED;
-//                      int id = wifiManager.addNetwork(config);
-//                      wifiManager.enableNetwork(id, true);
-//                      wifiManager.saveConfiguration();
-//                  }
+                for (int i = 0; i < scanList.size(); i++) {
+
+                    if (scanList.get(i).SSID.contains("CITI"))
+                        arrayList.add((scanList.get(i).SSID));
+
                 }
-                //tv.setText(sb);
             }
 
         },filter);
+
         wifiManager.startScan();
 
     }
+
     public String getInfoWifi(int iInformationType){
         // Get context variable
         Context tmpContext = getApplicationContext();
@@ -378,3 +380,13 @@ public class ListESP extends Activity implements View.OnClickListener {
     }
 
 }
+
+//                      WifiConfiguration config = new WifiConfiguration();
+//                      config.SSID = "\"" + scanList.get(i).SSID + "\"";
+//                      config.BSSID = scanList.get(i).BSSID;
+//                      config.priority = 0;
+//                      config.preSharedKey = "\"" + "12345678" + "\"";
+//                      config.status = WifiConfiguration.Status.ENABLED;
+//                      int id = wifiManager.addNetwork(config);
+//                      wifiManager.enableNetwork(id, true);
+//                      wifiManager.saveConfiguration();

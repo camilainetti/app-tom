@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Teste</string>
+    <string name="app_name">TOM 2015</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="IP_address">IP Address:</string>
@@ -11,7 +11,7 @@
     <string name="button_OFF">OFF</string>
     <string name="button_ON">ON</string>
     <string name="button_find">Procurar</string>
-    <string name="button_connect">Conectar</string>
+    <string name="button_connect">Configurar</string>
     <string name="button_Con">Configurar</string>
     <string name="button_access">Acessar</string>
     <string name="button_SET">Enviar</string>
@@ -29,7 +29,7 @@
         Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
     <string name="lista">Para encontrar redes, clique no botão Procurar</string>
     <string name="title_activity_list_esp">ListESP</string>
-    <string name="help">Selecione o dispositivo que você deseja conectar</string>
+    <string name="help">Procure e selecione o dispositivo ao qual você deseja conectar.</string>
     <string name="nome_escolhido">%s</string>
 
 </resources>

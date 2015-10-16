@@ -22,26 +22,19 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:id="@+id/listWeb"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/listWeb" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/button_connect"
-            android:id="@+id/button_connect" />
-
-        <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/button_find"
-        android:id="@+id/button_find" />
+            android:text="@string/button_find"
+            android:id="@+id/button_find" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_connect"
-            android:id="@+id/button_connect"
+            android:id="@+id/button_config"
             android:layout_gravity="center_horizontal" />
 
         <Button
