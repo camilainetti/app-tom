@@ -9,13 +9,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/button_Con"
-            android:id="@+id/button_Con" />
-
-
         <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

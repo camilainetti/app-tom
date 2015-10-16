@@ -24,7 +24,10 @@
         <activity android:name=".ConfigConn" >
         </activity>
         <activity android:name=".HomeActivity" >
-            +        </activity>
+            +        
+        </activity>
+        <activity android:name=".AccessActivity" >
+        </activity>
     </application>
 
 </manifest>

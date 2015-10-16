@@ -44,7 +44,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
 
     // declare buttons and text inputs
-    private Button button_ON,button_OFF,button_Con;
+    private Button button_ON,button_OFF;
     private EditText editTextIPAddress, editTextPortNumber;
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
@@ -64,11 +64,6 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_home);
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
-
-
-        button_Con = (Button)findViewById(R.id.button_Con);
-
-        button_Con.setOnClickListener(this);
 
 
         //tv= (TextView)findViewById(R.id.txtWifiNetworks);
@@ -98,39 +93,32 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == button_Con.getId()) {
-            connWifiNetwork();
-            Intent intent = new Intent(this, ConfigConn.class);
-            startActivity(intent);
+        // get the pin number
+        String parameterValue = "";
+        // get the ip address
+        String ipAddress = editTextIPAddress.getText().toString().trim();
+        // get the port number
+        String portNumber = editTextPortNumber.getText().toString().trim();
+
+        editor = sharedPreferences.edit();
+        // save the IP address and port for the next time the app is used
+        editor.putString(PREF_IP, ipAddress); // set the ip address value to save
+        editor.putString(PREF_PORT, portNumber); // set the port number to save
+        editor.commit(); // save the IP and PORT
+
+        // get the pin number from the button that was clicked
+        if (view.getId() == button_ON.getId()) {
+            parameterValue = "ON";
+        } else {
+            parameterValue = "OFF";
         }
-        else {
-            // get the pin number
-            String parameterValue = "";
-            // get the ip address
-            String ipAddress = editTextIPAddress.getText().toString().trim();
-            // get the port number
-            String portNumber = editTextPortNumber.getText().toString().trim();
-
-            editor = sharedPreferences.edit();
-            // save the IP address and port for the next time the app is used
-            editor.putString(PREF_IP, ipAddress); // set the ip address value to save
-            editor.putString(PREF_PORT, portNumber); // set the port number to save
-            editor.commit(); // save the IP and PORT
-
-            // get the pin number from the button that was clicked
-            if (view.getId() == button_ON.getId()) {
-                parameterValue = "ON";
-            } else {
-                parameterValue = "OFF";
-            }
 
 
-            // execute HTTP request
-            if (ipAddress.length() > 0 && portNumber.length() > 0) {
-                new HttpRequestAsyncTask(
-                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?pin"
-                ).execute();
-            }
+        // execute HTTP request
+        if (ipAddress.length() > 0 && portNumber.length() > 0) {
+            new HttpRequestAsyncTask(
+                    view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?pin"
+            ).execute();
         }
     }
 

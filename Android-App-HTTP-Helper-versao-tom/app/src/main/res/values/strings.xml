@@ -13,17 +13,23 @@
     <string name="button_find">Procurar</string>
     <string name="button_connect">Conectar</string>
     <string name="button_Con">Configurar</string>
+    <string name="button_access">Acessar</string>
     <string name="button_SET">Enviar</string>
     <string name="ssid">SSID</string>
     <string name="senha">Senha</string>
+    <string name="gateway">Gateway</string>
+    <string name="eg_gateway">Ex: 192.168.x.x</string>
+    <string name="mask">Máscara da Rede</string>
+    <string name="eg_mask">Ex: 255.255.255.0</string>
     <string name="ip">IP</string>
     <string name="eg_ip">Ex: 192.168.x.x</string>
     <string name="nome">Nome do dispositivo inteligente</string>
     <string name="eg_nome">Ex: Lâmpada da cozinha</string>
     <string name="info_conn">Insira o SSID (nome) da rede Wifi da sua casa e a senha.
-        Também escolha um IP e um nome para o dispositivo inteligente que você está configurando.</string>
+        Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
     <string name="lista">Para encontrar redes, clique no botão Procurar</string>
     <string name="title_activity_list_esp">ListESP</string>
     <string name="help">Selecione o dispositivo que você deseja conectar</string>
+    <string name="nome_escolhido">%s</string>
 
 </resources>

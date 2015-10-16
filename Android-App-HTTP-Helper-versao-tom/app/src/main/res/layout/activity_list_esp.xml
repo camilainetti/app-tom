@@ -39,6 +39,13 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/button_access"
+            android:id="@+id/button_access"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Teste"
             android:id="@+id/button_teste"
             android:layout_gravity="center_horizontal" />
