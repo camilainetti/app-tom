@@ -44,12 +44,13 @@ import java.util.ArrayList;
 
 public class ListESP extends Activity implements View.OnClickListener {
 
-    private static final String TAG = "HomeActivity";
+    private static final String TAG = "ListESP";
+    public final static String PREF_NAME = "PREF_NAME";
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
 
     // declare buttons and text inputs
-    private Button button_find, button_connect, button_teste;
+    private Button button_find, button_connect, button_access, button_teste;
     //private EditText editTextIPAddress, editTextPortNumber;
     private ListView listWeb;
     private ArrayAdapter<String> adapter;
@@ -82,7 +83,9 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         listWeb = (ListView)findViewById(R.id.listWeb);
 
-        //tv= (TextView)findViewById(R.id.txtWifiESP);
+        button_access = (Button)findViewById(R.id.button_access);
+        button_access.setOnClickListener(this);
+
         //getWifiNetworksList();
 
         // assign text inputs
@@ -102,6 +105,10 @@ public class ListESP extends Activity implements View.OnClickListener {
             connWifiNetwork();
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
+        }
+        if (view.getId() == button_access.getId()) {
+            Intent intent2 = new Intent(this, AccessActivity.class);
+            startActivity(intent2);
         }
         if (view.getId() == button_teste.getId()) {
             Intent intent2 = new Intent(this, HomeActivity.class);

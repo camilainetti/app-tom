@@ -26,11 +26,11 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class ConfigConn extends HomeActivity{
+public class ConfigConn extends ListESP{
 
-    public final static String PREF_NAME = "PREF_NAME";
+
     private Button button_SET;
-    private EditText editTextSSID, editTextsenha, editTextnome;
+    private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
     //SharedPreferences sharedPreferences;
     //SharedPreferences.Editor editor;
     //SharedPreferences sharedPreferences;
@@ -42,6 +42,9 @@ public class ConfigConn extends HomeActivity{
 
         editTextSSID = (EditText)findViewById(R.id.eg_ssid);
         editTextsenha = (EditText)findViewById(R.id.eg_senha);
+        editTextip = (EditText)findViewById(R.id.eg_ip);
+        editTextgateway = (EditText)findViewById(R.id.eg_gateway);
+        editTextmask = (EditText)findViewById(R.id.eg_mask);
         editTextnome = (EditText)findViewById(R.id.eg_nome);
 
         button_SET = (Button)findViewById(R.id.button_SET);
@@ -57,7 +60,10 @@ public class ConfigConn extends HomeActivity{
             // get the port number
             String senha = editTextsenha.getText().toString().trim();
             String nome = editTextnome.getText().toString().trim();
-            parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome;
+            String gateway = editTextgateway.getText().toString().trim();
+            String ip = editTextip.getText().toString().trim();
+            String mask = editTextmask.getText().toString().trim();
+            parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
             // execute HTTP request

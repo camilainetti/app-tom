@@ -43,6 +43,28 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:hint="@string/gateway"
+            android:id="@+id/gateway" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/eg_gateway"
+            android:id="@+id/eg_gateway" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/mask"
+            android:id="@+id/mask" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/eg_mask"
+            android:id="@+id/eg_mask" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:hint="@string/ip"
             android:id="@+id/ip" />
         <EditText
@@ -50,6 +72,12 @@
             android:layout_height="match_parent"
             android:hint="@string/eg_ip"
             android:id="@+id/eg_ip" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/nome"
+            android:id="@+id/nome" />
 
         <EditText
             android:layout_width="match_parent"
