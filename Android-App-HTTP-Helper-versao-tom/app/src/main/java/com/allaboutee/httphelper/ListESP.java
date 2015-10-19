@@ -39,14 +39,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ListESP";
-    public final static String PREF_NAME = "PREF_NAME";
+    //public final static Map PREF_NAME = new HashMap();
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
 
