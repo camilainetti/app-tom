@@ -20,12 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -49,13 +51,16 @@ public class ListESP extends Activity implements View.OnClickListener {
     public final static String PREF_NAME = "PREF_NAME";
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
+    public String rede;
 
     // declare buttons and text inputs
     private Button button_find, button_config, button_access, button_teste;
     //private EditText editTextIPAddress, editTextPortNumber;
     private ListView listWeb;
     private ArrayAdapter<String> adapter;
-    private ArrayList<String> arrayList;
+    ArrayList<String> arrayList = new ArrayList<String>();
+    public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
+    Intent intentwifi = new Intent(this, AccessActivity.class);
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -82,50 +87,40 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         listWeb = (ListView)findViewById(R.id.listWeb);
         listWeb.setItemsCanFocus(true);
-        //listWeb.setOnItemClickListener(this);
+        listWeb.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                Integer i = (int) (long) id;
+                System.out.println(arrayList.get(i));
+                rede = arrayList.get(i);
+
+                intentwifi.putExtra(EXTRA_MESSAGE, rede);
+
+            }
+
+        });
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
-
-        //getWifiNetworksList();
-
-        // assign text inputs
-        //editTextIPAddress = (EditText)findViewById(R.id.eg_IP_address);
-        //editTextPortNumber = (EditText)findViewById(R.id.eg_port_number);
-
-        // get the IP address and port number from the last time the user used the app,
-        // put an empty string "" is this is the first time.
-        //editTextIPAddress.setText(sharedPreferences.getString(PREF_IP,""));
-        //editTextPortNumber.setText(sharedPreferences.getString(PREF_PORT,""));
     }
-
-/*    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        Log.i("HelloListView", "You clicked Item: " + id + " at position:" + position);
-        // Then you start a new Activity via Intent
-        Intent intent = new Intent();
-        //intent.setClass(this, ListItemDetail.class);
-        intent.putExtra("position", position);
-        // Or / And
-        intent.putExtra("id", id);
-        startActivity(intent);
-    }*/
 
     @Override
     public void onClick(View view) {
         //Botão procurar: abre rotina de busca e exibicao de rede
         if (view.getId() == button_find.getId())
-            connWifiNetwork();
+            findWifiNetwork();
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-
+            connWifiNetwork(rede);
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
         }
 
         if (view.getId() == button_access.getId()) {
-            Intent intent2 = new Intent(this, AccessActivity.class);
-            startActivity(intent2);
+
+            startActivity(intentwifi);
         }
 
         if (view.getId() == button_teste.getId()) {
@@ -272,7 +267,7 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
     }
-    private void connWifiNetwork(){
+    private void findWifiNetwork(){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
@@ -285,8 +280,6 @@ public class ListESP extends Activity implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
 
                 Context tmpContext = getApplicationContext();
-
-                ArrayList<String> arrayList = new ArrayList<String>();
 
                 adapter = new ArrayAdapter<String>(getApplicationContext(),
                         R.layout.wifi_list_item,
@@ -303,14 +296,61 @@ public class ListESP extends Activity implements View.OnClickListener {
 
                 for (int i = 0; i < scanList.size(); i++) {
 
-                    if (scanList.get(i).SSID.contains("CITI"))
+                    if (scanList.get(i).SSID.contains("CITI")) {
                         arrayList.add((scanList.get(i).SSID));
-
+                    }
                 }
             }
 
         },filter);
 
+        wifiManager.startScan();
+
+    }
+
+    private void connWifiNetwork(String rede){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        final String nome_rede = rede;
+        final WifiManager wifiManager =
+                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        registerReceiver(new BroadcastReceiver() {
+            @SuppressLint("UseValueOf")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //sb = new StringBuilder();
+                Context tmpContext = getApplicationContext();
+                WifiManager tmpManager =
+                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                if (!tmpManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(true);
+
+                scanList = wifiManager.getScanResults();
+
+                //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
+                for (int i = 0; i < scanList.size(); i++) {
+                    //sb.append(new Integer(i+1).toString() + ". ");
+                    //sb.append((scanList.get(i)).toString());
+                    //sb.append("\n\n");
+                    if (scanList.get(i).SSID.equals(nome_rede)) {
+                        //tv.setText(scanList.get(i).SSID);
+                        System.out.println("Nome da rede:" + nome_rede);
+                        WifiConfiguration config = new WifiConfiguration();
+                        config.SSID = "\"" + scanList.get(i).SSID + "\"";
+                        config.BSSID = scanList.get(i).BSSID;
+                        //config.priority = 0;
+                        config.preSharedKey = "\"" + "welcomeCITI" + "\"";
+                        config.status = WifiConfiguration.Status.ENABLED;
+                        int id = wifiManager.addNetwork(config);
+                        wifiManager.enableNetwork(id, true);
+                        //wifiManager.saveConfiguration();
+
+                    }
+                    }
+                //tv.setText(sb);
+            }
+
+        },filter);
         wifiManager.startScan();
 
     }
@@ -378,15 +418,5 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
     }
-
 }
 
-//                      WifiConfiguration config = new WifiConfiguration();
-//                      config.SSID = "\"" + scanList.get(i).SSID + "\"";
-//                      config.BSSID = scanList.get(i).BSSID;
-//                      config.priority = 0;
-//                      config.preSharedKey = "\"" + "12345678" + "\"";
-//                      config.status = WifiConfiguration.Status.ENABLED;
-//                      int id = wifiManager.addNetwork(config);
-//                      wifiManager.enableNetwork(id, true);
-//                      wifiManager.saveConfiguration();
