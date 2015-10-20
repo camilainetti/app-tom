@@ -29,7 +29,7 @@
         Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
     <string name="lista">Para encontrar redes, clique no botão Procurar</string>
     <string name="title_activity_list_esp">ListESP</string>
-    <string name="help">Procure e selecione o dispositivo ao qual você deseja conectar.</string>
+    <string name="help">Clique em "Procurar" e selecione seu dispositivo.</string>
     <string name="nome_escolhido">%s</string>
 
 </resources>

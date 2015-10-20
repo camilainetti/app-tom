@@ -44,7 +44,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.ArrayList;
 
-
 public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ListESP";
@@ -94,9 +93,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                 Integer i = (int) (long) id;
                 System.out.println(arrayList.get(i));
                 rede = arrayList.get(i);
-
                 intentwifi.putExtra(EXTRA_MESSAGE, rede);
-
             }
 
         });
@@ -119,7 +116,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
         if (view.getId() == button_access.getId()) {
-
             startActivity(intentwifi);
         }
 
@@ -129,15 +125,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
     }
 
-    /**
-     * Description: Send an HTTP Get request to a specified ip address and port.
-     * Also send a parameter "parameterName" with the value of "parameterValue".
-     * @param parameterValue the pin number to toggle
-     * @param ipAddress the ip address to send the request to
-     * @param portNumber the port number of the ip address
-     * @param parameterName
-     * @return The ip address' reply text, or an ERROR message is it fails to receive one
-     */
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
         String serverResponse = "ERROR";
 
@@ -178,11 +165,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         return serverResponse;
     }
 
-
-    /**
-     * An AsyncTask is needed to execute HTTP requests in the background so that they do not
-     * block the user interface.
-     */
     public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Void> {
 
         // declare variables needed
@@ -267,6 +249,7 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
     }
+
     private void findWifiNetwork(){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
@@ -293,6 +276,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                     wifiManager.setWifiEnabled(true);
 
                 scanList = wifiManager.getScanResults();
+                arrayList.clear();
 
                 for (int i = 0; i < scanList.size(); i++) {
 
@@ -327,13 +311,9 @@ public class ListESP extends Activity implements View.OnClickListener {
 
                 scanList = wifiManager.getScanResults();
 
-                //sb.append("\n  Number Of Wifi connections :" + " " +scanList.size()+"\n\n");
                 for (int i = 0; i < scanList.size(); i++) {
-                    //sb.append(new Integer(i+1).toString() + ". ");
-                    //sb.append((scanList.get(i)).toString());
-                    //sb.append("\n\n");
+
                     if (scanList.get(i).SSID.equals(nome_rede)) {
-                        //tv.setText(scanList.get(i).SSID);
                         System.out.println("Nome da rede:" + nome_rede);
                         WifiConfiguration config = new WifiConfiguration();
                         config.SSID = "\"" + scanList.get(i).SSID + "\"";
@@ -344,11 +324,9 @@ public class ListESP extends Activity implements View.OnClickListener {
                         int id = wifiManager.addNetwork(config);
                         wifiManager.enableNetwork(id, true);
                         //wifiManager.saveConfiguration();
-
                     }
-                    }
-                //tv.setText(sb);
-            }
+                }
+             }
 
         },filter);
         wifiManager.startScan();
@@ -419,4 +397,3 @@ public class ListESP extends Activity implements View.OnClickListener {
 
     }
 }
-
