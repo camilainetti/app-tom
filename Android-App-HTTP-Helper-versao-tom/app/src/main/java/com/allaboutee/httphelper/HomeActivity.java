@@ -139,8 +139,8 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
-            URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
-            Log.v(TAG, "http://"+ipAddress+portNumber+parameterName+parameterValue);
+            URI website = new URI("http://"+"httpstat.us/200");
+            Log.v(TAG, "http://"+website.toString());
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request
@@ -151,7 +151,9 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                     content
             ));
             serverResponse = in.readLine();
-            //serverResponse = in.readLine();
+//            while (!serverResponse.contains("origin")){
+//                serverResponse = in.readLine();
+//            }
             // Close the connection
             content.close();
         } catch (ClientProtocolException e) {
