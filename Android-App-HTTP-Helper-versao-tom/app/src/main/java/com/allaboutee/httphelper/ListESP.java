@@ -15,18 +15,12 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -41,16 +35,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ListESP";
-    public final static String PREF_IP = "PREF_IP_ADDRESS";
-    public final static String PREF_PORT = "PREF_PORT_NUMBER";
+    //public final static String PREF_IP = "PREF_IP_ADDRESS";
+    //public final static String PREF_PORT = "PREF_PORT_NUMBER";
     public String rede = "";
 
     // declare buttons and text inputs
@@ -93,7 +85,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                 Integer i = (int) (long) id;
                 System.out.println(arrayList.get(i));
                 rede = arrayList.get(i);
-                intentwifi.putExtra(EXTRA_MESSAGE, rede);
+
             }
 
         });
@@ -110,7 +102,24 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-            connWifiNetwork(rede);
+
+            final WifiManager wifiManager =
+                    (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+            if (wifiManager.getConnectionInfo().getSSID().contains(rede)!=true){
+                Toast.makeText(ListESP.this,
+                        "Tentando conectar",
+                        Toast.LENGTH_LONG).show();
+                System.out.println(wifiManager.getConnectionInfo().getSSID());
+                connWifiNetwork(rede);
+            }
+
+            if (wifiManager.getConnectionInfo().getSSID().contains(rede)){
+                Toast.makeText(ListESP.this,
+                        "Conectado em "+rede,
+                        Toast.LENGTH_LONG).show();
+            }
+
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
         }
@@ -128,7 +137,7 @@ public class ListESP extends Activity implements View.OnClickListener {
     }
 
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
-        String serverResponse = "ERROR";
+        String serverResponse;
 
         try {
 
@@ -141,7 +150,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request
             // get the ip address server's reply
-            InputStream content = null;
+            InputStream content;
             content = response.getEntity().getContent();
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     content
@@ -201,8 +210,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         /**
          * Name: doInBackground
          * Description: Sends the request to the ip address
-         * @param voids
-         * @return
          */
         @Override
         protected Void doInBackground(Void... voids) {
@@ -288,10 +295,9 @@ public class ListESP extends Activity implements View.OnClickListener {
                 }
             }
 
-        },filter);
+        }, filter);
 
         wifiManager.startScan();
-
     }
 
     private void connWifiNetwork(String rede){
@@ -304,7 +310,6 @@ public class ListESP extends Activity implements View.OnClickListener {
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
-                //sb = new StringBuilder();
                 Context tmpContext = getApplicationContext();
                 WifiManager tmpManager =
                         (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -320,19 +325,18 @@ public class ListESP extends Activity implements View.OnClickListener {
                         WifiConfiguration config = new WifiConfiguration();
                         config.SSID = "\"" + scanList.get(i).SSID + "\"";
                         config.BSSID = scanList.get(i).BSSID;
-                        //config.priority = 0;
+                        config.priority = 0;
                         config.preSharedKey = "\"" + "welcomeCITI" + "\"";
                         config.status = WifiConfiguration.Status.ENABLED;
                         int id = wifiManager.addNetwork(config);
                         wifiManager.enableNetwork(id, true);
-                        //wifiManager.saveConfiguration();
+                        wifiManager.saveConfiguration();
                     }
                 }
-             }
+            }
 
-        },filter);
+        }, filter);
         wifiManager.startScan();
-
     }
 
     public String getInfoWifi(int iInformationType){
@@ -345,7 +349,7 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Init variable to store current network information for processing
         WifiInfo tmpInfo = tmpManager.getConnectionInfo();
         //Init variable to store DHCP information
-        DhcpInfo tmpDHCP = null;
+        DhcpInfo tmpDHCP;
         if (tmpInfo != null)
         {
             switch(iInformationType)

@@ -63,11 +63,16 @@ public class ConfigConn extends ListESP{
                 ).execute();
             }
             editor = sharedPreferences.edit();
+
             // save the name for the next time the app is used
             //editor.putString(PREF_NAME, nome);
-            nomeWifi = nomeWifi.replaceAll("\"", "");
+
+            nomeWifi = nomeWifi.replaceAll("(.*)\"(.*)", "");
+
             editor.putString(nomeWifi, nome);
+            System.out.println(nome);
             Log.v(TAG, "ip:"+ip+"nome:"+nomeWifi + "::");
+
             editor.putString(nome, ip);
             editor.commit(); // save name
         }
