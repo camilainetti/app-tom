@@ -4,6 +4,7 @@ package com.allaboutee.httphelper;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,9 @@ public class ConfigConn extends ListESP{
 
     private Button button_SET;
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
+    private static final String TAG = "ConfigConn";
+    public final static String EXTRA_MESSAGE = "nome_escolhido";
+    String nome;
     //SharedPreferences sharedPreferences;
     //SharedPreferences.Editor editor;
     //SharedPreferences sharedPreferences;
@@ -43,12 +47,13 @@ public class ConfigConn extends ListESP{
             String ssid = editTextSSID.getText().toString().trim();
             // get the port number
             String senha = editTextsenha.getText().toString().trim();
-            String nome = editTextnome.getText().toString().trim();
+            nome = editTextnome.getText().toString().trim();
             String nomeWifi = getInfoWifi(2);
             String gateway = editTextgateway.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
             parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
+            Log.v(TAG, "dados: " + parameterValue);
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
             // execute HTTP request
@@ -61,10 +66,13 @@ public class ConfigConn extends ListESP{
             // save the name for the next time the app is used
             //editor.putString(PREF_NAME, nome);
             editor.putString(nomeWifi, nome);
+            nomeWifi = nomeWifi.replaceAll("\"", "");
+            Log.v(TAG, "ip:"+ip+"nome:"+nomeWifi+"::");
             editor.putString(nome, ip);
             editor.commit(); // save name
         }
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, ListESP.class);
+        intent.putExtra(EXTRA_MESSAGE, nome);
         startActivity(intent);
     }
 }

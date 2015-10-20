@@ -50,10 +50,9 @@ import java.util.Map;
 public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ListESP";
-    //public final static Map PREF_NAME = new HashMap();
     public final static String PREF_IP = "PREF_IP_ADDRESS";
     public final static String PREF_PORT = "PREF_PORT_NUMBER";
-    public String rede;
+    public String rede = "";
 
     // declare buttons and text inputs
     private Button button_find, button_config, button_access, button_teste;
@@ -62,7 +61,6 @@ public class ListESP extends Activity implements View.OnClickListener {
     private ArrayAdapter<String> adapter;
     ArrayList<String> arrayList = new ArrayList<String>();
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
-    Intent intentwifi = new Intent(this, AccessActivity.class);
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -96,9 +94,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                 Integer i = (int) (long) id;
                 System.out.println(arrayList.get(i));
                 rede = arrayList.get(i);
-
-                intentwifi.putExtra(EXTRA_MESSAGE, rede);
-
             }
 
         });
@@ -121,7 +116,8 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
         if (view.getId() == button_access.getId()) {
-
+            Intent intentwifi = new Intent(this, AccessActivity.class);
+            intentwifi.putExtra(EXTRA_MESSAGE, rede);
             startActivity(intentwifi);
         }
 
