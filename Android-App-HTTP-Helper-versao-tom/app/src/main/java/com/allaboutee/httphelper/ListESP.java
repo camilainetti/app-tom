@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
@@ -44,14 +45,19 @@ public class ListESP extends Activity implements View.OnClickListener {
     //public final static String PREF_IP = "PREF_IP_ADDRESS";
     //public final static String PREF_PORT = "PREF_PORT_NUMBER";
     public String rede = "";
+    public String nomeWifi;
 
     // declare buttons and text inputs
     private Button button_find, button_config, button_access, button_teste;
+    private TextView disp_escolhido;
     //private EditText editTextIPAddress, editTextPortNumber;
     private ListView listWeb;
     private ArrayAdapter<String> adapter;
+
     ArrayList<String> arrayList = new ArrayList<String>();
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
+    public final static String EXTRA_MESSAGE2 = "nome_escolhido";
+
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -85,10 +91,21 @@ public class ListESP extends Activity implements View.OnClickListener {
                 Integer i = (int) (long) id;
                 System.out.println(arrayList.get(i));
                 rede = arrayList.get(i);
+                disp_escolhido.setText(rede);
 
             }
 
         });
+        Intent intent = getIntent();
+        nomeWifi = intent.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+
+        disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
+        if (nomeWifi!=null){
+            disp_escolhido.setText(nomeWifi);
+        }
+        else{
+            disp_escolhido.setText(rede);
+        }
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
@@ -119,7 +136,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                         "Conectado em "+rede,
                         Toast.LENGTH_LONG).show();
             }
-
             Intent intent = new Intent(this, ConfigConn.class);
             startActivity(intent);
         }
@@ -290,7 +306,13 @@ public class ListESP extends Activity implements View.OnClickListener {
                 for (int i = 0; i < scanList.size(); i++) {
 
                     if (scanList.get(i).SSID.contains("CITI")) {
-                        arrayList.add((scanList.get(i).SSID));
+                        if(nomeWifi!=null && scanList.get(i).SSID.equals(nomeWifi) && sharedPreferences.getString(nomeWifi, "")!=null){
+                            arrayList.add(sharedPreferences.getString(nomeWifi, ""));
+                        }
+                        else{
+                            arrayList.add((scanList.get(i).SSID));
+                        }
+
                     }
                 }
             }

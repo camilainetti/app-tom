@@ -31,5 +31,7 @@
     <string name="title_activity_list_esp">ListESP</string>
     <string name="help">Clique em "Procurar" e selecione seu dispositivo.</string>
     <string name="nome_escolhido">%s</string>
+    <string name="disp">Dispositivo escolhido:</string>
+    <string name="disp_escolhido"> Selecione um dispositivo</string>
 
 </resources>
