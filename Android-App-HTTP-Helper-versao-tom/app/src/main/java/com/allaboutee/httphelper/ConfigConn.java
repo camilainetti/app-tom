@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.Set;
 
 
 public class ConfigConn extends ListESP{
@@ -49,6 +50,8 @@ public class ConfigConn extends ListESP{
             // get the port number
             String senha = editTextsenha.getText().toString().trim();
 
+            Set savednames;
+
             nome_carinhoso = editTextnome.getText().toString().trim();
 
             nomeWifi = getInfoWifi(2);
@@ -77,10 +80,9 @@ public class ConfigConn extends ListESP{
             //nomeWifi = nomeWifi.replaceAll("(.*)\"(.*)", "");
 
             editor.putString(nomeWifi, nome_carinhoso);
-            System.out.println(nomeWifi + " vai virar " + nome_carinhoso);
             editor.commit();
 
-            String prova = sharedPreferences.getString(nome_carinhoso, "");
+            String prova = sharedPreferences.getString(nomeWifi, "");
             System.out.println("Aí! Virou "+ prova);
 
             Log.v(TAG, "ip:" + ip + "nome:" + nomeWifi + "::");
