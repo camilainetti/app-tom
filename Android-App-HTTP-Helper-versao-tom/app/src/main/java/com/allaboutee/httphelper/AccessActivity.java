@@ -41,9 +41,9 @@ public class AccessActivity extends ListESP {
         Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome_wifi+"::");
 
         // execute HTTP request
-        new HttpRequestAsyncTask(
+        /*new HttpRequestAsyncTask(
                 view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-        ).execute();
+        ).execute();*/
     }
 }
 

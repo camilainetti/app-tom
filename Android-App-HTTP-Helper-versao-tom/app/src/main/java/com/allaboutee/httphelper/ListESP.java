@@ -84,7 +84,7 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         button_teste = (Button)findViewById(R.id.button_teste);
         button_teste.setOnClickListener(this);
-        button_teste.setVisibility(View.INVISIBLE);
+        button_teste.setVisibility(View.GONE);
 
         listWeb = (ListView)findViewById(R.id.listWeb);
         listWeb.setItemsCanFocus(true);
@@ -131,20 +131,34 @@ public class ListESP extends Activity implements View.OnClickListener {
                 final WifiManager wifiManager =
                         (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-                if (wifiManager.getConnectionInfo().getSSID().contains(rede) != true) {
-                    Toast.makeText(ListESP.this,
-                            "Tentando conectar",
-                            Toast.LENGTH_LONG).show();
-                    System.out.println(wifiManager.getConnectionInfo().getSSID());
-                    connWifiNetwork(rede);
-                }
-
                 if (wifiManager.getConnectionInfo().getSSID().contains(rede)) {
                     Toast.makeText(ListESP.this,
                             "Conectado em " + rede,
                             Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(this, ConfigConn.class);
                     startActivity(intent);
+                }
+                else{
+                    for (int i = 1; i < 3; i++){
+                        Toast.makeText(ListESP.this,
+                                "Tentativa " + i + " de conectar na rede.",
+                                Toast.LENGTH_LONG).show();
+                        if (wifiManager.getConnectionInfo().getSSID().contains(rede) != true) {
+                            //System.out.println(wifiManager.getConnectionInfo().getSSID());
+                            connWifiNetwork(rede);
+                            if (wifiManager.getConnectionInfo().getSSID().contains(rede) == true){
+                                Toast.makeText(ListESP.this,
+                                        "Conectado em " + rede,
+                                        Toast.LENGTH_LONG).show();
+                                i=6;
+                                Intent intent = new Intent(this, ConfigConn.class);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                    Toast.makeText(ListESP.this,
+                            "Não foi possível conectar o dispositivo.\nTente novamente.",
+                            Toast.LENGTH_LONG).show();
                 }
             }
             else{
