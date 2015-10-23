@@ -73,8 +73,8 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-        Intent intent = getIntent();
-        nomeWifi = intent.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        //Intent intent = getIntent();
+        //nomeWifi = intent.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
 
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
@@ -102,16 +102,14 @@ public class ListESP extends Activity implements View.OnClickListener {
         });
 
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
-
-        if (nomeWifi!=null && sharedPreferences.getString(nomeWifi, "")!=null){
-            disp_escolhido.setText(sharedPreferences.getString(nomeWifi, ""));
+        Log.v(TAG, "nome_rede:"+rede+"::");
+        nomeWifi = sharedPreferences.getString(rede, "");
+        if (!nomeWifi.equals("")){
+            Log.v(TAG, "nome:"+nomeWifi+"::");
+            disp_escolhido.setText(nomeWifi);
         }
-        else{
-            if (nomeWifi!=null)
-                disp_escolhido.setText(nomeWifi);
-            else {
-                disp_escolhido.setText(rede);
-            }
+        else if (!rede.equals("")){
+            disp_escolhido.setText(rede);
         }
 
         button_access = (Button)findViewById(R.id.button_access);
@@ -344,21 +342,15 @@ public class ListESP extends Activity implements View.OnClickListener {
                 String nome_temp;
 
                 for (int i = 0; i < scanList.size(); i++) {
-
                     if (scanList.get(i).SSID.contains("CITI")) {
-
-                        if(nomeWifi!=null && nomeWifi.equals("\""+scanList.get(i).SSID+"\"") && sharedPreferences.getString(nomeWifi, "")!=null){
-                            arrayList.add(sharedPreferences.getString(nomeWifi, ""));
-
+                        nomeWifi = sharedPreferences.getString(scanList.get(i).SSID, "");
+                        Log.v(TAG, "nome:" + nomeWifi + "::");
+                        if(!nomeWifi.equals("")){
+                            arrayList.add(nomeWifi);
                         }
                         else{
                             arrayList.add((scanList.get(i).SSID));
-                            if (nomeWifi!=null) {
-                                System.out.println(nomeWifi);
-                                System.out.print((scanList.get(i).SSID));
-                            }
                         }
-
                     }
                 }
             }

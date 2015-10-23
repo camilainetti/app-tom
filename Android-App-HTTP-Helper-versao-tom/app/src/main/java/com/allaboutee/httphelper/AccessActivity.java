@@ -11,7 +11,7 @@ public class AccessActivity extends ListESP {
 
     private TextView nome_escolhido;
     private Button button_ON,button_OFF;
-    String nome_wifi;
+    String nome;
 
     private static final String TAG = "AccessActivity";
 
@@ -21,8 +21,8 @@ public class AccessActivity extends ListESP {
         setContentView(R.layout.activity_access);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         Intent intent = getIntent();
-        nome_wifi = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
-        nome_escolhido.setText(nome_wifi);
+        nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+        nome_escolhido.setText(nome);
         button_ON = (Button)findViewById(R.id.button_ON);
         button_OFF = (Button)findViewById(R.id.button_OFF);
         button_ON.setOnClickListener(this);
@@ -36,9 +36,10 @@ public class AccessActivity extends ListESP {
         } else {
             parameterValue = "OFF";
         }
-        String ipAddress = sharedPreferences.getString(nome_wifi, "");
+        String ipAddress = sharedPreferences.getString(nome, "");
+        nome = sharedPreferences.getString("\""+nome+"\"", "");
         String portNumber = "80";
-        Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome_wifi+"::");
+        Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
 
         // execute HTTP request
         /*new HttpRequestAsyncTask(
