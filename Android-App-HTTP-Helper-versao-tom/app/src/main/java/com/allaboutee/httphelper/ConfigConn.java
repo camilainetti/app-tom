@@ -77,8 +77,6 @@ public class ConfigConn extends ListESP{
             // save the name for the next time the app is used
             //editor.putString(PREF_NAME, nome);
 
-            //nomeWifi = nomeWifi.replaceAll("(.*)\"(.*)", "");
-
             editor.putString(nomeWifi, nome_carinhoso);
             editor.commit();
 
@@ -91,7 +89,7 @@ public class ConfigConn extends ListESP{
             editor.commit(); // save name
         }
         Intent intent = new Intent(this, ListESP.class);
-        intent.putExtra(EXTRA_MESSAGE, nomeWifi);
+        //intent.putExtra(EXTRA_MESSAGE, nomeWifi);
         System.out.println("nomeWifi= " + nomeWifi);
         startActivity(intent);
     }
