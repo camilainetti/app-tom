@@ -37,7 +37,7 @@ public class AccessActivity extends ListESP {
             parameterValue = "OFF";
         }
         String ipAddress = sharedPreferences.getString(nome, "");
-        nome = sharedPreferences.getString("\""+nome+"\"", "");
+        nome = sharedPreferences.getString(nome, "");
         String portNumber = "80";
         Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
 

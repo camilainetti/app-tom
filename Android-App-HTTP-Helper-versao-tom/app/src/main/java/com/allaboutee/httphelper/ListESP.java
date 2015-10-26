@@ -57,7 +57,7 @@ public class ListESP extends Activity implements View.OnClickListener {
     ArrayList<String> arrayList = new ArrayList<String>();
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
     public final static String EXTRA_MESSAGE2 = "nome_escolhido";
-
+    boolean voltou_config = false;
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -102,6 +102,13 @@ public class ListESP extends Activity implements View.OnClickListener {
         });
 
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
+        if (voltou_config == true) {
+            Intent intent_nomeWifi = getIntent();
+            rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+            Log.v(TAG, "nome_rede222:"+rede+"::");
+            voltou_config = false;
+        }
+
         Log.v(TAG, "nome_rede:"+rede+"::");
         nomeWifi = sharedPreferences.getString(rede, "");
         if (!nomeWifi.equals("")){
@@ -124,7 +131,11 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-
+            Log.v(TAG, "findwifi:" + rede + "::");
+            voltou_config = true;
+            if (!sharedPreferences.getString(rede+"getSSID", "").equals("")){
+                rede = sharedPreferences.getString(rede+"getSSID", "");
+            }
             if (disp_escolhido.getText() != "") {
                 final WifiManager wifiManager =
                         (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -346,6 +357,10 @@ public class ListESP extends Activity implements View.OnClickListener {
                         nomeWifi = sharedPreferences.getString(scanList.get(i).SSID, "");
                         Log.v(TAG, "nome:" + nomeWifi + "::");
                         if(!nomeWifi.equals("")){
+                            editor = sharedPreferences.edit();
+                            Log.v(TAG, "nome_reverso:" + scanList.get(i).SSID+"reverso" + "nomewifi:"+nomeWifi+"::");
+                            editor.putString(nomeWifi+"getSSID", scanList.get(i).SSID);
+                            editor.commit();
                             arrayList.add(nomeWifi);
                         }
                         else{
