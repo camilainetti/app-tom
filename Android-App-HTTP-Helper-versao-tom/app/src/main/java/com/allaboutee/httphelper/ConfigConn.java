@@ -59,7 +59,8 @@ public class ConfigConn extends ListESP{
             String ip = editTextip.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
 
-            parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome_carinhoso+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
+            parameterValue = "SSID="+ssid+"/SENHA="+senha+"/";
+            //parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome_carinhoso+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
 
             Log.v(TAG, "dados: " + parameterValue);
 

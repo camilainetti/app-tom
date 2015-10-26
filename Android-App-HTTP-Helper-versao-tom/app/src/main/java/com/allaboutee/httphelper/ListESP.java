@@ -353,7 +353,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                 String nome_temp;
 
                 for (int i = 0; i < scanList.size(); i++) {
-                    if (scanList.get(i).SSID.contains("CITI")) {
+                    if (scanList.get(i).SSID.contains("ESP")) {
                         nomeWifi = sharedPreferences.getString(scanList.get(i).SSID, "");
                         Log.v(TAG, "nome:" + nomeWifi + "::");
                         if(!nomeWifi.equals("")){
@@ -401,7 +401,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                         config.SSID = "\"" + scanList.get(i).SSID + "\"";
                         config.BSSID = scanList.get(i).BSSID;
                         config.priority = 0;
-                        config.preSharedKey = "\"" + "welcomeCITI" + "\"";
+                        config.preSharedKey = "\"" + "12345678" + "\"";
                         config.status = WifiConfiguration.Status.ENABLED;
                         int id = wifiManager.addNetwork(config);
                         wifiManager.enableNetwork(id, true);

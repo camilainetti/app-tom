@@ -32,9 +32,9 @@ public class AccessActivity extends ListESP {
     public void onClick(View view) {
         String parameterValue;
         if (view.getId() == button_ON.getId()) {
-            parameterValue = "ON";
+            parameterValue = "on";
         } else {
-            parameterValue = "OFF";
+            parameterValue = "off";
         }
         String ipAddress = sharedPreferences.getString(nome, "");
         nome = sharedPreferences.getString(nome, "");
@@ -42,9 +42,9 @@ public class AccessActivity extends ListESP {
         Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
 
         // execute HTTP request
-        /*new HttpRequestAsyncTask(
+        new HttpRequestAsyncTask(
                 view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-        ).execute();*/
+        ).execute();
     }
 }
 
