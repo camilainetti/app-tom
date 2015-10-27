@@ -135,6 +135,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             if (disp_escolhido.getText() != "") {
                 final WifiManager wifiManager =
                         (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                wifiManager.setWifiEnabled(false);
                 String teste = wifiManager.getConnectionInfo().getSSID();
                 Log.v(TAG, "conectado em:" + teste + "::");
                 if (wifiManager.getConnectionInfo().getSSID().contains(rede)) {
@@ -182,23 +183,24 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
-//                Intent intent_nomeWifi = getIntent();
-//                String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-//                String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
-//
-//                connWifiNetwork(wifi, senha);
+                Intent intent_nomeWifi = getIntent();
+                String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+                String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
                 final WifiManager wifiManager =
                         (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                Context tmpContext = getApplicationContext();
-                WifiManager tmpManager =
-                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-                if (tmpManager.isWifiEnabled())
-                    wifiManager.setWifiEnabled(false);
+                wifiManager.setWifiEnabled(false);
+                connWifiNetwork(wifi, senha);
+//                final WifiManager wifiManager =
+//                        (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//                Context tmpContext = getApplicationContext();
+//                WifiManager tmpManager =
+//                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+//                if (tmpManager.isWifiEnabled())
+//                    wifiManager.setWifiEnabled(false);
 
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
-                wifiManager.setWifiEnabled(true);
                 startActivity(intentwifi);
             }
             else{
