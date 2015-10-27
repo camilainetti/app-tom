@@ -42,22 +42,19 @@ import java.util.ArrayList;
 public class ListESP extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ListESP";
-    //public final static String PREF_IP = "PREF_IP_ADDRESS";
-    //public final static String PREF_PORT = "PREF_PORT_NUMBER";
     public String rede = "";
     public String nomeWifi;
 
     // declare buttons and text inputs
     private Button button_find, button_config, button_access, button_teste;
     private TextView disp_escolhido;
-    //private EditText editTextIPAddress, editTextPortNumber;
     private ListView listWeb;
     private ArrayAdapter<String> adapter;
 
     ArrayList<String> arrayList = new ArrayList<String>();
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
-    public final static String EXTRA_MESSAGE2 = "nome_escolhido";
-    boolean voltou_config = false;
+    public final static String EXTRA_MESSAGE2 = "nome_wifi_home";
+    public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -93,7 +90,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 Integer i = (int) (long) id;
-                System.out.println(arrayList.get(i));
+                System.out.println("item selecionado: "+arrayList.get(i));
                 rede = arrayList.get(i);
                 disp_escolhido.setText(rede);
 
@@ -102,22 +99,22 @@ public class ListESP extends Activity implements View.OnClickListener {
         });
 
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
-        if (voltou_config == true) {
-            Intent intent_nomeWifi = getIntent();
-            rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-            Log.v(TAG, "nome_rede222:"+rede+"::");
-            voltou_config = false;
-        }
-
-        Log.v(TAG, "nome_rede:"+rede+"::");
-        nomeWifi = sharedPreferences.getString(rede, "");
-        if (!nomeWifi.equals("")){
-            Log.v(TAG, "nome:"+nomeWifi+"::");
-            disp_escolhido.setText(nomeWifi);
-        }
-        else if (!rede.equals("")){
-            disp_escolhido.setText(rede);
-        }
+//        Log.v(TAG, "voltou_config:"+Boolean.toString(ListESP.voltou_config)+"::");
+//        if (ListESP.voltou_config) {
+//            Intent intent_nomeWifi = getIntent();
+//            String nome = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+//            if (!nome.equals("")) {
+//                rede = nome;
+//            }
+//            ListESP.voltou_config = false;
+//
+//            Log.v(TAG, "nome_rede:" + rede + "::");
+//            nomeWifi = sharedPreferences.getString(rede, "");
+//            if (!nomeWifi.equals("")) {
+//                Log.v(TAG, "nome:" + nomeWifi + "::");
+//                disp_escolhido.setText(nomeWifi);
+//            }
+//        }
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
@@ -131,15 +128,15 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-            Log.v(TAG, "findwifi:" + rede + "::");
-            voltou_config = true;
+            Log.v(TAG, "configwifi:" + rede + "::");
             if (!sharedPreferences.getString(rede+"getSSID", "").equals("")){
                 rede = sharedPreferences.getString(rede+"getSSID", "");
             }
             if (disp_escolhido.getText() != "") {
                 final WifiManager wifiManager =
                         (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
+                String teste = wifiManager.getConnectionInfo().getSSID();
+                Log.v(TAG, "conectado em:" + teste + "::");
                 if (wifiManager.getConnectionInfo().getSSID().contains(rede)) {
                     Toast.makeText(ListESP.this,
                             "Conectado em " + rede,
@@ -148,26 +145,31 @@ public class ListESP extends Activity implements View.OnClickListener {
                     startActivity(intent);
                 }
                 else{
-                    for (int i = 1; i < 3; i++){
-                        Toast.makeText(ListESP.this,
-                                "Tentativa " + i + " de conectar na rede.",
-                                Toast.LENGTH_LONG).show();
-                        if (wifiManager.getConnectionInfo().getSSID().contains(rede) != true) {
-                            //System.out.println(wifiManager.getConnectionInfo().getSSID());
-                            connWifiNetwork(rede);
-                            if (wifiManager.getConnectionInfo().getSSID().contains(rede) == true){
-                                Toast.makeText(ListESP.this,
-                                        "Conectado em " + rede,
-                                        Toast.LENGTH_LONG).show();
-                                i=6;
-                                Intent intent = new Intent(this, ConfigConn.class);
-                                startActivity(intent);
-                            }
-                        }
-                    }
-                    Toast.makeText(ListESP.this,
-                            "Não foi possível conectar o dispositivo.\nTente novamente.",
-                            Toast.LENGTH_LONG).show();
+                    connWifiNetwork(rede, "12345678");
+                    Intent intent = new Intent(this, ConfigConn.class);
+                    startActivity(intent);
+//                    for (int i = 1; i < 5; i++){
+//                        Log.v(TAG, "nome_rede222:"+rede+"::");
+//                        Toast.makeText(ListESP.this,
+//                                "Tentativa " + i + " de conectar na rede.",
+//                                Toast.LENGTH_LONG).show();
+//                        if (wifiManager.getConnectionInfo().getSSID().contains(rede) != true) {
+//                            //System.out.println(wifiManager.getConnectionInfo().getSSID());
+//                            connWifiNetwork(rede);
+//                            if (wifiManager.getConnectionInfo().getSSID().contains(rede) == true){
+//                                Toast.makeText(ListESP.this,
+//                                        "Conectado em " + rede,
+//                                        Toast.LENGTH_LONG).show();
+//                                i=6;
+//                                Intent intent = new Intent(this, ConfigConn.class);
+//                                ListESP.voltou_config = true;
+//                                startActivity(intent);
+//                            }
+//                        }
+//                    }
+//                    Toast.makeText(ListESP.this,
+//                            "Não foi possível conectar o dispositivo.\nTente novamente.",
+//                            Toast.LENGTH_LONG).show();
                 }
             }
             else{
@@ -180,9 +182,23 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
+//                Intent intent_nomeWifi = getIntent();
+//                String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+//                String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
+//
+//                connWifiNetwork(wifi, senha);
+                final WifiManager wifiManager =
+                        (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                Context tmpContext = getApplicationContext();
+                WifiManager tmpManager =
+                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                if (tmpManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(false);
+
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
+                wifiManager.setWifiEnabled(true);
                 startActivity(intentwifi);
             }
             else{
@@ -350,18 +366,18 @@ public class ListESP extends Activity implements View.OnClickListener {
                 scanList = wifiManager.getScanResults();
                 arrayList.clear();
 
-                String nome_temp;
-
                 for (int i = 0; i < scanList.size(); i++) {
                     if (scanList.get(i).SSID.contains("ESP")) {
                         nomeWifi = sharedPreferences.getString(scanList.get(i).SSID, "");
-                        Log.v(TAG, "nome:" + nomeWifi + "::");
+                        Log.v(TAG, "nome find:" + nomeWifi + "::");
                         if(!nomeWifi.equals("")){
-                            editor = sharedPreferences.edit();
-                            Log.v(TAG, "nome_reverso:" + scanList.get(i).SSID+"reverso" + "nomewifi:"+nomeWifi+"::");
-                            editor.putString(nomeWifi+"getSSID", scanList.get(i).SSID);
-                            editor.commit();
-                            arrayList.add(nomeWifi);
+                            if(!arrayList.contains(nomeWifi)) {
+                                editor = sharedPreferences.edit();
+                                Log.v(TAG, "nome_reverso:" + scanList.get(i).SSID + "reverso" + "nomewifi:" + nomeWifi + "::");
+                                editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
+                                editor.commit();
+                                arrayList.add(nomeWifi);
+                            }
                         }
                         else{
                             arrayList.add((scanList.get(i).SSID));
@@ -375,10 +391,11 @@ public class ListESP extends Activity implements View.OnClickListener {
         wifiManager.startScan();
     }
 
-    private void connWifiNetwork(String rede){
+    private void connWifiNetwork(String rede, String senha_home){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         final String nome_rede = rede;
+        final String senha = senha_home;
         final WifiManager wifiManager =
                 (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
@@ -392,7 +409,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                     wifiManager.setWifiEnabled(true);
 
                 scanList = wifiManager.getScanResults();
-
                 for (int i = 0; i < scanList.size(); i++) {
 
                     if (scanList.get(i).SSID.equals(nome_rede)) {
@@ -401,7 +417,7 @@ public class ListESP extends Activity implements View.OnClickListener {
                         config.SSID = "\"" + scanList.get(i).SSID + "\"";
                         config.BSSID = scanList.get(i).BSSID;
                         config.priority = 0;
-                        config.preSharedKey = "\"" + "12345678" + "\"";
+                        config.preSharedKey = "\"" + senha + "\"";
                         config.status = WifiConfiguration.Status.ENABLED;
                         int id = wifiManager.addNetwork(config);
                         wifiManager.enableNetwork(id, true);

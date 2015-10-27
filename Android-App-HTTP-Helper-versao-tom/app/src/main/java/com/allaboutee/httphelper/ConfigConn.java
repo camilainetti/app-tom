@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.Set;
 
 
 public class ConfigConn extends ListESP{
@@ -18,10 +17,6 @@ public class ConfigConn extends ListESP{
     private Button button_SET;
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
     private static final String TAG = "ConfigConn";
-    //public final static String EXTRA_MESSAGE = "nome_escolhido";
-    //SharedPreferences sharedPreferences;
-    //SharedPreferences.Editor editor;
-    //SharedPreferences sharedPreferences;
     public String nome_carinhoso;
     public String nomeWifi;
 
@@ -50,8 +45,6 @@ public class ConfigConn extends ListESP{
             // get the port number
             String senha = editTextsenha.getText().toString().trim();
 
-            Set savednames;
-
             nome_carinhoso = editTextnome.getText().toString().trim();
 
             nomeWifi = getInfoWifi(2);
@@ -62,36 +55,30 @@ public class ConfigConn extends ListESP{
             parameterValue = "SSID="+ssid+"/SENHA="+senha+"/";
             //parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome_carinhoso+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
 
-            Log.v(TAG, "dados: " + parameterValue);
-
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
 
             // execute HTTP request
-            if (ssid.length() > 0 && senha.length() > 0) {
-                new HttpRequestAsyncTask(
-                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?"
-                ).execute();
-            }
+//            if (ssid.length() > 0 && senha.length() > 0) {
+//                new HttpRequestAsyncTask(
+//                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?"
+//                ).execute();
+//            }
             editor = sharedPreferences.edit();
-
-            // save the name for the next time the app is used
-            //editor.putString(PREF_NAME, nome);
+            Log.v(TAG, "nome:" + nomeWifi + "::");
             nomeWifi = nomeWifi.replaceAll("\"", "");
+            Log.v(TAG, "nome:" + nomeWifi + "::");
             editor.putString(nomeWifi, nome_carinhoso);
             editor.commit();
 
-            String prova = sharedPreferences.getString(nomeWifi, "");
-            System.out.println("Aí! Virou "+ prova);
-
-            Log.v(TAG, "ip:" + ip + "nome:" + nomeWifi + "::");
-
             editor.putString(nome_carinhoso, ip);
             editor.commit(); // save name
+
+            Intent intent = new Intent(this, ListESP.class);
+            intent.putExtra(EXTRA_MESSAGE2, ssid);
+            intent.putExtra(EXTRA_MESSAGE3, senha);
+            startActivity(intent);
         }
-        Intent intent = new Intent(this, ListESP.class);
-        intent.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
-        System.out.println("nomeWifi=::" + nome_carinhoso+"::");
-        startActivity(intent);
+
     }
 }

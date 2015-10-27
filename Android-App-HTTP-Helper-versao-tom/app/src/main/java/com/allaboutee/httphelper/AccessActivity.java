@@ -37,14 +37,13 @@ public class AccessActivity extends ListESP {
             parameterValue = "off";
         }
         String ipAddress = sharedPreferences.getString(nome, "");
-        nome = sharedPreferences.getString(nome, "");
         String portNumber = "80";
         Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
 
         // execute HTTP request
-        new HttpRequestAsyncTask(
-                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-        ).execute();
+//        new HttpRequestAsyncTask(
+//                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
+//        ).execute();
     }
 }
 
