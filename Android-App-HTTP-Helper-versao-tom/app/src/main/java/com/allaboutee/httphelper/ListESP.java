@@ -73,8 +73,8 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-        //Intent intent = getIntent();
-        //nomeWifi = intent.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Intent intent_nomeWifi = getIntent();
+        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
 
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
@@ -102,20 +102,9 @@ public class ListESP extends Activity implements View.OnClickListener {
         });
 
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
-        if (voltou_config == true) {
-            Intent intent_nomeWifi = getIntent();
-            rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-            Log.v(TAG, "nome_rede222:"+rede+"::");
-            voltou_config = false;
-        }
 
-        Log.v(TAG, "nome_rede:"+rede+"::");
-        nomeWifi = sharedPreferences.getString(rede, "");
-        if (!nomeWifi.equals("")){
-            Log.v(TAG, "nome:"+nomeWifi+"::");
-            disp_escolhido.setText(nomeWifi);
-        }
-        else if (!rede.equals("")){
+        if (rede != "") {
+            Log.v(TAG, "nome_rede222:"+rede+"::");
             disp_escolhido.setText(rede);
         }
 
