@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 public class ConfigConn extends ListESP{
@@ -58,7 +63,38 @@ public class ConfigConn extends ListESP{
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
 
-            // execute HTTP request
+            Socket smtpSocket = null;
+            DataOutputStream os = null;
+            DataInputStream is = null;
+
+            try {
+                smtpSocket = new Socket("192.168.4.1", 80);
+                os = new DataOutputStream(smtpSocket.getOutputStream());
+                is = new DataInputStream(smtpSocket.getInputStream());
+            } catch (UnknownHostException e) {
+                System.err.println("Don't know about host: hostname");
+            } catch (IOException e) {
+                System.err.println("Couldn't get I/O for the connection to: hostname");
+            }
+
+            if (smtpSocket != null && os != null && is != null) {
+                try {
+
+                    os.writeBytes(parameterValue+"\n");
+                    os.close();
+                    is.close();
+                    smtpSocket.close();
+                } catch (UnknownHostException e) {
+                    System.err.println("Trying to connect to unknown host: " + e);
+                } catch (IOException e) {
+                    System.err.println("IOException:  " + e);
+                }
+            }
+
+
+
+
+        // execute HTTP request
 //            if (ssid.length() > 0 && senha.length() > 0) {
 //                new HttpRequestAsyncTask(
 //                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?"

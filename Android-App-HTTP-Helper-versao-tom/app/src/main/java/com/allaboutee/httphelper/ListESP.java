@@ -63,10 +63,15 @@ public class ListESP extends Activity implements View.OnClickListener {
 
     List<ScanResult> scanList;
 
+    ConnectNetwork conectar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_esp);
+
+        conectar = ConnectNetwork.getInstance();
+        conectar.setContext(this);
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
@@ -136,56 +141,28 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-            Log.v(TAG, "configwifi:" + rede + "::");
-            if (!sharedPreferences.getString(rede+"getSSID", "").equals("")){
-                rede = sharedPreferences.getString(rede+"getSSID", "");
-            }
-            if (disp_escolhido.getText() != "") {
-                final WifiManager wifiManager =
-                        (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                wifiManager.setWifiEnabled(false);
-                String teste = wifiManager.getConnectionInfo().getSSID();
-                Log.v(TAG, "conectado em:" + teste + "::");
-                if (wifiManager.getConnectionInfo().getSSID().contains(rede)) {
-                    Toast.makeText(ListESP.this,
-                            "Conectado em " + rede,
-                            Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(this, ConfigConn.class);
-                    startActivity(intent);
-                }
-                else{
-                    connWifiNetwork(rede, "12345678");
-                    Intent intent = new Intent(this, ConfigConn.class);
-                    startActivity(intent);
-//                    for (int i = 1; i < 5; i++){
-//                        Log.v(TAG, "nome_rede222:"+rede+"::");
-//                        Toast.makeText(ListESP.this,
-//                                "Tentativa " + i + " de conectar na rede.",
-//                                Toast.LENGTH_LONG).show();
-//                        if (wifiManager.getConnectionInfo().getSSID().contains(rede) != true) {
-//                            //System.out.println(wifiManager.getConnectionInfo().getSSID());
-//                            connWifiNetwork(rede);
-//                            if (wifiManager.getConnectionInfo().getSSID().contains(rede) == true){
-//                                Toast.makeText(ListESP.this,
-//                                        "Conectado em " + rede,
-//                                        Toast.LENGTH_LONG).show();
-//                                i=6;
-//                                Intent intent = new Intent(this, ConfigConn.class);
-//                                ListESP.voltou_config = true;
-//                                startActivity(intent);
-//                            }
-//                        }
-//                    }
-//                    Toast.makeText(ListESP.this,
-//                            "Não foi possível conectar o dispositivo.\nTente novamente.",
-//                            Toast.LENGTH_LONG).show();
-                }
-            }
-            else{
-                Toast.makeText(ListESP.this,
-                        "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
-                        Toast.LENGTH_LONG).show();
-            }
+
+            //ConectarESP.conectar(getApplicationContext());
+            Intent intent = new Intent(this, ConfigConn.class);
+            startActivity(intent);
+//            Log.v(TAG, "configwifi:" + rede + "::");
+//            String ssid = sharedPreferences.getString(rede+"getSSID", "");
+//            if (!ssid.equals("")){
+//                rede = ssid;
+//            }
+//            if (disp_escolhido.getText() != "") {
+//                //connWifiNetwork(rede, "12345678");
+//                Log.v(TAG, "esp?:" + rede + "::");
+//                boolean conectou = conectar.conectarRede(rede);
+//                Log.v(TAG, "conectou?: "+Boolean.toString(conectou));
+//                Intent intent = new Intent(this, ConfigConn.class);
+//                startActivity(intent);
+//            }
+//            else{
+//                Toast.makeText(ListESP.this,
+//                        "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
+//                        Toast.LENGTH_LONG).show();
+//            }
         }
 
         //Botão acessar: acessa o dispositivo o qual está conectado
@@ -193,18 +170,9 @@ public class ListESP extends Activity implements View.OnClickListener {
             if (disp_escolhido.getText()!=""){
                 Intent intent_nomeWifi = getIntent();
                 String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-                String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
-                final WifiManager wifiManager =
-                        (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                wifiManager.setWifiEnabled(false);
-                connWifiNetwork(wifi, senha);
-//                final WifiManager wifiManager =
-//                        (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//                Context tmpContext = getApplicationContext();
-//                WifiManager tmpManager =
-//                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-//                if (tmpManager.isWifiEnabled())
-//                    wifiManager.setWifiEnabled(false);
+                //String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
+                //boolean conectou = conectar.conectarRede(wifi);
+                //Log.v(TAG, "conectou em home?: "+Boolean.toString(conectou));
 
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
@@ -233,11 +201,13 @@ public class ListESP extends Activity implements View.OnClickListener {
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
-            URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
+            //URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
+            URI website = new URI("http://"+"httpbin.org/ip");
             Log.v(TAG, "http://"+ipAddress+portNumber+parameterName+parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request
+            Log.v(TAG, "response::"+response.toString()+"::");
             // get the ip address server's reply
             InputStream content;
             content = response.getEntity().getContent();
@@ -503,4 +473,5 @@ public class ListESP extends Activity implements View.OnClickListener {
         }
 
     }
+
 }
