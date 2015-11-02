@@ -18,6 +18,9 @@ public class AccessActivity extends ListESP {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent_nomeWifi = getIntent();
+        String nome_wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE5);
+        ConectarESP.conectar(getApplicationContext(), nome_wifi);
         setContentView(R.layout.activity_access);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         Intent intent = getIntent();

@@ -52,8 +52,6 @@ public class ConnectNetwork {
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
         for (WifiConfiguration i : list) {
             if (i.SSID != null && isSSDEqual(i.SSID,desiredSSID)) {
-                //WifiConfiguration config = new WifiConfiguration();
-                //config.preSharedKey = "\"" + 12345678 + "\"";
                 if(!wifiManager.disconnect())return false;
                 if(!wifiManager.enableNetwork(i.networkId, true))return false; //Desativa todas as outras redes, menos a desejada.
                 if(!wifiManager.reconnect())return false;
@@ -69,8 +67,24 @@ public class ConnectNetwork {
                 }
                 return connected;
             }
+
         }
-        return false;
+        try {
+            System.out.println("rede não configurada:" + desiredSSID);
+            WifiConfiguration config = new WifiConfiguration();
+            config.SSID = "\"" + desiredSSID + "\"";
+            //config.BSSID = scanList.get(i).BSSID;
+            //config.priority = 0;
+            config.preSharedKey = "\"" + "12345678" + "\"";
+            config.status = WifiConfiguration.Status.ENABLED;
+            int id = wifiManager.addNetwork(config);
+            wifiManager.enableNetwork(id, true);
+            wifiManager.saveConfiguration();
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isInRange(){

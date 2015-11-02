@@ -55,6 +55,8 @@ public class ListESP extends Activity implements View.OnClickListener {
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
     public final static String EXTRA_MESSAGE2 = "nome_wifi_home";
     public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
+    public final static String EXTRA_MESSAGE4 = "wifi_esp_config";
+    public final static String EXTRA_MESSAGE5 = "wifi_esp_access";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -144,6 +146,11 @@ public class ListESP extends Activity implements View.OnClickListener {
 
             //ConectarESP.conectar(getApplicationContext());
             Intent intent = new Intent(this, ConfigConn.class);
+            String ssid = sharedPreferences.getString(rede+"getSSID", "");
+            if (!ssid.equals("")){
+                rede = ssid;
+            }
+            intent.putExtra(EXTRA_MESSAGE4, rede);
             startActivity(intent);
 //            Log.v(TAG, "configwifi:" + rede + "::");
 //            String ssid = sharedPreferences.getString(rede+"getSSID", "");
@@ -170,6 +177,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             if (disp_escolhido.getText()!=""){
                 Intent intent_nomeWifi = getIntent();
                 String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+
                 //String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
                 //boolean conectou = conectar.conectarRede(wifi);
                 //Log.v(TAG, "conectou em home?: "+Boolean.toString(conectou));
@@ -177,6 +185,11 @@ public class ListESP extends Activity implements View.OnClickListener {
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
+                String ssid = sharedPreferences.getString(rede+"getSSID", "");
+                if (!ssid.equals("")){
+                    rede = ssid;
+                }
+                intentwifi.putExtra(EXTRA_MESSAGE5, rede);
                 startActivity(intentwifi);
             }
             else{

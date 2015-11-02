@@ -28,6 +28,9 @@ public class ConfigConn extends ListESP{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent_nomeWifi = getIntent();
+        String nome = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE4);
+        ConectarESP.conectar(getApplicationContext(), nome);
         setContentView(R.layout.activity_config_conn);
 
         editTextSSID = (EditText)findViewById(R.id.eg_ssid);
@@ -62,34 +65,6 @@ public class ConfigConn extends ListESP{
 
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
-
-            Socket smtpSocket = null;
-            DataOutputStream os = null;
-            DataInputStream is = null;
-
-            try {
-                smtpSocket = new Socket("192.168.4.1", 80);
-                os = new DataOutputStream(smtpSocket.getOutputStream());
-                is = new DataInputStream(smtpSocket.getInputStream());
-            } catch (UnknownHostException e) {
-                System.err.println("Don't know about host: hostname");
-            } catch (IOException e) {
-                System.err.println("Couldn't get I/O for the connection to: hostname");
-            }
-
-            if (smtpSocket != null && os != null && is != null) {
-                try {
-
-                    os.writeBytes(parameterValue+"\n");
-                    os.close();
-                    is.close();
-                    smtpSocket.close();
-                } catch (UnknownHostException e) {
-                    System.err.println("Trying to connect to unknown host: " + e);
-                } catch (IOException e) {
-                    System.err.println("IOException:  " + e);
-                }
-            }
 
 
 
