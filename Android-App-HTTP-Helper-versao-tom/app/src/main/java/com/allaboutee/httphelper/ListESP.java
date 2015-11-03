@@ -146,7 +146,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
 
-
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
@@ -245,11 +244,6 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected Void doInBackground(Void... voids) {
-            alertDialog.setMessage("Data sent, waiting for reply from server...");
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show();
-            }
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
             return null;
         }
@@ -263,11 +257,9 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-            alertDialog.setMessage(requestReply);
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show(); // show dialog
-            }
+            Toast.makeText(ListESP.this,
+                    requestReply,
+                    Toast.LENGTH_LONG).show();
         }
 
         /**
@@ -277,11 +269,9 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-            alertDialog.setMessage("Sending data to server, please wait...");
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show();
-            }
+            Toast.makeText(ListESP.this,
+                    "Enviando...",
+                    Toast.LENGTH_LONG).show();
         }
 
     }

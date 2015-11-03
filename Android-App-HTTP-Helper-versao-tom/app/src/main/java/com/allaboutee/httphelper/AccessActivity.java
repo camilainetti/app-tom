@@ -23,7 +23,9 @@ public class AccessActivity extends ListESP {
         String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
         String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
         Log.v(TAG, "home_ssid:" + ssid_home + "::");
+
         //ConectarESP.conectar(getApplicationContext(), ssid_home);
+
         setContentView(R.layout.activity_access);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome);
