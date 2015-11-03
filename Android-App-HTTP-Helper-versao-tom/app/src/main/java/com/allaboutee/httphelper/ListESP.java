@@ -75,8 +75,10 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-//        Intent intent_nomeWifi = getIntent();
-//        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Intent intent_nomeWifi = getIntent();
+        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Log.v(TAG, "rede555:" + rede + "::");
+
 
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
@@ -107,6 +109,10 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
+
+        if (rede!=null && !rede.equals("")){
+            disp_escolhido.setText(rede);
+        }
     }
 
     @Override
@@ -138,7 +144,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
-
 
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
@@ -238,11 +243,7 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected Void doInBackground(Void... voids) {
-//            alertDialog.setMessage("Data sent, waiting for reply from server...");
-//            if(!alertDialog.isShowing())
-//            {
-//                alertDialog.show();
-//            }
+
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
             return null;
         }
@@ -256,15 +257,12 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-//            alertDialog.setMessage(requestReply);
-//            if(!alertDialog.isShowing())
-//            {
-//                alertDialog.show(); // show dialog
-//            }
+
             Toast.makeText(ListESP.this,
                     "Comando enviado com sucesso!",
                     Toast.LENGTH_LONG).show();
             Log.v(TAG, "requestReply::"+requestReply+"::");
+
         }
 
         /**
@@ -274,13 +272,9 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-//            alertDialog.setMessage("Sending data to server, please wait...");
-//            if(!alertDialog.isShowing())
-//            {
-//                alertDialog.show();
-//            }
+
             Toast.makeText(ListESP.this,
-                    "Enviando comando!",
+                    "Enviando...",
                     Toast.LENGTH_LONG).show();
         }
 
