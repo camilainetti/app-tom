@@ -56,7 +56,6 @@ public class ListESP extends Activity implements View.OnClickListener {
     public final static String EXTRA_MESSAGE2 = "nome_wifi_home";
     public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
     public final static String EXTRA_MESSAGE4 = "wifi_esp_config";
-    public final static String EXTRA_MESSAGE5 = "wifi_esp_access";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
@@ -77,8 +76,8 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-        Intent intent_nomeWifi = getIntent();
-        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+//        Intent intent_nomeWifi = getIntent();
+//        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
 
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
@@ -107,30 +106,6 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
 
-//        Log.v(TAG, "voltou_config:"+Boolean.toString(ListESP.voltou_config)+"::");
-//        if (ListESP.voltou_config) {
-//            Intent intent_nomeWifi = getIntent();
-//            String nome = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-//            if (!nome.equals("")) {
-//                rede = nome;
-//            }
-//            ListESP.voltou_config = false;
-//
-//            Log.v(TAG, "nome_rede:" + rede + "::");
-//            nomeWifi = sharedPreferences.getString(rede, "");
-//            if (!nomeWifi.equals("")) {
-//                Log.v(TAG, "nome:" + nomeWifi + "::");
-//                disp_escolhido.setText(nomeWifi);
-//            }
-//        }
-
-
-        if (rede != "") {
-            Log.v(TAG, "nome_rede222:"+rede+"::");
-            disp_escolhido.setText(rede);
-        }
-
-
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
     }
@@ -143,53 +118,32 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão configurar: configura o esp ao qual o dispositivo está conectado
         if (view.getId() == button_config.getId()) {
-
-            //ConectarESP.conectar(getApplicationContext());
-            Intent intent = new Intent(this, ConfigConn.class);
-            String ssid = sharedPreferences.getString(rede+"getSSID", "");
-            if (!ssid.equals("")){
-                rede = ssid;
+            if (disp_escolhido.getText()!="") {
+                Intent intent = new Intent(this, ConfigConn.class);
+                String ssid = sharedPreferences.getString(rede + "getSSID", "");
+                if (!ssid.equals("")) {
+                    rede = ssid;
+                }
+                intent.putExtra(EXTRA_MESSAGE4, rede);
+                Log.v(TAG, "rede111:" + rede + "::");
+                startActivity(intent);
             }
-            intent.putExtra(EXTRA_MESSAGE4, rede);
-            startActivity(intent);
-//            Log.v(TAG, "configwifi:" + rede + "::");
-//            String ssid = sharedPreferences.getString(rede+"getSSID", "");
-//            if (!ssid.equals("")){
-//                rede = ssid;
-//            }
-//            if (disp_escolhido.getText() != "") {
-//                //connWifiNetwork(rede, "12345678");
-//                Log.v(TAG, "esp?:" + rede + "::");
-//                boolean conectou = conectar.conectarRede(rede);
-//                Log.v(TAG, "conectou?: "+Boolean.toString(conectou));
-//                Intent intent = new Intent(this, ConfigConn.class);
-//                startActivity(intent);
-//            }
-//            else{
-//                Toast.makeText(ListESP.this,
-//                        "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
-//                        Toast.LENGTH_LONG).show();
-//            }
+
+            else{
+                Toast.makeText(ListESP.this,
+                        "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
+                        Toast.LENGTH_LONG).show();
+            }
         }
 
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
-                Intent intent_nomeWifi = getIntent();
-                String wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
 
-                //String senha = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE3);
-                //boolean conectou = conectar.conectarRede(wifi);
-                //Log.v(TAG, "conectou em home?: "+Boolean.toString(conectou));
 
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
-                String ssid = sharedPreferences.getString(rede+"getSSID", "");
-                if (!ssid.equals("")){
-                    rede = ssid;
-                }
-                intentwifi.putExtra(EXTRA_MESSAGE5, rede);
                 startActivity(intentwifi);
             }
             else{
@@ -216,7 +170,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
             //URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
             URI website = new URI("http://"+"httpbin.org/ip");
-            Log.v(TAG, "http://"+ipAddress+portNumber+parameterName+parameterValue);
+            Log.v(TAG, "http://" + ipAddress + portNumber + parameterName + parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
             HttpResponse response = httpclient.execute(getRequest); // execute the request

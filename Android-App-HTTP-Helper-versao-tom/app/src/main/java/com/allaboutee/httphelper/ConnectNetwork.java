@@ -73,8 +73,6 @@ public class ConnectNetwork {
             System.out.println("rede não configurada:" + desiredSSID);
             WifiConfiguration config = new WifiConfiguration();
             config.SSID = "\"" + desiredSSID + "\"";
-            //config.BSSID = scanList.get(i).BSSID;
-            //config.priority = 0;
             config.preSharedKey = "\"" + "12345678" + "\"";
             config.status = WifiConfiguration.Status.ENABLED;
             int id = wifiManager.addNetwork(config);

@@ -2,19 +2,11 @@ package com.allaboutee.httphelper;
 
 
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 
 public class ConfigConn extends ListESP{
 
@@ -23,14 +15,16 @@ public class ConfigConn extends ListESP{
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
     private static final String TAG = "ConfigConn";
     public String nome_carinhoso;
-    public String nomeWifi;
+    String nomeWifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "::");
         Intent intent_nomeWifi = getIntent();
-        String nome = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE4);
-        ConectarESP.conectar(getApplicationContext(), nome);
+        nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
+        Log.v(TAG, "nomeWifi111:" + nomeWifi + "::");
+        //ConectarESP.conectar(getApplicationContext(), nomeWifi);
         setContentView(R.layout.activity_config_conn);
 
         editTextSSID = (EditText)findViewById(R.id.eg_ssid);
@@ -55,7 +49,9 @@ public class ConfigConn extends ListESP{
 
             nome_carinhoso = editTextnome.getText().toString().trim();
 
-            nomeWifi = getInfoWifi(2);
+            Intent intent_nomeWifi = getIntent();
+            nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
+            
             String gateway = editTextgateway.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
@@ -85,10 +81,11 @@ public class ConfigConn extends ListESP{
             editor.putString(nome_carinhoso, ip);
             editor.commit(); // save name
 
-            Intent intent = new Intent(this, ListESP.class);
-            intent.putExtra(EXTRA_MESSAGE2, ssid);
-            intent.putExtra(EXTRA_MESSAGE3, senha);
-            startActivity(intent);
+            editor.putString(nomeWifi+"getHomessid", ssid);
+            editor.commit();
+
+            Intent intentESP = new Intent(this, ListESP.class);
+            startActivity(intentESP);
         }
 
     }

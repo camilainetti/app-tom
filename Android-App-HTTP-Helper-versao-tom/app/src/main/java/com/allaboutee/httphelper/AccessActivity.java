@@ -18,13 +18,14 @@ public class AccessActivity extends ListESP {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent_nomeWifi = getIntent();
-        String nome_wifi = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE5);
-        ConectarESP.conectar(getApplicationContext(), nome_wifi);
-        setContentView(R.layout.activity_access);
-        nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         Intent intent = getIntent();
         nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+        String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
+        String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
+        Log.v(TAG, "home_ssid:" + ssid_home + "::");
+        //ConectarESP.conectar(getApplicationContext(), ssid_home);
+        setContentView(R.layout.activity_access);
+        nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome);
         button_ON = (Button)findViewById(R.id.button_ON);
         button_OFF = (Button)findViewById(R.id.button_OFF);
