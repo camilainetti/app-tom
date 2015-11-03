@@ -54,7 +54,6 @@ public class ListESP extends Activity implements View.OnClickListener {
     ArrayList<String> arrayList = new ArrayList<String>();
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
     public final static String EXTRA_MESSAGE2 = "nome_wifi_home";
-    public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
     public final static String EXTRA_MESSAGE4 = "wifi_esp_config";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
@@ -222,10 +221,10 @@ public class ListESP extends Activity implements View.OnClickListener {
         {
             this.context = context;
 
-            alertDialog = new AlertDialog.Builder(this.context)
-                    .setTitle("HTTP Response From IP Address:")
-                    .setCancelable(true)
-                    .create();
+//            alertDialog = new AlertDialog.Builder(this.context)
+//                    .setTitle("HTTP Response From IP Address:")
+//                    .setCancelable(true)
+//                    .create();
 
             this.ipAddress = ipAddress;
             this.parameterValue = parameterValue;
@@ -239,11 +238,11 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected Void doInBackground(Void... voids) {
-            alertDialog.setMessage("Data sent, waiting for reply from server...");
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show();
-            }
+//            alertDialog.setMessage("Data sent, waiting for reply from server...");
+//            if(!alertDialog.isShowing())
+//            {
+//                alertDialog.show();
+//            }
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
             return null;
         }
@@ -257,11 +256,15 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-            alertDialog.setMessage(requestReply);
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show(); // show dialog
-            }
+//            alertDialog.setMessage(requestReply);
+//            if(!alertDialog.isShowing())
+//            {
+//                alertDialog.show(); // show dialog
+//            }
+            Toast.makeText(ListESP.this,
+                    "Comando enviado com sucesso!",
+                    Toast.LENGTH_LONG).show();
+            Log.v(TAG, "requestReply::"+requestReply+"::");
         }
 
         /**
@@ -271,11 +274,14 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-            alertDialog.setMessage("Sending data to server, please wait...");
-            if(!alertDialog.isShowing())
-            {
-                alertDialog.show();
-            }
+//            alertDialog.setMessage("Sending data to server, please wait...");
+//            if(!alertDialog.isShowing())
+//            {
+//                alertDialog.show();
+//            }
+            Toast.makeText(ListESP.this,
+                    "Enviando comando!",
+                    Toast.LENGTH_LONG).show();
         }
 
     }

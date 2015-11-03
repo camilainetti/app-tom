@@ -6,12 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AccessActivity extends ListESP {
 
     private TextView nome_escolhido;
     private Button button_ON,button_OFF;
-    String nome;
 
     private static final String TAG = "AccessActivity";
 
@@ -19,11 +19,11 @@ public class AccessActivity extends ListESP {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
-        String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
-        String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
+        String nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+        String nome_ssid = sharedPreferences.getString(nome + "getSSID", "");
+        String ssid_home = sharedPreferences.getString(nome_ssid + "getHomessid", "");
         Log.v(TAG, "home_ssid:" + ssid_home + "::");
-        //ConectarESP.conectar(getApplicationContext(), ssid_home);
+        ConectarESP.conectar(getApplicationContext(), ssid_home);
         setContentView(R.layout.activity_access);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome);
@@ -34,20 +34,40 @@ public class AccessActivity extends ListESP {
     }
     @Override
     public void onClick(View view) {
-        String parameterValue;
-        if (view.getId() == button_ON.getId()) {
-            parameterValue = "on";
-        } else {
-            parameterValue = "off";
-        }
-        String ipAddress = sharedPreferences.getString(nome, "");
-        String portNumber = "80";
-        Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
+        Intent intent = getIntent();
+        String nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+        String nome_ssid = sharedPreferences.getString(nome + "getSSID", "");
+        String ssid_home = sharedPreferences.getString(nome_ssid + "getHomessid", "");
+        String wifi_atual = getInfoWifi(2).replaceAll("\"", "");
+        if (wifi_atual.equals(ssid_home)) {
+            String parameterValue;
+            if (view.getId() == button_ON.getId()) {
+                parameterValue = "on";
+            } else {
+                parameterValue = "off";
+            }
+            String ipAddress = sharedPreferences.getString(nome, "");
+            String portNumber = "80";
+            Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
 
-        // execute HTTP request
-        new HttpRequestAsyncTask(
-                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-        ).execute();
+            // execute HTTP request
+            new HttpRequestAsyncTask(
+                    view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
+            ).execute();
+        }
+
+        else {
+            Toast.makeText(AccessActivity.this,
+                    "Conectando a sua rede! Aguarde...",
+                    Toast.LENGTH_LONG).show();
+            while(!wifi_atual.equals(ssid_home)) {
+                wifi_atual = getInfoWifi(2).replaceAll("\"", "");
+            }
+
+            Toast.makeText(AccessActivity.this,
+                    "Conectado em: "+ssid_home,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }
 
