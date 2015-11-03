@@ -7,12 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ConfigConn extends ListESP{
 
-    private Button button_SET;
+
+    private Button button_SET, button_back;
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
+
     private static final String TAG = "ConfigConn";
+
     public String nome_carinhoso;
     String nomeWifi;
 
@@ -20,12 +24,15 @@ public class ConfigConn extends ListESP{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "::");
+
         Intent intent_nomeWifi = getIntent();
         nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
-        Log.v(TAG, "nomeWifi111:" + nomeWifi + "::");
+        Log.v(TAG, "nome Wifi:" + nomeWifi + "::");
+
         //ConectarESP.conectar(getApplicationContext(), nomeWifi);
         setContentView(R.layout.activity_config_conn);
 
+        //TextBoxes
         editTextSSID = (EditText)findViewById(R.id.eg_ssid);
         editTextsenha = (EditText)findViewById(R.id.eg_senha);
         editTextip = (EditText)findViewById(R.id.eg_ip);
@@ -33,27 +40,36 @@ public class ConfigConn extends ListESP{
         editTextmask = (EditText)findViewById(R.id.eg_mask);
         editTextnome = (EditText)findViewById(R.id.eg_nome);
 
+        //Botao Enviar
         button_SET = (Button)findViewById(R.id.button_SET);
         button_SET.setOnClickListener(this);
+
+        button_back = (Button)findViewById(R.id.button_back);
+        button_back.setOnClickListener(this);
+
     }
     @Override
     public void onClick(View view) {
         if (view.getId() == button_SET.getId()) {
+
             // get the pin number
             String parameterValue;
+
             // get the ip address
             String ssid = editTextSSID.getText().toString().trim();
+
             // get the port number
             String senha = editTextsenha.getText().toString().trim();
 
-            nome_carinhoso = editTextnome.getText().toString().trim();
-
+            //Recebe nome do dispositivo selecionado na tela principal
             Intent intent_nomeWifi = getIntent();
             nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
-            
+
             String gateway = editTextgateway.getText().toString().trim();
-            String ip = editTextip.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
+            String ip = editTextip.getText().toString().trim();
+            //Nome do dispositivo inteligente
+            nome_carinhoso = editTextnome.getText().toString().trim();
 
             parameterValue = "SSID="+ssid+"/SENHA="+senha+"/";
             //parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome_carinhoso+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
@@ -61,15 +77,13 @@ public class ConfigConn extends ListESP{
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
 
-
-
-
         // execute HTTP request
 //            if (ssid.length() > 0 && senha.length() > 0) {
 //                new HttpRequestAsyncTask(
 //                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?"
 //                ).execute();
 //            }
+
 
             editor = sharedPreferences.edit();
             Log.v(TAG, "nome:" + nomeWifi + "::");
@@ -80,11 +94,17 @@ public class ConfigConn extends ListESP{
             editor.commit();
 
             editor.putString(nome_carinhoso, ip);
-            editor.commit(); // save name
+            editor.commit();
 
             editor.putString(nomeWifi + "getHomessid", ssid);
             editor.commit();
 
+            //Volta para tela inicial e envia nome escolhido para dispositivo
+            Intent intentESP = new Intent(this, ListESP.class);
+            intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
+            startActivity(intentESP);
+        }
+        else {
             Intent intentESP = new Intent(this, ListESP.class);
             intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
             startActivity(intentESP);

@@ -8,32 +8,46 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class AccessActivity extends ListESP {
-
-    private TextView nome_escolhido;
-    private Button button_ON,button_OFF;
-    String portNumber = "80";
 
     private static final String TAG = "AccessActivity";
 
+    private TextView nome_escolhido;
+
+    private Button button_ON, button_OFF, button_back;
+    String nome;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
-        String nome_ssid = sharedPreferences.getString(nome + "getSSID", "");
-        String ssid_home = sharedPreferences.getString(nome_ssid + "getHomessid", "");
+
+        //Recebe nome do dispositivo escolhido na tela principal
+        nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+
+        //Recebe nome da rede e senha ja configurados
+        String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
+        String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
+
         Log.v(TAG, "home_ssid:" + ssid_home + "::");
 
         ConectarESP.conectar(getApplicationContext(), ssid_home);
 
         setContentView(R.layout.activity_access);
 
+
+        //Nome do dispositivo e botoes
+        nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
+        nome_escolhido.setText(nome);
+
         button_ON = (Button)findViewById(R.id.button_ON);
-        button_OFF = (Button)findViewById(R.id.button_OFF);
         button_ON.setOnClickListener(this);
+
+        button_OFF = (Button)findViewById(R.id.button_OFF);
         button_OFF.setOnClickListener(this);
+
         Toast.makeText(AccessActivity.this,
                 "Conectando a sua rede! Aguarde...",
                 Toast.LENGTH_LONG).show();
@@ -62,20 +76,43 @@ public class AccessActivity extends ListESP {
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome + " está " + estado);
 
+
+        button_back = (Button)findViewById(R.id.button_back);
+        button_back.setOnClickListener(this);
+
     }
+
     @Override
     public void onClick(View view) {
-        Intent intent = getIntent();
-        String nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
-        String nome_ssid = sharedPreferences.getString(nome + "getSSID", "");
-        String ssid_home = sharedPreferences.getString(nome_ssid + "getHomessid", "");
 
-        String parameterValue;
-        if (view.getId() == button_ON.getId()) {
+        String parameterValue = "";
+
+        //Rotinas botoes on e off
+        if (view.getId() == button_ON.getId())
+
             parameterValue = "on";
-        } else {
+        if (view.getId() == button_OFF.getId())
             parameterValue = "off";
+
+        if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+            String ipAddress = sharedPreferences.getString(nome, "");
+            String portNumber = "80";
+            Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
+
+            // execute HTTP request
+            new HttpRequestAsyncTask(
+                    view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
+            ).execute();
         }
+
+        //Rotina botao voltar
+        if(view.getId() == button_back.getId()) {
+            Intent intentvoltar = new Intent(this, ListESP.class);
+            intentvoltar.putExtra(EXTRA_MESSAGE2, nome);
+            startActivity(intentvoltar);
+
+        }
+
         String ipAddress = sharedPreferences.getString(nome, "");
         Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
 
@@ -84,6 +121,6 @@ public class AccessActivity extends ListESP {
 //                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
 //        ).execute();
 
+
     }
 }
-

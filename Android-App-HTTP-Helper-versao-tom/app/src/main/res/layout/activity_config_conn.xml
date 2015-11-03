@@ -90,6 +90,11 @@
             android:layout_height="match_parent"
             android:text="@string/button_SET"
             android:id="@+id/button_SET" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/back"
+            android:id="@+id/button_back" />
     </LinearLayout>
 
 
