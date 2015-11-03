@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -45,24 +44,24 @@ public class ListESP extends Activity implements View.OnClickListener {
     public String rede = "";
     public String nomeWifi;
 
-    // declare buttons and text inputs
     private Button button_find, button_config, button_access, button_teste;
     private TextView disp_escolhido;
     private ListView listWeb;
-    private ArrayAdapter<String> adapter;
 
+    private ArrayAdapter<String> adapter;
     ArrayList<String> arrayList = new ArrayList<String>();
+
+    List<ScanResult> scanList;
+
     public final static String EXTRA_MESSAGE = "list_esp_wifi_name";
     public final static String EXTRA_MESSAGE2 = "nome_wifi_home";
-    public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
+    //public final static String EXTRA_MESSAGE3 = "senha_wifi_home";
     public final static String EXTRA_MESSAGE4 = "wifi_esp_config";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
     // type them next time he/she opens the app.
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
-
-    List<ScanResult> scanList;
 
     ConnectNetwork conectar;
 
@@ -76,21 +75,16 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
+        //Tentando receber nome de dispositivo pre selecionado
         Intent intent_nomeWifi = getIntent();
         rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-        Log.v(TAG, "rede555:" + rede + "::");
+        //Se nao vier nenhum resultado do configurar, tentar acessar
+        //Caso do botao 'voltar'
+        if (rede==null)
+            rede = intent_nomeWifi.getStringExtra(AccessActivity.EXTRA_MESSAGE2);
+        Log.v(TAG, "nome do dispositivo:" + rede + "::");
 
-
-        button_find = (Button)findViewById(R.id.button_find);
-        button_find.setOnClickListener(this);
-
-        button_config = (Button)findViewById(R.id.button_config);
-        button_config.setOnClickListener(this);
-
-        button_teste = (Button)findViewById(R.id.button_teste);
-        button_teste.setOnClickListener(this);
-        button_teste.setVisibility(View.GONE);
-
+        //ListView de dispositivos
         listWeb = (ListView)findViewById(R.id.listWeb);
         listWeb.setItemsCanFocus(true);
         listWeb.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,23 +100,36 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         });
 
+        //Dispositivo escolhido
         disp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
-
-        button_access = (Button)findViewById(R.id.button_access);
-        button_access.setOnClickListener(this);
 
         if (rede!=null && !rede.equals("")){
             disp_escolhido.setText(rede);
         }
+
+        //Botões Procurar, Configurar e Acessar. Teste apenas como referencias antigas
+        button_find = (Button)findViewById(R.id.button_find);
+        button_find.setOnClickListener(this);
+
+        button_config = (Button)findViewById(R.id.button_config);
+        button_config.setOnClickListener(this);
+
+        button_access = (Button)findViewById(R.id.button_access);
+        button_access.setOnClickListener(this);
+
+        button_teste = (Button)findViewById(R.id.button_teste);
+        button_teste.setOnClickListener(this);
+        button_teste.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View view) {
-        //Botão procurar: abre rotina de busca e exibicao de rede
+
+        //Botão procurar: abre rotina de busca e exibicao de dispositivos
         if (view.getId() == button_find.getId())
             findWifiNetwork();
 
-        //Botão configurar: configura o esp ao qual o dispositivo está conectado
+        //Botão configurar: conecta e configura o dispositivo desejado
         if (view.getId() == button_config.getId()) {
             if (disp_escolhido.getText()!="") {
                 Intent intent = new Intent(this, ConfigConn.class);
@@ -131,10 +138,9 @@ public class ListESP extends Activity implements View.OnClickListener {
                     rede = ssid;
                 }
                 intent.putExtra(EXTRA_MESSAGE4, rede);
-                Log.v(TAG, "rede111:" + rede + "::");
+                Log.v(TAG, "dispositivo escolhido:" + rede + "::");
                 startActivity(intent);
             }
-
             else{
                 Toast.makeText(ListESP.this,
                         "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
@@ -145,7 +151,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
             if (disp_escolhido.getText()!=""){
-
                 Intent intentwifi = new Intent(this, AccessActivity.class);
                 String ultimo_selecionado = disp_escolhido.getText().toString();
                 intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
@@ -158,7 +163,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             }
         }
 
-        //Botão teste: algumas funcionalidades salvas, porem botão está invisivel
+        //Botão teste: algumas funcionalidades salvas, porem botão invisivel
         if (view.getId() == button_teste.getId()) {
             Intent intent2 = new Intent(this, HomeActivity.class);
             startActivity(intent2);
@@ -169,7 +174,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         String serverResponse;
 
         try {
-
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
@@ -289,7 +293,6 @@ public class ListESP extends Activity implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
 
                 Context tmpContext = getApplicationContext();
-
                 adapter = new ArrayAdapter<String>(getApplicationContext(),
                         R.layout.wifi_list_item,
                         arrayList);
@@ -297,7 +300,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                 listWeb.setAdapter(adapter);
 
                 WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-
                 if (!tmpManager.isWifiEnabled())
                     wifiManager.setWifiEnabled(true);
 
@@ -308,10 +310,11 @@ public class ListESP extends Activity implements View.OnClickListener {
                     if (scanList.get(i).SSID.contains("ESP")) {
                         nomeWifi = sharedPreferences.getString(scanList.get(i).SSID, "");
                         Log.v(TAG, "nome find:" + nomeWifi + "::");
+
                         if(!nomeWifi.equals("")){
                             if(!arrayList.contains(nomeWifi)) {
                                 editor = sharedPreferences.edit();
-                                Log.v(TAG, "nome_reverso:" + scanList.get(i).SSID + "reverso" + "nomewifi:" + nomeWifi + "::");
+                                Log.v(TAG, "nome_reverso: " + scanList.get(i).SSID + " reverso " + "nomewifi: " + nomeWifi + "::");
                                 editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
                                 editor.commit();
                                 arrayList.add(nomeWifi);
@@ -326,45 +329,6 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         }, filter);
 
-        wifiManager.startScan();
-    }
-
-    private void connWifiNetwork(String rede, String senha_home){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        final String nome_rede = rede;
-        final String senha = senha_home;
-        final WifiManager wifiManager =
-                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(new BroadcastReceiver() {
-            @SuppressLint("UseValueOf")
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Context tmpContext = getApplicationContext();
-                WifiManager tmpManager =
-                        (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-                if (!tmpManager.isWifiEnabled())
-                    wifiManager.setWifiEnabled(true);
-
-                scanList = wifiManager.getScanResults();
-                for (int i = 0; i < scanList.size(); i++) {
-
-                    if (scanList.get(i).SSID.equals(nome_rede)) {
-                        System.out.println("Nome da rede:" + nome_rede);
-                        WifiConfiguration config = new WifiConfiguration();
-                        config.SSID = "\"" + scanList.get(i).SSID + "\"";
-                        config.BSSID = scanList.get(i).BSSID;
-                        config.priority = 0;
-                        config.preSharedKey = "\"" + senha + "\"";
-                        config.status = WifiConfiguration.Status.ENABLED;
-                        int id = wifiManager.addNetwork(config);
-                        wifiManager.enableNetwork(id, true);
-                        wifiManager.saveConfiguration();
-                    }
-                }
-            }
-
-        }, filter);
         wifiManager.startScan();
     }
 
