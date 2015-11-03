@@ -308,11 +308,6 @@ public class ListESP extends Activity implements View.OnClickListener {
             {
                 alertDialog.show(); // show dialog
             }
-            final WifiManager wifiManager =
-                    (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(wifiManager.getConnectionInfo().getSSID().contains("ESP")){
-                wifiManager.disconnect();
-            }
         }
 
         /**
