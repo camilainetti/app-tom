@@ -6,11 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AccessActivity extends ListESP {
 
     private TextView nome_escolhido;
-    private Button button_ON,button_OFF;
+    private Button button_ON,button_OFF, button_back;
     String nome;
 
     private static final String TAG = "AccessActivity";
@@ -33,23 +34,34 @@ public class AccessActivity extends ListESP {
         button_OFF = (Button)findViewById(R.id.button_OFF);
         button_ON.setOnClickListener(this);
         button_OFF.setOnClickListener(this);
+        button_back = (Button)findViewById(R.id.button_back);
+        button_back.setOnClickListener(this);
     }
     @Override
     public void onClick(View view) {
-        String parameterValue;
-        if (view.getId() == button_ON.getId()) {
-            parameterValue = "on";
-        } else {
-            parameterValue = "off";
-        }
-        String ipAddress = sharedPreferences.getString(nome, "");
-        String portNumber = "80";
-        Log.v(TAG, "ip server:"+ipAddress+"nome:"+nome+"::");
+        String parameterValue = "";
 
-        // execute HTTP request
-        new HttpRequestAsyncTask(
-                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-        ).execute();
+        if (view.getId() == button_ON.getId())
+            parameterValue = "on";
+        if (view.getId() == button_OFF.getId())
+            parameterValue = "off";
+
+        if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+            String ipAddress = sharedPreferences.getString(nome, "");
+            String portNumber = "80";
+            Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
+
+            // execute HTTP request
+            new HttpRequestAsyncTask(
+                    view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
+            ).execute();
+        }
+
+        if(view.getId() == button_back.getId()) {
+            Intent intentvoltar = new Intent(this, ListESP.class);
+            startActivity(intentvoltar);
+
+        }
     }
 }
 

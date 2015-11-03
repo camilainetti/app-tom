@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ConfigConn extends ListESP{
 
@@ -36,6 +37,8 @@ public class ConfigConn extends ListESP{
 
         button_SET = (Button)findViewById(R.id.button_SET);
         button_SET.setOnClickListener(this);
+
+
     }
     @Override
     public void onClick(View view) {
@@ -61,9 +64,6 @@ public class ConfigConn extends ListESP{
 
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
-
-
-
 
         // execute HTTP request
 //            if (ssid.length() > 0 && senha.length() > 0) {
