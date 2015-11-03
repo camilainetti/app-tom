@@ -65,9 +65,21 @@ public class ConfigConn extends ListESP{
             Intent intent_nomeWifi = getIntent();
             nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
 
+            String nome_real = "";
+
+            String teste = sharedPreferences.getString(nomeWifi + "getSSID", "");
+
+            if (!teste.equals("") && teste!=null) {
+                nome_real = teste;
+            }
+            else{
+                nome_real = nomeWifi;
+            }
+
             String gateway = editTextgateway.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
+
             //Nome do dispositivo inteligente
             nome_carinhoso = editTextnome.getText().toString().trim();
 
@@ -84,7 +96,6 @@ public class ConfigConn extends ListESP{
 //                ).execute();
 //            }
 
-
             editor = sharedPreferences.edit();
             Log.v(TAG, "nome:" + nomeWifi + "::");
             nomeWifi = nomeWifi.replaceAll("\"", "");
@@ -92,12 +103,20 @@ public class ConfigConn extends ListESP{
 
             editor.putString(nomeWifi, nome_carinhoso);
             editor.commit();
+            Log.v(TAG, "1" + sharedPreferences.getString(nomeWifi, "") + "::");
 
             editor.putString(nome_carinhoso, ip);
             editor.commit();
+            Log.v(TAG, "10" + sharedPreferences.getString(nome_carinhoso, "") + "::");
 
             editor.putString(nomeWifi + "getHomessid", ssid);
             editor.commit();
+            Log.v(TAG, "11" + sharedPreferences.getString(nomeWifi + "getHomessid", "") + "::");
+
+            editor.putString(nome_carinhoso + "getSSID", nome_real);
+            editor.commit();
+            Log.v(TAG, "100" + sharedPreferences.getString(nome_carinhoso + "getSSID", "") + "::");
+
 
             //Volta para tela inicial e envia nome escolhido para dispositivo
             Intent intentESP = new Intent(this, ListESP.class);
@@ -106,7 +125,8 @@ public class ConfigConn extends ListESP{
         }
         else {
             Intent intentESP = new Intent(this, ListESP.class);
-            intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
+            String nome = sharedPreferences.getString(nomeWifi,"");
+            intentESP.putExtra(EXTRA_MESSAGE2, nome);
             startActivity(intentESP);
         }
 

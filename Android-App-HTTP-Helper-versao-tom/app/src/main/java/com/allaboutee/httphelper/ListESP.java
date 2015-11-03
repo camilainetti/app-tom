@@ -77,11 +77,13 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Tentando receber nome de dispositivo pre selecionado
         Intent intent_nomeWifi = getIntent();
         rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Log.v(TAG, "nome do dispositivo first:" + rede + "::");
         //Se nao vier nenhum resultado do configurar, tentar acessar
         //Caso do botao 'voltar'
-        if (rede==null)
+        if (rede==null) {
             rede = intent_nomeWifi.getStringExtra(AccessActivity.EXTRA_MESSAGE2);
-        Log.v(TAG, "nome do dispositivo:" + rede + "::");
+        }
+        Log.v(TAG, "nome do dispositivo second:" + rede + "::");
 
         //ListView de dispositivos
         listWeb = (ListView)findViewById(R.id.listWeb);
@@ -133,7 +135,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             if (disp_escolhido.getText()!="") {
                 Intent intent = new Intent(this, ConfigConn.class);
                 String ssid = sharedPreferences.getString(rede + "getSSID", "");
-                if (!ssid.equals("")) {
+                if (!ssid.equals("") && ssid!=null) {
                     rede = ssid;
                 }
                 intent.putExtra(EXTRA_MESSAGE4, rede);
@@ -265,7 +267,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             Toast.makeText(ListESP.this,
                     "Comando enviado com sucesso!",
                     Toast.LENGTH_LONG).show();
-            Log.v(TAG, "requestReply::"+requestReply+"::");
+            Log.v(TAG, "requestReply::" + requestReply + "::");
 
         }
 
@@ -319,8 +321,8 @@ public class ListESP extends Activity implements View.OnClickListener {
                             if(!arrayList.contains(nomeWifi)) {
                                 editor = sharedPreferences.edit();
                                 Log.v(TAG, "nome_reverso: " + scanList.get(i).SSID + " reverso " + "nomewifi: " + nomeWifi + "::");
-                                editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
-                                editor.commit();
+                                //editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
+                                //editor.commit();
                                 arrayList.add(nomeWifi);
                             }
                         }

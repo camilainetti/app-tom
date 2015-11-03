@@ -17,7 +17,6 @@ public class AccessActivity extends ListESP {
     private Button button_ON, button_OFF, button_back;
     String nome;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -26,17 +25,20 @@ public class AccessActivity extends ListESP {
 
         //Recebe nome do dispositivo escolhido na tela principal
         nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
+        Log.v(TAG, "Qual e o nome "+nome);
 
         //Recebe nome da rede e senha ja configurados
         String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
+        Log.v(TAG, "Qual e o nome da rede "+nome_ssid);
+
         String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
 
         Log.v(TAG, "home_ssid:" + ssid_home + "::");
 
         ConectarESP.conectar(getApplicationContext(), ssid_home);
+        Log.v(TAG, "Pass");
 
         setContentView(R.layout.activity_access);
-
 
         //Nome do dispositivo e botoes
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
@@ -51,9 +53,11 @@ public class AccessActivity extends ListESP {
         Toast.makeText(AccessActivity.this,
                 "Conectando a sua rede! Aguarde...",
                 Toast.LENGTH_LONG).show();
+
         String wifi_atual = getInfoWifi(2).replaceAll("\"", "");
         while(!wifi_atual.equals(ssid_home)) {
             wifi_atual = getInfoWifi(2).replaceAll("\"", "");
+
         }
         Toast.makeText(AccessActivity.this,
                 "Conectado em: "+ssid_home,
@@ -72,6 +76,7 @@ public class AccessActivity extends ListESP {
 //        while(Globals.getInstance().getData(0).equals("false")){
 //        }
 //        Log.v(TAG, "aqui2");
+
         String estado = "";//Globals.getInstance().getData(1);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome + " está " + estado);
@@ -120,7 +125,6 @@ public class AccessActivity extends ListESP {
 //        new HttpRequestAsyncTask(
 //                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
 //        ).execute();
-
 
     }
 }
