@@ -71,20 +71,23 @@ public class ConfigConn extends ListESP{
 //                        view.getContext(), "="+parameterValue, ipAddress, ":"+portNumber, "/?"
 //                ).execute();
 //            }
+
             editor = sharedPreferences.edit();
             Log.v(TAG, "nome:" + nomeWifi + "::");
             nomeWifi = nomeWifi.replaceAll("\"", "");
             Log.v(TAG, "nome:" + nomeWifi + "::");
+
             editor.putString(nomeWifi, nome_carinhoso);
             editor.commit();
 
             editor.putString(nome_carinhoso, ip);
             editor.commit(); // save name
 
-            editor.putString(nomeWifi+"getHomessid", ssid);
+            editor.putString(nomeWifi + "getHomessid", ssid);
             editor.commit();
 
             Intent intentESP = new Intent(this, ListESP.class);
+            intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
             startActivity(intentESP);
         }
 

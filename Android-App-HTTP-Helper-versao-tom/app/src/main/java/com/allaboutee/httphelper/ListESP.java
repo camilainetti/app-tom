@@ -76,8 +76,10 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
-//        Intent intent_nomeWifi = getIntent();
-//        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Intent intent_nomeWifi = getIntent();
+        rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
+        Log.v(TAG, "rede555:" + rede + "::");
+
 
         button_find = (Button)findViewById(R.id.button_find);
         button_find.setOnClickListener(this);
@@ -108,6 +110,10 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         button_access = (Button)findViewById(R.id.button_access);
         button_access.setOnClickListener(this);
+
+        if (rede!=null && !rede.equals("")){
+            disp_escolhido.setText(rede);
+        }
     }
 
     @Override
