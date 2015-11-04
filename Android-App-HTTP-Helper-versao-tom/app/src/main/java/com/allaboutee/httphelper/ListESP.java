@@ -190,7 +190,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                     content
             ));
             serverResponse = in.readLine();
-            //serverResponse = in.readLine();
             // Close the connection
             content.close();
         } catch (ClientProtocolException e) {
@@ -229,12 +228,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         public HttpRequestAsyncTask(Context context, String parameterValue, String ipAddress, String portNumber, String parameter)
         {
             this.context = context;
-
-//            alertDialog = new AlertDialog.Builder(this.context)
-//                    .setTitle("HTTP Response From IP Address:")
-//                    .setCancelable(true)
-//                    .create();
-
             this.ipAddress = ipAddress;
             this.parameterValue = parameterValue;
             this.portNumber = portNumber;
@@ -247,9 +240,8 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected Void doInBackground(Void... voids) {
-
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
-            return null;
+            Globals.getInstance().setData(requestReply);            return null;
         }
 
         /**
@@ -261,12 +253,7 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-
-            Toast.makeText(ListESP.this,
-                    "Comando enviado com sucesso!",
-                    Toast.LENGTH_LONG).show();
             Log.v(TAG, "requestReply::"+requestReply+"::");
-
         }
 
         /**
@@ -276,10 +263,7 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-
-            Toast.makeText(ListESP.this,
-                    "Enviando...",
-                    Toast.LENGTH_LONG).show();
+            Log.v(TAG, "Enviando...");
         }
 
     }
@@ -319,8 +303,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                             if(!arrayList.contains(nomeWifi)) {
                                 editor = sharedPreferences.edit();
                                 Log.v(TAG, "nome_reverso: " + scanList.get(i).SSID + " reverso " + "nomewifi: " + nomeWifi + "::");
-                                editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
-                                editor.commit();
                                 arrayList.add(nomeWifi);
                             }
                         }

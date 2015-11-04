@@ -52,13 +52,10 @@ public class ConfigConn extends ListESP{
     public void onClick(View view) {
         if (view.getId() == button_SET.getId()) {
 
-            // get the pin number
             String parameterValue;
 
-            // get the ip address
             String ssid = editTextSSID.getText().toString().trim();
 
-            // get the port number
             String senha = editTextsenha.getText().toString().trim();
 
             //Recebe nome do dispositivo selecionado na tela principal
@@ -97,6 +94,9 @@ public class ConfigConn extends ListESP{
             editor.commit();
 
             editor.putString(nomeWifi + "getHomessid", ssid);
+            editor.commit();
+
+            editor.putString(nome_carinhoso + "getSSID", nomeWifi);
             editor.commit();
 
             //Volta para tela inicial e envia nome escolhido para dispositivo

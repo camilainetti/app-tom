@@ -94,6 +94,7 @@ public class ConnectNetwork {
                 ctx.registerReceiver(BroadcastReceiver_scanWIFI, intentFilter);
                 Log.i("teste", "antes");
                 sync.wait();
+                Log.i("teste", "antes2");
             } catch (InterruptedException e) {
                 return false;
             }

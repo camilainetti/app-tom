@@ -16,6 +16,7 @@ public class AccessActivity extends ListESP {
 
     private Button button_ON, button_OFF, button_back;
     String nome;
+    String portNumber = "80";
 
 
     @Override
@@ -33,10 +34,11 @@ public class AccessActivity extends ListESP {
 
         Log.v(TAG, "home_ssid:" + ssid_home + "::");
 
-        ConectarESP.conectar(getApplicationContext(), ssid_home);
+        Toast.makeText(AccessActivity.this,
+                "Conectando a sua rede! Aguarde...",
+                Toast.LENGTH_LONG).show();
 
         setContentView(R.layout.activity_access);
-
 
         //Nome do dispositivo e botoes
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
@@ -51,28 +53,20 @@ public class AccessActivity extends ListESP {
         Toast.makeText(AccessActivity.this,
                 "Conectando a sua rede! Aguarde...",
                 Toast.LENGTH_LONG).show();
-        String wifi_atual = getInfoWifi(2).replaceAll("\"", "");
-        while(!wifi_atual.equals(ssid_home)) {
-            wifi_atual = getInfoWifi(2).replaceAll("\"", "");
-        }
-        Toast.makeText(AccessActivity.this,
-                "Conectado em: "+ssid_home,
-                Toast.LENGTH_LONG).show();
+
+        ConectarESP.conectar(getApplicationContext(), ssid_home);
 
         String ipAddress = sharedPreferences.getString(nome, "");
+        try {
+            new HttpRequestAsyncTask(
+                    getApplicationContext(), "=" + "estado", ipAddress, ":" + portNumber, "/?"
+            ).execute().get();
+        }
+        catch (Exception e){
+            Log.v(TAG, "erro no envio!");
+        }
 
-//        new HttpRequestAsyncTask(
-//                getApplicationContext(), "=" + "estado", ipAddress, ":" + portNumber, "/?"
-//        ).execute();
-
-//        Toast.makeText(AccessActivity.this,
-//                "Aguarde...",
-//                Toast.LENGTH_LONG).show();
-//        Log.v(TAG, "aqui");
-//        while(Globals.getInstance().getData(0).equals("false")){
-//        }
-//        Log.v(TAG, "aqui2");
-        String estado = "";//Globals.getInstance().getData(1);
+        String estado = Globals.getInstance().getData(1);
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
         nome_escolhido.setText(nome + " está " + estado);
 
@@ -91,7 +85,7 @@ public class AccessActivity extends ListESP {
         if (view.getId() == button_ON.getId())
 
             parameterValue = "on";
-        if (view.getId() == button_OFF.getId())
+        else if (view.getId() == button_OFF.getId())
             parameterValue = "off";
 
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
@@ -103,18 +97,19 @@ public class AccessActivity extends ListESP {
             new HttpRequestAsyncTask(
                     view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
             ).execute();
+
+            Toast.makeText(AccessActivity.this,
+                    "Comando enviado!",
+                    Toast.LENGTH_LONG).show();
         }
 
         //Rotina botao voltar
-        if(view.getId() == button_back.getId()) {
+        else if (view.getId() == button_back.getId()) {
             Intent intentvoltar = new Intent(this, ListESP.class);
             intentvoltar.putExtra(EXTRA_MESSAGE2, nome);
             startActivity(intentvoltar);
 
         }
-
-        String ipAddress = sharedPreferences.getString(nome, "");
-        Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
 
         // execute HTTP request
 //        new HttpRequestAsyncTask(

@@ -7,7 +7,7 @@ public class Globals {
     private static Globals instance;
 
     // Global variable
-    private String resposta;
+    private String resposta = "";
     private Boolean foi = false;
 
     // Restrict the constructor from being instantiated
