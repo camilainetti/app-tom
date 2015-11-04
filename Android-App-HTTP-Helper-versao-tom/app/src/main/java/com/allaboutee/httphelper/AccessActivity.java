@@ -12,7 +12,7 @@ public class AccessActivity extends ListESP {
 
     private static final String TAG = "AccessActivity";
 
-    private TextView nome_escolhido;
+    private TextView nome_escolhido, txtestado;
 
     private Button button_ON, button_OFF, button_back;
     String nome;
@@ -42,7 +42,9 @@ public class AccessActivity extends ListESP {
 
         //Nome do dispositivo e botoes
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
-        nome_escolhido.setText(nome);
+        nome_escolhido.setText(nome + " está");
+
+        txtestado = (TextView)findViewById(R.id.estado);
 
         button_ON = (Button)findViewById(R.id.button_ON);
         button_ON.setOnClickListener(this);
@@ -67,8 +69,7 @@ public class AccessActivity extends ListESP {
         }
 
         String estado = Globals.getInstance().getData(1);
-        nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
-        nome_escolhido.setText(nome + " está " + estado);
+        txtestado.setText(estado);
 
 
         button_back = (Button)findViewById(R.id.button_back);
@@ -83,7 +84,6 @@ public class AccessActivity extends ListESP {
 
         //Rotinas botoes on e off
         if (view.getId() == button_ON.getId())
-
             parameterValue = "on";
         else if (view.getId() == button_OFF.getId())
             parameterValue = "off";
@@ -108,14 +108,6 @@ public class AccessActivity extends ListESP {
             Intent intentvoltar = new Intent(this, ListESP.class);
             intentvoltar.putExtra(EXTRA_MESSAGE2, nome);
             startActivity(intentvoltar);
-
         }
-
-        // execute HTTP request
-//        new HttpRequestAsyncTask(
-//                view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
-//        ).execute();
-
-
     }
 }

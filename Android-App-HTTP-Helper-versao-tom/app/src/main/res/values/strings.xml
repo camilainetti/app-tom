@@ -26,6 +26,7 @@
     <string name="button_SET">Enviar</string>
 
     <string name="nome_escolhido">%s</string>
+    <string name="estado">%s</string>
     <string name="button_ON">ON</string>
     <string name="button_OFF">OFF</string>
     <string name="back">Voltar</string>

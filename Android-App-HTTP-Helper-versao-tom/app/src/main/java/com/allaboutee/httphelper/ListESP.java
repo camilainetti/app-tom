@@ -176,8 +176,8 @@ public class ListESP extends Activity implements View.OnClickListener {
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
-            //URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
-            URI website = new URI("http://"+"httpbin.org/ip");
+            URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
+            //URI website = new URI("http://"+"httpbin.org/ip");
             Log.v(TAG, "http://" + ipAddress + portNumber + parameterName + parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
