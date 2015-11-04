@@ -29,7 +29,7 @@ public class ConfigConn extends ListESP{
         nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
         Log.v(TAG, "nome Wifi:" + nomeWifi + "::");
 
-        //ConectarESP.conectar(getApplicationContext(), nomeWifi);
+        ConectarESP.conectar(getApplicationContext(), nomeWifi);
         setContentView(R.layout.activity_config_conn);
 
         //TextBoxes
@@ -52,42 +52,29 @@ public class ConfigConn extends ListESP{
     public void onClick(View view) {
         if (view.getId() == button_SET.getId()) {
 
-            // get the pin number
-            String parameterValue;
-
-            // get the ip address
-            String ssid = editTextSSID.getText().toString().trim();
-
-            // get the port number
-            String senha = editTextsenha.getText().toString().trim();
-
             //Recebe nome do dispositivo selecionado na tela principal
             Intent intent_nomeWifi = getIntent();
             nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
 
-            String nome_real = "";
-
-            String teste = sharedPreferences.getString(nomeWifi + "getSSID", "");
-
-            if (!teste.equals("") && teste!=null) {
-                nome_real = teste;
-            }
-            else{
-                nome_real = nomeWifi;
-            }
-
+            String parameterValue;
+            String ssid = editTextSSID.getText().toString().trim();
+            String senha = editTextsenha.getText().toString().trim();
             String gateway = editTextgateway.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
-
-            //Nome do dispositivo inteligente
             nome_carinhoso = editTextnome.getText().toString().trim();
 
-            parameterValue = "SSID="+ssid+"/SENHA="+senha+"/";
-            //parameterValue = "ssid="+ssid+"+senha="+senha+"+nome="+nome_carinhoso+"+gateway="+gateway+"+ip="+ip+"+mask="+mask;
+            //parameterValue = "SSID="+ssid+"/SENHA="+senha+"/";
+            parameterValue = "SSID="+ssid+"/SENHA="+senha+"/IP="+ip+"/MASCARA="+mask+"/GATEWAY="+gateway+"/NOME="+nome_carinhoso+"/";
+            ///SSID=CITI-Terreo/SENHA=1cbe991a14/IP=192.168.1.95/MASCARA=255.255.255.0/GATEWAY=192.168.2.15/NOME=madrugs/
 
             String ipAddress = "192.168.4.1";
             String portNumber = "80";
+
+            // execute HTTP request
+            new HttpRequestAsyncTask(
+                    view.getContext(), parameterValue, ipAddress, ":" + portNumber, "/"
+            ).execute();
 
         // execute HTTP request
 //            if (ssid.length() > 0 && senha.length() > 0) {
@@ -103,31 +90,29 @@ public class ConfigConn extends ListESP{
 
             editor.putString(nomeWifi, nome_carinhoso);
             editor.commit();
-            Log.v(TAG, "1" + sharedPreferences.getString(nomeWifi, "") + "::");
 
             editor.putString(nome_carinhoso, ip);
             editor.commit();
-            Log.v(TAG, "10" + sharedPreferences.getString(nome_carinhoso, "") + "::");
 
             editor.putString(nomeWifi + "getHomessid", ssid);
             editor.commit();
-            Log.v(TAG, "11" + sharedPreferences.getString(nomeWifi + "getHomessid", "") + "::");
 
-            editor.putString(nome_carinhoso + "getSSID", nome_real);
+            editor.putString(nome_carinhoso + "getSSID", nomeWifi);
             editor.commit();
-            Log.v(TAG, "100" + sharedPreferences.getString(nome_carinhoso + "getSSID", "") + "::");
-
 
             //Volta para tela inicial e envia nome escolhido para dispositivo
             Intent intentESP = new Intent(this, ListESP.class);
             intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
             startActivity(intentESP);
+
+            //Desconecta
         }
         else {
             Intent intentESP = new Intent(this, ListESP.class);
-            String nome = sharedPreferences.getString(nomeWifi,"");
-            intentESP.putExtra(EXTRA_MESSAGE2, nome);
+            intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
             startActivity(intentESP);
+
+            //Desconecta
         }
 
     }

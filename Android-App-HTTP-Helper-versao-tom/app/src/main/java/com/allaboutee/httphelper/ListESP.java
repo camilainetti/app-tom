@@ -77,13 +77,11 @@ public class ListESP extends Activity implements View.OnClickListener {
         //Tentando receber nome de dispositivo pre selecionado
         Intent intent_nomeWifi = getIntent();
         rede = intent_nomeWifi.getStringExtra(ConfigConn.EXTRA_MESSAGE2);
-        Log.v(TAG, "nome do dispositivo first:" + rede + "::");
         //Se nao vier nenhum resultado do configurar, tentar acessar
         //Caso do botao 'voltar'
-        if (rede==null) {
+        if (rede==null)
             rede = intent_nomeWifi.getStringExtra(AccessActivity.EXTRA_MESSAGE2);
-        }
-        Log.v(TAG, "nome do dispositivo second:" + rede + "::");
+        Log.v(TAG, "nome do dispositivo:" + rede + "::");
 
         //ListView de dispositivos
         listWeb = (ListView)findViewById(R.id.listWeb);
@@ -135,7 +133,7 @@ public class ListESP extends Activity implements View.OnClickListener {
             if (disp_escolhido.getText()!="") {
                 Intent intent = new Intent(this, ConfigConn.class);
                 String ssid = sharedPreferences.getString(rede + "getSSID", "");
-                if (!ssid.equals("") && ssid!=null) {
+                if (!ssid.equals("")) {
                     rede = ssid;
                 }
                 intent.putExtra(EXTRA_MESSAGE4, rede);
@@ -178,8 +176,8 @@ public class ListESP extends Activity implements View.OnClickListener {
             HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
             // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
             //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
-            //URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
-            URI website = new URI("http://"+"httpbin.org/ip");
+            URI website = new URI("http://"+ipAddress+portNumber+parameterName+parameterValue);
+            //URI website = new URI("http://"+"httpbin.org/ip");
             Log.v(TAG, "http://" + ipAddress + portNumber + parameterName + parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
@@ -192,7 +190,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                     content
             ));
             serverResponse = in.readLine();
-            //serverResponse = in.readLine();
             // Close the connection
             content.close();
         } catch (ClientProtocolException e) {
@@ -231,12 +228,6 @@ public class ListESP extends Activity implements View.OnClickListener {
         public HttpRequestAsyncTask(Context context, String parameterValue, String ipAddress, String portNumber, String parameter)
         {
             this.context = context;
-
-//            alertDialog = new AlertDialog.Builder(this.context)
-//                    .setTitle("HTTP Response From IP Address:")
-//                    .setCancelable(true)
-//                    .create();
-
             this.ipAddress = ipAddress;
             this.parameterValue = parameterValue;
             this.portNumber = portNumber;
@@ -249,9 +240,8 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected Void doInBackground(Void... voids) {
-
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
-            return null;
+            Globals.getInstance().setData(requestReply);            return null;
         }
 
         /**
@@ -263,12 +253,7 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-
-            Toast.makeText(ListESP.this,
-                    "Comando enviado com sucesso!",
-                    Toast.LENGTH_LONG).show();
-            Log.v(TAG, "requestReply::" + requestReply + "::");
-
+            Log.v(TAG, "requestReply::"+requestReply+"::");
         }
 
         /**
@@ -278,10 +263,7 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-
-            Toast.makeText(ListESP.this,
-                    "Enviando...",
-                    Toast.LENGTH_LONG).show();
+            Log.v(TAG, "Enviando...");
         }
 
     }
@@ -321,8 +303,6 @@ public class ListESP extends Activity implements View.OnClickListener {
                             if(!arrayList.contains(nomeWifi)) {
                                 editor = sharedPreferences.edit();
                                 Log.v(TAG, "nome_reverso: " + scanList.get(i).SSID + " reverso " + "nomewifi: " + nomeWifi + "::");
-                                //editor.putString(nomeWifi + "getSSID", scanList.get(i).SSID);
-                                //editor.commit();
                                 arrayList.add(nomeWifi);
                             }
                         }
