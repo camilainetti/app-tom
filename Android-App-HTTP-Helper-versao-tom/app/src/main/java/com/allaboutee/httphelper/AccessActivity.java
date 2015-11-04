@@ -83,10 +83,14 @@ public class AccessActivity extends ListESP {
         String parameterValue = "";
 
         //Rotinas botoes on e off
-        if (view.getId() == button_ON.getId())
+        if (view.getId() == button_ON.getId()) {
             parameterValue = "on";
-        else if (view.getId() == button_OFF.getId())
+            txtestado.setText("on");
+        }
+        else if (view.getId() == button_OFF.getId()) {
             parameterValue = "off";
+            txtestado.setText("off");
+        }
 
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
             String ipAddress = sharedPreferences.getString(nome, "");
