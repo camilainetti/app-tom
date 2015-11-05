@@ -149,17 +149,12 @@ public class ListESP extends Activity implements View.OnClickListener {
 
         //Botão acessar: acessa o dispositivo o qual está conectado
         if (view.getId() == button_access.getId()) {
-            if (disp_escolhido.getText()!=""){
-                Intent intentwifi = new Intent(this, AccessActivity.class);
-                String ultimo_selecionado = disp_escolhido.getText().toString();
-                intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
-                startActivity(intentwifi);
-            }
-            else{
-                Toast.makeText(ListESP.this,
-                        "Selecione um dispositivo o qual deseja acessar.",
-                        Toast.LENGTH_LONG).show();
-            }
+
+            Intent intentwifi = new Intent(this, AccessActivity.class);
+            //String ultimo_selecionado = disp_escolhido.getText().toString();
+            //intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
+            startActivity(intentwifi);
+
         }
 
         //Botão teste: algumas funcionalidades salvas, porem botão invisivel

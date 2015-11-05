@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.regex.Pattern;
 
 public class AccessActivity extends ListESP {
 
     private static final String TAG = "AccessActivity";
 
-    private TextView nome_escolhido, txtestado;
+    private TextView nome_escolhido, txtestado, interruptor, txtestado_int;
+    private Switch switcher;
 
     private Button button_ON, button_OFF, button_back;
     String nome;
@@ -23,27 +27,10 @@ public class AccessActivity extends ListESP {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-
-        //Recebe nome do dispositivo escolhido na tela principal
-        nome = intent.getStringExtra(ListESP.EXTRA_MESSAGE);
-
-        //Recebe nome da rede e senha ja configurados
-        String nome_ssid = sharedPreferences.getString(nome+"getSSID", "");
-        String ssid_home = sharedPreferences.getString(nome_ssid+"getHomessid", "");
-
-        Log.v(TAG, "home_ssid:" + ssid_home + "::");
-
-        Toast.makeText(AccessActivity.this,
-                "Conectando a sua rede! Aguarde...",
-                Toast.LENGTH_LONG).show();
-
         setContentView(R.layout.activity_access);
 
         //Nome do dispositivo e botoes
         nome_escolhido= (TextView)findViewById(R.id.nome_escolhido);
-        nome_escolhido.setText(nome + " está");
-
         txtestado = (TextView)findViewById(R.id.estado);
 
         button_ON = (Button)findViewById(R.id.button_ON);
@@ -52,16 +39,15 @@ public class AccessActivity extends ListESP {
         button_OFF = (Button)findViewById(R.id.button_OFF);
         button_OFF.setOnClickListener(this);
 
-        Toast.makeText(AccessActivity.this,
-                "Conectando a sua rede! Aguarde...",
-                Toast.LENGTH_LONG).show();
+        interruptor = (TextView)findViewById(R.id.interruptor);
 
-        ConectarESP.conectar(getApplicationContext(), ssid_home);
+        txtestado_int = (TextView)findViewById(R.id.estado_int);
 
-        String ipAddress = sharedPreferences.getString(nome, "");
+        switcher = (Switch)findViewById(R.id.switcha);
+
         try {
             new HttpRequestAsyncTask(
-                    getApplicationContext(), "=" + "estado", ipAddress, ":" + portNumber, "/?"
+                    getApplicationContext(), "=" + "estado", "192.168.1.96", ":" + portNumber, "/?"
             ).execute().get();
         }
         catch (Exception e){
@@ -69,8 +55,12 @@ public class AccessActivity extends ListESP {
         }
 
         String estado = Globals.getInstance().getData(1);
-        txtestado.setText(estado);
 
+        String[] parts = estado.split("_");
+        String est = parts[1];
+
+        System.out.println("Nozeeees " + est);
+        txtestado.setText(est);
 
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
@@ -99,7 +89,7 @@ public class AccessActivity extends ListESP {
 
             // execute HTTP request
             new HttpRequestAsyncTask(
-                    view.getContext(), "=" + parameterValue, ipAddress, ":" + portNumber, "/?pin"
+                    view.getContext(), "=" + parameterValue, "192.168.1.96", ":" + portNumber, "/?pin"
             ).execute();
 
             Toast.makeText(AccessActivity.this,

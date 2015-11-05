@@ -39,6 +39,29 @@
         android:id="@+id/button_OFF"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/interruptor"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/estado_int"
+        android:layout_gravity="center"/>
+
+    <com.rey.material.widget.Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcha"
+        android:gravity="center"
+        android:checked="false"/>
+
     <Button
         android:id="@+id/button_teste"
         android:layout_width="match_parent"
