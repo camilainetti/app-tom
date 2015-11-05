@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:hint="@string/nome_escolhido"
         android:id="@+id/nome_escolhido"
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:hint="@string/estado"
         android:id="@+id/estado"
@@ -42,33 +42,27 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_marginTop="20dp"
-        android:id="@+id/interruptor"
+        android:hint="@string/nome_escolhido_2"
+        android:id="@+id/nome_escolhido_2"
         android:layout_gravity="center"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:layout_marginTop="20dp"
-        android:id="@+id/estado_int"
+        android:hint="@string/estado_2"
+        android:id="@+id/estado_2"
         android:layout_gravity="center"/>
 
-    <com.rey.material.widget.Switch
+
+    <Switch
+        android:id="@+id/switch_int"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/switcha"
-        android:gravity="center"
-        android:checked="false"/>
-
-    <Button
-        android:id="@+id/button_teste"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Teste"
-        android:layout_weight="1"
-        android:visibility="invisible"/>
+        android:layout_gravity="center" />
 
     <Button
         android:layout_width="match_parent"
