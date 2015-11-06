@@ -87,12 +87,25 @@ public class AccessActivity extends ListESP {
 
         switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                button_OFF.setClickable(false);
+                button_ON.setClickable(false);
+                switch_int.setClickable(false);
+                button_OFF.setCursorVisible(false);
+                button_ON.setCursorVisible(false);
+                switch_int.setCursorVisible(false);
+                button_OFF.setEnabled(false);
+                button_ON.setEnabled(false);
+                switch_int.setEnabled(false);
+                button_OFF.setEnabled(false);
+                button_ON.setEnabled(false);
+                switch_int.setEnabled(false);
                 if (isChecked) {
-                    //enviarHTTP("ligado", getApplicationContext(), "192.168.1.95");
+                    enviarHTTP("ligado", getApplicationContext(), "192.168.1.95");
                     txtestado_2.setText("Azul");
                 } else {
-                    //enviarHTTP("desligado", getApplicationContext(), "192.168.1.95");
+                    enviarHTTP("desligado", getApplicationContext(), "192.168.1.95");
                     txtestado_2.setText("Cinza");
+
                 }
             }
         });
@@ -102,6 +115,15 @@ public class AccessActivity extends ListESP {
     @Override
     public void onClick(View view) {
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+            button_OFF.setClickable(false);
+            button_ON.setClickable(false);
+            switch_int.setClickable(false);
+            button_OFF.setCursorVisible(false);
+            button_ON.setCursorVisible(false);
+            switch_int.setCursorVisible(false);
+            button_OFF.setEnabled(false);
+            button_ON.setEnabled(false);
+            switch_int.setEnabled(false);
             String parameterValue = "";
 
             //Rotinas botoes on e off
@@ -114,7 +136,7 @@ public class AccessActivity extends ListESP {
                 txtestado.setText("desligado");
             }
 
-            //enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+            enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
 
         }
 
@@ -128,17 +150,47 @@ public class AccessActivity extends ListESP {
     }
     //Envia comando HTTP GET para o ESP
     public void enviarHTTP(String parameterValue, Context ctx, String ip) {
-        String ipAddress = sharedPreferences.getString(nome, "");
+
         String portNumber = "80";
-        Log.v(TAG, "ip server:" + ipAddress + "nome:" + nome + "::");
+        Log.v(TAG, "ip server:" + ip+ "::" + "parameterValue" + parameterValue);
 
         // execute HTTP request
-        new HttpRequestAsyncTask(
-                ctx, "=" + parameterValue, ip, ":" + portNumber, "/?pin"
-        ).execute();
+        /*try {
+            new HttpRequestAsyncTask(
+                    ctx, "=" + parameterValue, ip, ":" + portNumber, "/?pin"
+            ).execute().get();
+            Toast.makeText(AccessActivity.this,
+                    "Comando enviado!",
+                    Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e) {
+            Toast.makeText(AccessActivity.this,
+                    "Comando não enviado! Tente novamente",
+                    Toast.LENGTH_LONG).show();
+        }
+        */
+        try {
+            new HttpRequestAsyncTask(
+                    ctx, "" + "httpbin.org/ip", "", "" + "", ""
+            ).execute().get();
+            Toast.makeText(AccessActivity.this,
+                    "Comando enviado!",
+                    Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e) {
+            Toast.makeText(AccessActivity.this,
+                    "Comando não enviado! Tente novamente",
+                    Toast.LENGTH_LONG).show();
+        }
+        button_OFF.setClickable(true);
+        button_ON.setClickable(true);
+        switch_int.setClickable(true);
+        button_OFF.setCursorVisible(true);
+        button_ON.setCursorVisible(true);
+        switch_int.setCursorVisible(true);
+        button_OFF.setEnabled(true);
+        button_ON.setEnabled(true);
+        switch_int.setEnabled(true);
 
-        Toast.makeText(AccessActivity.this,
-                "Comando enviado!",
-                Toast.LENGTH_LONG).show();
     }
 }
