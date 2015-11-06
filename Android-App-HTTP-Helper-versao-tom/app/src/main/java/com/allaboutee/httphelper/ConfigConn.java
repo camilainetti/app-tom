@@ -84,6 +84,7 @@ public class ConfigConn extends ListESP{
 //                ).execute();
 //            }
 
+            //Registra configuracoes
             editor = sharedPreferences.edit();
             Log.v(TAG, "nome:" + nomeWifi + "::");
             nomeWifi = nomeWifi.replaceAll("\"", "");
@@ -100,6 +101,11 @@ public class ConfigConn extends ListESP{
 
             editor.putString(nome_carinhoso + "getSSID", nomeWifi);
             editor.commit();
+
+            //Registra parametros na globals
+            Globals.getips().setDatadisps(ip,parameterValue);
+            String Dados = Globals.getips().getDataip(ip);
+            System.out.println("Dados rede "+Dados);
 
             //Volta para tela inicial e envia nome escolhido para dispositivo
             Intent intentESP = new Intent(this, ListESP.class);
