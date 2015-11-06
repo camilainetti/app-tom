@@ -10,9 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import java.util.regex.Pattern;
 
 public class AccessActivity extends ListESP {
 
@@ -44,8 +41,10 @@ public class AccessActivity extends ListESP {
         txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
         switch_int = (Switch) findViewById(R.id.switch_int);
+        switch_int.setTextOn("");
+        switch_int.setTextOff("");
 
-        try {
+        /*try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
             ).execute().get();
@@ -59,8 +58,12 @@ public class AccessActivity extends ListESP {
         String[] parts_2 = estado_2.split("_");
         String est_2 = parts_2[1];
 
-        System.out.println("Nozeeees 2" + est_2);
-        txtestado_2.setText(est_2);
+        if (est_2.equals("ligado")) {
+            txtestado_2.setText("Azul");
+        }
+        else if (est_2.equals("desligado")) {
+            txtestado_2.setText("Cinza");
+        }
 
         try {
             new HttpRequestAsyncTask(
@@ -71,17 +74,12 @@ public class AccessActivity extends ListESP {
             Log.v(TAG, "erro no envio!");
         }
 
-
         String estado = Globals.getInstance().getData(1);
         System.out.println("estado " + estado);
         String[] parts = estado.split("_");
         String est = parts[1];
 
-        System.out.println("Nozeeees  " + est);
-        txtestado.setText(est);
-
-
-
+        txtestado.setText(est);*/
 
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
@@ -90,11 +88,11 @@ public class AccessActivity extends ListESP {
         switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    enviarHTTP("on", getApplicationContext(), "192.168.1.95");
-                    txtestado_2.setText("on");
+                    //enviarHTTP("ligado", getApplicationContext(), "192.168.1.95");
+                    txtestado_2.setText("Azul");
                 } else {
-                    enviarHTTP("off", getApplicationContext(), "192.168.1.95");
-                    txtestado_2.setText("off");
+                    //enviarHTTP("desligado", getApplicationContext(), "192.168.1.95");
+                    txtestado_2.setText("Cinza");
                 }
             }
         });
@@ -109,14 +107,14 @@ public class AccessActivity extends ListESP {
             //Rotinas botoes on e off
             if (view.getId() == button_ON.getId()) {
                 parameterValue = "on";
-                txtestado.setText("on");
+                txtestado.setText("ligado");
             }
             else if (view.getId() == button_OFF.getId()) {
                 parameterValue = "off";
-                txtestado.setText("off");
+                txtestado.setText("desligado");
             }
 
-            enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+            //enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
 
         }
 
