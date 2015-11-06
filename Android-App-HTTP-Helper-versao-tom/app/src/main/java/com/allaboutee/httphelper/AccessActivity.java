@@ -21,6 +21,7 @@ public class AccessActivity extends ListESP {
     private Button button_ON, button_OFF, button_back;
     String nome;
     String portNumber = "80";
+    Boolean enviou = false;
 
 
     @Override
@@ -29,98 +30,110 @@ public class AccessActivity extends ListESP {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_access);
 
-        //Nome do dispositivo e botoes
-        txtestado = (TextView)findViewById(R.id.estado);
-
-        button_ON = (Button)findViewById(R.id.button_ON);
-        button_ON.setOnClickListener(this);
-
-        button_OFF = (Button)findViewById(R.id.button_OFF);
-        button_OFF.setOnClickListener(this);
-
-        txtestado_2 = (TextView)findViewById(R.id.estado_2);
-
         switch_int = (Switch) findViewById(R.id.switch_int);
         switch_int.setTextOn("");
         switch_int.setTextOff("");
+        button_ON = (Button)findViewById(R.id.button_ON);
+        button_OFF = (Button)findViewById(R.id.button_OFF);
+
+        txtestado = (TextView)findViewById(R.id.estado);
+        txtestado_2 = (TextView)findViewById(R.id.estado_2);
+
 
         try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
             ).execute().get();
+            String estado_2 = Globals.getInstance().getData(1);
+            System.out.println("estado_2 " + estado_2);
+            String[] parts_2 = estado_2.split("_");
+            //String est_2 = parts_2[1];
+            String est_2 = estado_2;
+
+            if (est_2.equals("ligado")) {
+                txtestado_2.setText("Azul");
+            }
+            else if (est_2.equals("desligado")) {
+                txtestado_2.setText("Cinza");
+            }
+            switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    button_OFF.setEnabled(false);
+                    button_ON.setEnabled(false);
+                    switch_int.setEnabled(false);
+                    if (isChecked) {
+                        enviou = enviarHTTP("on", getApplicationContext(), "192.168.1.95");
+                        if (enviou) {
+                            txtestado_2.setText("Azul");
+                        }
+                    } else {
+                        enviou = enviarHTTP("off", getApplicationContext(), "192.168.1.95");
+                        if (enviou) {
+                            txtestado_2.setText("Cinza");
+                        }
+
+                    }
+                }
+            });
         }
-        catch (Exception e){
-            Log.v(TAG, "erro no envio!");
+        catch (Exception e) {
+            Log.v(TAG, "erro no envio: "+e);
+            txtestado_2.setText("Desativado! Volte ao início e tente novamente!");
         }
 
-        String estado_2 = Globals.getInstance().getData(1);
-        System.out.println("estado_2 " + estado_2);
-        String[] parts_2 = estado_2.split("_");
-        String est_2 = parts_2[1];
 
-        if (est_2.equals("ligado")) {
-            txtestado_2.setText("Azul");
-        }
-        else if (est_2.equals("desligado")) {
-            txtestado_2.setText("Cinza");
-        }
 
         try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.96", ":" + portNumber, "/?"
             ).execute().get();
+            String estado = Globals.getInstance().getData(1);
+            System.out.println("estado " + estado);
+            String[] parts = estado.split("_");
+            //String est = parts[1];
+            String est = estado;
+
+            txtestado.setText(est);
+            createUI("192.168.1.96");
+            setButton(est);
         }
         catch (Exception e){
-            Log.v(TAG, "erro no envio!");
+            Log.v(TAG, "erro no envio: "+e);
+            txtestado.setText("Desativado! Volte ao início e tente novamente!");
         }
-
-        String estado = Globals.getInstance().getData(1);
-        System.out.println("estado " + estado);
-        String[] parts = estado.split("_");
-        String est = parts[1];
-
-        txtestado.setText(est);
 
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
 
+    }
 
-        switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                button_OFF.setClickable(false);
-                button_ON.setClickable(false);
-                switch_int.setClickable(false);
-                button_OFF.setCursorVisible(false);
-                button_ON.setCursorVisible(false);
-                switch_int.setCursorVisible(false);
-                button_OFF.setEnabled(false);
-                button_ON.setEnabled(false);
-                switch_int.setEnabled(false);
-                button_OFF.setEnabled(false);
-                button_ON.setEnabled(false);
-                switch_int.setEnabled(false);
-                if (isChecked) {
-                    enviarHTTP("on", getApplicationContext(), "192.168.1.95");
-                    txtestado_2.setText("Azul");
-                } else {
-                    enviarHTTP("off", getApplicationContext(), "192.168.1.95");
-                    txtestado_2.setText("Cinza");
+    public void setButton(String state) {
+        Log.v(TAG, "state: "+state);
+        if (state.equals("ligado")) {
+            button_ON.setEnabled(false);
+            button_OFF.setEnabled(true);
+        }
+        else {
+            button_OFF.setEnabled(false);
+            button_ON.setEnabled(true);
+        }
 
-                }
-            }
-        });
+    }
 
+    public void createUI(String ip) {
+        if (ip.equals("192.168.1.95")) {
+
+        }
+        else if(ip.equals("192.168.1.96")) {
+            //Nome do dispositivo e botoes
+            button_ON.setOnClickListener(this);
+            button_OFF.setOnClickListener(this);
+        }
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
-            button_OFF.setClickable(false);
-            button_ON.setClickable(false);
-            switch_int.setClickable(false);
-            button_OFF.setCursorVisible(false);
-            button_ON.setCursorVisible(false);
-            switch_int.setCursorVisible(false);
             button_OFF.setEnabled(false);
             button_ON.setEnabled(false);
             switch_int.setEnabled(false);
@@ -129,14 +142,23 @@ public class AccessActivity extends ListESP {
             //Rotinas botoes on e off
             if (view.getId() == button_ON.getId()) {
                 parameterValue = "on";
-                txtestado.setText("ligado");
+
             }
             else if (view.getId() == button_OFF.getId()) {
                 parameterValue = "off";
-                txtestado.setText("desligado");
+
             }
 
-            enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+            enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+            if (enviou) {
+                if (parameterValue.equals("on")) {
+                    txtestado.setText("ligado");
+                }
+                else {
+                    txtestado.setText("desligado");
+                }
+                setButton(txtestado.getText().toString());
+            }
 
         }
 
@@ -149,7 +171,7 @@ public class AccessActivity extends ListESP {
         }
     }
     //Envia comando HTTP GET para o ESP
-    public void enviarHTTP(String parameterValue, Context ctx, String ip) {
+    public boolean enviarHTTP(String parameterValue, Context ctx, String ip) {
 
         String portNumber = "80";
         Log.v(TAG, "ip server:" + ip+ "::" + "parameterValue" + parameterValue);
@@ -162,22 +184,22 @@ public class AccessActivity extends ListESP {
             Toast.makeText(AccessActivity.this,
                     "Comando enviado!",
                     Toast.LENGTH_LONG).show();
+            button_OFF.setEnabled(true);
+            button_ON.setEnabled(true);
+            switch_int.setEnabled(true);
+            setButton(txtestado.getText().toString());
+            return true;
         }
         catch (Exception e) {
             Toast.makeText(AccessActivity.this,
                     "Comando não enviado! Tente novamente",
                     Toast.LENGTH_LONG).show();
+            Log.v(TAG, "2-erro no envio: " + e);
+            button_OFF.setEnabled(true);
+            button_ON.setEnabled(true);
+            switch_int.setEnabled(true);
+            setButton(txtestado.getText().toString());
+            return false;
         }
-
-        button_OFF.setClickable(true);
-        button_ON.setClickable(true);
-        switch_int.setClickable(true);
-        button_OFF.setCursorVisible(true);
-        button_ON.setCursorVisible(true);
-        switch_int.setCursorVisible(true);
-        button_OFF.setEnabled(true);
-        button_ON.setEnabled(true);
-        switch_int.setEnabled(true);
-
     }
 }

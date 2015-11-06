@@ -70,7 +70,7 @@ public class ListESP extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_esp);
 
-        ConectarWIFI.conectar(getApplicationContext(), "lsitec-tom");
+        //ConectarWIFI.conectar(getApplicationContext(), "lsitec-tom");
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 
