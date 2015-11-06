@@ -68,6 +68,15 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/button_teste"
+        android:layout_weight="1"
+        android:text="Teste"
+        android:visibility="invisible"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/button_back"
         android:layout_marginTop="20dp"
         android:layout_gravity="bottom"

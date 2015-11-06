@@ -99,6 +99,7 @@ public class AccessActivity extends ListESP {
 
         switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                
                 String estado_ligado = "";
 
                 if (button_ON.isEnabled()){
@@ -128,7 +129,7 @@ public class AccessActivity extends ListESP {
                 if (estado_ligado.equals("off")){
                     button_OFF.setEnabled(true);
                 }
-                
+
                 switch_int.setClickable(true);
             }
         });
@@ -170,6 +171,8 @@ public class AccessActivity extends ListESP {
     //Envia comando HTTP GET para o ESP
     public void enviarHTTP(String parameterValue, Context ctx, String ip) {
 
+        switch_int.setVisibility(View.GONE);
+
         String portNumber = "80";
         Log.v(TAG, "ip server:" + ip + "::" + "parameterValue" + parameterValue);
 
@@ -187,5 +190,6 @@ public class AccessActivity extends ListESP {
                     "Comando não enviado! Tente novamente",
                     Toast.LENGTH_LONG).show();
         }
+        switch_int.setVisibility(View.VISIBLE);
     }
 }
