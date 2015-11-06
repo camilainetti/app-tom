@@ -44,7 +44,7 @@ public class AccessActivity extends ListESP {
         switch_int.setTextOn("");
         switch_int.setTextOff("");
 
-        /*try {
+        try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
             ).execute().get();
@@ -79,7 +79,7 @@ public class AccessActivity extends ListESP {
         String[] parts = estado.split("_");
         String est = parts[1];
 
-        txtestado.setText(est);*/
+        txtestado.setText(est);
 
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
@@ -100,10 +100,10 @@ public class AccessActivity extends ListESP {
                 button_ON.setEnabled(false);
                 switch_int.setEnabled(false);
                 if (isChecked) {
-                    enviarHTTP("ligado", getApplicationContext(), "192.168.1.95");
+                    enviarHTTP("on", getApplicationContext(), "192.168.1.95");
                     txtestado_2.setText("Azul");
                 } else {
-                    enviarHTTP("desligado", getApplicationContext(), "192.168.1.95");
+                    enviarHTTP("off", getApplicationContext(), "192.168.1.95");
                     txtestado_2.setText("Cinza");
 
                 }
@@ -155,7 +155,7 @@ public class AccessActivity extends ListESP {
         Log.v(TAG, "ip server:" + ip+ "::" + "parameterValue" + parameterValue);
 
         // execute HTTP request
-        /*try {
+        try {
             new HttpRequestAsyncTask(
                     ctx, "=" + parameterValue, ip, ":" + portNumber, "/?pin"
             ).execute().get();
@@ -168,20 +168,7 @@ public class AccessActivity extends ListESP {
                     "Comando não enviado! Tente novamente",
                     Toast.LENGTH_LONG).show();
         }
-        */
-        try {
-            new HttpRequestAsyncTask(
-                    ctx, "" + "httpbin.org/ip", "", "" + "", ""
-            ).execute().get();
-            Toast.makeText(AccessActivity.this,
-                    "Comando enviado!",
-                    Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e) {
-            Toast.makeText(AccessActivity.this,
-                    "Comando não enviado! Tente novamente",
-                    Toast.LENGTH_LONG).show();
-        }
+
         button_OFF.setClickable(true);
         button_ON.setClickable(true);
         switch_int.setClickable(true);
