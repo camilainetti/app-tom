@@ -30,7 +30,7 @@ public class AccessActivity extends ListESP {
         setContentView(R.layout.activity_access);
 
         //Nome do dispositivo e botoes
-        txtestado = (TextView)findViewById(R.id.estado);
+        txtestado = (TextView)findViewById(R.id.estado); //tomada
 
         button_ON = (Button)findViewById(R.id.button_ON);
         button_ON.setOnClickListener(this);
@@ -38,13 +38,14 @@ public class AccessActivity extends ListESP {
         button_OFF = (Button)findViewById(R.id.button_OFF);
         button_OFF.setOnClickListener(this);
 
-        txtestado_2 = (TextView)findViewById(R.id.estado_2);
+        txtestado_2 = (TextView)findViewById(R.id.estado_2); //interruptor
 
         switch_int = (Switch) findViewById(R.id.switch_int);
         switch_int.setTextOn("");
         switch_int.setTextOff("");
 
-        try {
+        //interruptor
+        /*try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
             ).execute().get();
@@ -56,16 +57,20 @@ public class AccessActivity extends ListESP {
         String estado_2 = Globals.getInstance().getData(1);
         System.out.println("estado_2 " + estado_2);
         String[] parts_2 = estado_2.split("_");
-        String est_2 = parts_2[1];
+        String est_2 = parts_2[1];*/
+        String est_2 = "ligado";
 
         if (est_2.equals("ligado")) {
             txtestado_2.setText("Azul");
+            switch_int.setChecked(true);
         }
         else if (est_2.equals("desligado")) {
             txtestado_2.setText("Cinza");
+            switch_int.setChecked(false);
         }
 
-        try {
+        //tomada
+        /*try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.96", ":" + portNumber, "/?"
             ).execute().get();
@@ -77,9 +82,16 @@ public class AccessActivity extends ListESP {
         String estado = Globals.getInstance().getData(1);
         System.out.println("estado " + estado);
         String[] parts = estado.split("_");
-        String est = parts[1];
+        String est = parts[1];*/
+        String est = "ligado";
 
         txtestado.setText(est);
+        if (est.equals("ligado")) {
+            button_ON.setEnabled(false);
+        }
+        else if (est.equals("desligado")) {
+            button_OFF.setEnabled(false);
+        }
 
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
@@ -87,18 +99,20 @@ public class AccessActivity extends ListESP {
 
         switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                button_OFF.setClickable(false);
-                button_ON.setClickable(false);
+                String estado_ligado = "";
+
+                if (button_ON.isEnabled()){
+                    estado_ligado = "on";
+                    button_ON.setEnabled(false);
+                }
+
+                if (button_OFF.isEnabled()){
+                    estado_ligado = "off";
+                    button_OFF.setEnabled(false);
+                }
+
                 switch_int.setClickable(false);
-                button_OFF.setCursorVisible(false);
-                button_ON.setCursorVisible(false);
-                switch_int.setCursorVisible(false);
-                button_OFF.setEnabled(false);
-                button_ON.setEnabled(false);
-                switch_int.setEnabled(false);
-                button_OFF.setEnabled(false);
-                button_ON.setEnabled(false);
-                switch_int.setEnabled(false);
+
                 if (isChecked) {
                     enviarHTTP("on", getApplicationContext(), "192.168.1.95");
                     txtestado_2.setText("Azul");
@@ -107,6 +121,15 @@ public class AccessActivity extends ListESP {
                     txtestado_2.setText("Cinza");
 
                 }
+
+                if (estado_ligado.equals("on")){
+                    button_ON.setEnabled(true);
+                }
+                if (estado_ligado.equals("off")){
+                    button_OFF.setEnabled(true);
+                }
+                
+                switch_int.setClickable(true);
             }
         });
 
@@ -115,31 +138,26 @@ public class AccessActivity extends ListESP {
     @Override
     public void onClick(View view) {
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
-            button_OFF.setClickable(false);
-            button_ON.setClickable(false);
-            switch_int.setClickable(false);
-            button_OFF.setCursorVisible(false);
-            button_ON.setCursorVisible(false);
-            switch_int.setCursorVisible(false);
-            button_OFF.setEnabled(false);
-            button_ON.setEnabled(false);
-            switch_int.setEnabled(false);
             String parameterValue = "";
 
             //Rotinas botoes on e off
             if (view.getId() == button_ON.getId()) {
                 parameterValue = "on";
+                enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
                 txtestado.setText("ligado");
+                button_ON.setEnabled(false);
+                button_OFF.setEnabled(true);
             }
             else if (view.getId() == button_OFF.getId()) {
                 parameterValue = "off";
+                enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
                 txtestado.setText("desligado");
+                button_ON.setEnabled(true);
+                button_OFF.setEnabled(false);
+
             }
 
-            enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
-
         }
-
 
         //Rotina botao voltar
         else if (view.getId() == button_back.getId()) {
@@ -148,11 +166,12 @@ public class AccessActivity extends ListESP {
             startActivity(intentvoltar);
         }
     }
+
     //Envia comando HTTP GET para o ESP
     public void enviarHTTP(String parameterValue, Context ctx, String ip) {
 
         String portNumber = "80";
-        Log.v(TAG, "ip server:" + ip+ "::" + "parameterValue" + parameterValue);
+        Log.v(TAG, "ip server:" + ip + "::" + "parameterValue" + parameterValue);
 
         // execute HTTP request
         try {
@@ -168,16 +187,5 @@ public class AccessActivity extends ListESP {
                     "Comando não enviado! Tente novamente",
                     Toast.LENGTH_LONG).show();
         }
-
-        button_OFF.setClickable(true);
-        button_ON.setClickable(true);
-        switch_int.setClickable(true);
-        button_OFF.setCursorVisible(true);
-        button_ON.setCursorVisible(true);
-        switch_int.setCursorVisible(true);
-        button_OFF.setEnabled(true);
-        button_ON.setEnabled(true);
-        switch_int.setEnabled(true);
-
     }
 }
