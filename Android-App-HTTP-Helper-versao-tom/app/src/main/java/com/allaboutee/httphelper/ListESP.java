@@ -64,15 +64,13 @@ public class ListESP extends Activity implements View.OnClickListener {
     SharedPreferences.Editor editor;
     SharedPreferences sharedPreferences;
 
-    ConnectNetwork conectar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_esp);
 
-        conectar = ConnectNetwork.getInstance();
-        conectar.setContext(this);
+        ConectarWIFI.conectar(getApplicationContext(), "lsitec-tom");
 
         sharedPreferences = getSharedPreferences("HTTP_HELPER_PREFS", Context.MODE_PRIVATE);
 

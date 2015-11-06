@@ -7,7 +7,7 @@ import android.widget.Toast;
 /**
  * Created by bela_ on 29-Oct-15.
  */
-public class ConectarESP {
+public class ConectarWIFI {
 
     public static void conectar(final Context ctx, final String wifi) {
         Thread t = new Thread(new Runnable() {

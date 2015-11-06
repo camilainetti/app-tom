@@ -29,7 +29,8 @@ public class ConfigConn extends ListESP{
         nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
         Log.v(TAG, "nome Wifi:" + nomeWifi + "::");
 
-        ConectarESP.conectar(getApplicationContext(), nomeWifi);
+        ConectarWIFI.conectar(getApplicationContext(), nomeWifi);
+
         setContentView(R.layout.activity_config_conn);
 
         //TextBoxes

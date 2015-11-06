@@ -3,7 +3,7 @@
 
     <string name="app_name">TOM 2015</string>
 
-    <string name="help">Clique em "Procurar" e selecione seu dispositivo.</string>
+    <string name="help">Clique em "Procurar" e selecione seu dispositivo para configurar.</string>
     <string name="disp">Dispositivo escolhido:</string>
     <string name="disp_escolhido"> Selecione um dispositivo</string>
     <string name="button_find">Procurar</string>
