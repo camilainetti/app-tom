@@ -30,16 +30,20 @@ public class AccessActivity extends ListESP {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_access);
 
+
         switch_int = (Switch) findViewById(R.id.switch_int);
         switch_int.setTextOn("");
         switch_int.setTextOff("");
+
         button_ON = (Button)findViewById(R.id.button_ON);
         button_OFF = (Button)findViewById(R.id.button_OFF);
+
 
         txtestado = (TextView)findViewById(R.id.estado);
         txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
 
+        //interruptor
         try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
@@ -83,6 +87,8 @@ public class AccessActivity extends ListESP {
 
 
 
+
+        //tomada
         try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.96", ":" + portNumber, "/?"
@@ -102,10 +108,13 @@ public class AccessActivity extends ListESP {
             txtestado.setText("Desativado! Volte ao início e tente novamente!");
         }
 
+
+
         button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(this);
 
     }
+
 
     public void setButton(String state) {
         Log.v(TAG, "state: "+state);
@@ -123,6 +132,7 @@ public class AccessActivity extends ListESP {
     public void createUI(String ip) {
         if (ip.equals("192.168.1.95")) {
 
+
         }
         else if(ip.equals("192.168.1.96")) {
             //Nome do dispositivo e botoes
@@ -134,14 +144,17 @@ public class AccessActivity extends ListESP {
     @Override
     public void onClick(View view) {
         if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+
             button_OFF.setEnabled(false);
             button_ON.setEnabled(false);
             switch_int.setEnabled(false);
+
             String parameterValue = "";
 
             //Rotinas botoes on e off
             if (view.getId() == button_ON.getId()) {
                 parameterValue = "on";
+
 
             }
             else if (view.getId() == button_OFF.getId()) {
@@ -158,10 +171,10 @@ public class AccessActivity extends ListESP {
                     txtestado.setText("desligado");
                 }
                 setButton(txtestado.getText().toString());
+
             }
 
         }
-
 
         //Rotina botao voltar
         else if (view.getId() == button_back.getId()) {
@@ -170,11 +183,12 @@ public class AccessActivity extends ListESP {
             startActivity(intentvoltar);
         }
     }
+
     //Envia comando HTTP GET para o ESP
     public boolean enviarHTTP(String parameterValue, Context ctx, String ip) {
 
         String portNumber = "80";
-        Log.v(TAG, "ip server:" + ip+ "::" + "parameterValue" + parameterValue);
+        Log.v(TAG, "ip server:" + ip + "::" + "parameterValue" + parameterValue);
 
         // execute HTTP request
         try {
