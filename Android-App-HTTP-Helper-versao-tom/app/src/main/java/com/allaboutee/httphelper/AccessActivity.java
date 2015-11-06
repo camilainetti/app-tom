@@ -51,14 +51,15 @@ public class AccessActivity extends ListESP {
             String estado_2 = Globals.getInstance().getData(1);
             System.out.println("estado_2 " + estado_2);
             String[] parts_2 = estado_2.split("_");
-            //String est_2 = parts_2[1];
-            String est_2 = estado_2;
+            String est_2 = parts_2[1];
 
             if (est_2.equals("ligado")) {
                 txtestado_2.setText("Azul");
+                switch_int.setChecked(true);
             }
             else if (est_2.equals("desligado")) {
                 txtestado_2.setText("Cinza");
+                switch_int.setChecked(false);
             }
             switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -86,8 +87,6 @@ public class AccessActivity extends ListESP {
         }
 
 
-
-
         //tomada
         try {
             new HttpRequestAsyncTask(
@@ -96,7 +95,6 @@ public class AccessActivity extends ListESP {
             String estado = Globals.getInstance().getData(1);
             System.out.println("estado " + estado);
             String[] parts = estado.split("_");
-            //String est = parts[1];
             String est = estado;
 
             txtestado.setText(est);
