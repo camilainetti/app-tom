@@ -1,4 +1,4 @@
-package com.allaboutee.httphelper;
+package com.allaboutee.httphelper_teste;
 
 
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class ConfigConn extends ListESP{
 
@@ -26,7 +25,7 @@ public class ConfigConn extends ListESP{
         Log.v(TAG, "::");
 
         Intent intent_nomeWifi = getIntent();
-        nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
+        nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE4);
         Log.v(TAG, "nome Wifi:" + nomeWifi + "::");
 
         ConectarWIFI.conectar(getApplicationContext(), nomeWifi);
@@ -55,7 +54,7 @@ public class ConfigConn extends ListESP{
 
             //Recebe nome do dispositivo selecionado na tela principal
             Intent intent_nomeWifi = getIntent();
-            nomeWifi = intent_nomeWifi.getStringExtra(ListESP.EXTRA_MESSAGE4);
+            nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE4);
 
             String parameterValue;
             String ssid = editTextSSID.getText().toString().trim();

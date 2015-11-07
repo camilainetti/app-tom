@@ -1,8 +1,7 @@
-package com.allaboutee.httphelper;
+package com.allaboutee.httphelper_teste;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by bela_ on 29-Oct-15.

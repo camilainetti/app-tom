@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TOM 2015</string>
+    <string name="app_name">TESTE - TOM 2015</string>
 
     <string name="help">Clique em "Procurar" e selecione seu dispositivo para configurar.</string>
     <string name="disp">Dispositivo escolhido:</string>
