@@ -25,9 +25,9 @@
     <string name="eg_nome">Ex: Lâmpada da cozinha</string>
     <string name="button_SET">Enviar</string>
 
-    <string name="nome_escolhido">Tomada está</string>
+    <string name="nome_escolhido">Tomada</string>
     <string name="estado">%s</string>
-    <string name="nome_escolhido_2">Interruptor no estado</string>
+    <string name="nome_escolhido_2">Interruptor</string>
     <string name="estado_2">%s</string>
     <string name="button_ON">ON</string>
     <string name="button_OFF">OFF</string>
