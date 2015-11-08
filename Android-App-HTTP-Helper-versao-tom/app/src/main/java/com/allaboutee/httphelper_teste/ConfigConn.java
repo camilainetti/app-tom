@@ -11,7 +11,7 @@ import android.widget.EditText;
 public class ConfigConn extends ListESP{
 
 
-    private Button button_SET, button_back;
+    private Button button_SET;
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
 
     private static final String TAG = "ConfigConn";
@@ -43,9 +43,6 @@ public class ConfigConn extends ListESP{
         //Botao Enviar
         button_SET = (Button)findViewById(R.id.button_SET);
         button_SET.setOnClickListener(this);
-
-        button_back = (Button)findViewById(R.id.button_back);
-        button_back.setOnClickListener(this);
 
     }
     @Override
@@ -107,13 +104,5 @@ public class ConfigConn extends ListESP{
 
             //Desconecta
         }
-        else {
-            Intent intentESP = new Intent(this, ListESP.class);
-            intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
-            startActivity(intentESP);
-
-            //Desconecta
-        }
-
     }
 }

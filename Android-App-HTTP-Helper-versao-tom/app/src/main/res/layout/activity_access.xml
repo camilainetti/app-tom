@@ -70,14 +70,14 @@
         android:switchMinWidth="200dp"
         android:layout_gravity="center" />
 
-    <Button
+    <!--Button
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:id="@+id/button_back"
         android:layout_marginTop="20dp"
         android:layout_gravity="bottom"
         android:text="@string/back"
-        />
+        /-->
 
     </LinearLayout>
 </ScrollView>

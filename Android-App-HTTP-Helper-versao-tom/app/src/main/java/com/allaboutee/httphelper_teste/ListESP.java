@@ -227,6 +227,10 @@ public class ListESP extends Activity implements View.OnClickListener {
             this.parameterValue = parameterValue;
             this.portNumber = portNumber;
             this.parameter = parameter;
+            alertDialog = new AlertDialog.Builder(this.context)
+                    .setTitle("Enviando comando!")
+                    .setCancelable(true)
+                    .create();
         }
 
         /**
@@ -236,7 +240,8 @@ public class ListESP extends Activity implements View.OnClickListener {
         @Override
         protected Void doInBackground(Void... voids) {
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
-            Globals.getInstance().setData(requestReply);            return null;
+            Globals.getInstance().setData(requestReply);
+            return null;
         }
 
         /**
@@ -248,7 +253,13 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPostExecute(Void aVoid) {
-            Log.v(TAG, "requestReply::"+requestReply+"::");
+
+            Log.v(TAG, "requestReply::" + requestReply + "::");
+            if (parameterValue.equals("=on") || parameterValue.equals("=off")) {
+                if (alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
+            }
         }
 
         /**
@@ -258,7 +269,15 @@ public class ListESP extends Activity implements View.OnClickListener {
          */
         @Override
         protected void onPreExecute() {
-            Log.v(TAG, "Enviando...");
+
+            Log.v(TAG, "Enviando...::"+parameterValue+"::");
+            if (parameterValue.equals("=on") || parameterValue.equals("=off")) {
+                Log.v(TAG, "Enviando2...");
+                alertDialog.setMessage("Aguarde!");
+                if (!alertDialog.isShowing()) {
+                    alertDialog.show();
+                }
+            }
         }
 
     }
