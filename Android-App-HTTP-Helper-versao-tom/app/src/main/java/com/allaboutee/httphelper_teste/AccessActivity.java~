@@ -15,7 +15,7 @@ public class AccessActivity extends ListESP {
 
     private static final String TAG = "AccessActivity";
 
-    private TextView txtestado, txtestado_2;
+    //private TextView txtestado, txtestado_2;
     private Switch switch_int;
 
     private Button button_ON, button_OFF;
@@ -42,13 +42,18 @@ public class AccessActivity extends ListESP {
         button_OFF = (Button)findViewById(R.id.button_OFF);
 
 
-        txtestado = (TextView)findViewById(R.id.estado);
-        txtestado_2 = (TextView)findViewById(R.id.estado_2);
+        //txtestado = (TextView)findViewById(R.id.estado);
+        //txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
+<<<<<<< HEAD:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper_teste/AccessActivity.java
         /*new HttpRequestAsyncTask(
                 getApplicationContext(), "=" + "estado", "192.168.1.97", ":" + portNumber, "/?"
         ).execute();*/
         //interruptor
+=======
+
+        /*//interruptor
+>>>>>>> 56c5b8646fb86a70146cf677b29309862c414193:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper/AccessActivity.java
         try {
             new HttpRequestAsyncTask(
                     getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
@@ -122,18 +127,35 @@ public class AccessActivity extends ListESP {
         catch (Exception e){
             Log.v(TAG, "erro no envio: "+e);
             txtestado.setText("Desativado! Volte ao início e tente novamente!");
-        }
+        }*/
 
+        switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                button_OFF.setEnabled(false);
+                button_ON.setEnabled(false);
+                switch_int.setEnabled(false);
+                if (isChecked) {
+                    enviou = enviarHTTP("on", getApplicationContext(), "192.168.1.95");
+                    if (enviou) {
+                        //txtestado_2.setText("Azul");
+                    }
+                } else {
+                    enviou = enviarHTTP("off", getApplicationContext(), "192.168.1.95");
+                    if (enviou) {
+                        //txtestado_2.setText("Cinza");
+                    }
 
-
+<<<<<<< HEAD:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper_teste/AccessActivity.java
         /*switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //if (!AccessActivity.busy || switch_int.isEnabled()) {
                 if (switch_int.isEnabled()) {
                     AccessActivity.busy = true;
+
                     button_OFF.setEnabled(false);
                     button_ON.setEnabled(false);
                     switch_int.setEnabled(false);
+
                     if (isChecked) {
                         enviou = enviarHTTP("on", getApplicationContext(), "192.168.1.95");
                         if (enviou) {
@@ -144,11 +166,20 @@ public class AccessActivity extends ListESP {
                         if (enviou) {
                             txtestado_2.setText("Cinza");
                         }
+
                     }
                 }
             }
         });
         createUI("192.168.1.96");*/
+=======
+                }
+            }
+        });
+        createUI("192.168.1.96");
+        button_back = (Button)findViewById(R.id.button_back);
+        button_back.setOnClickListener(this);
+>>>>>>> 56c5b8646fb86a70146cf677b29309862c414193:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper/AccessActivity.java
 
     }
 
@@ -202,7 +233,19 @@ public class AccessActivity extends ListESP {
 
                     }
 
+<<<<<<< HEAD:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper_teste/AccessActivity.java
                     enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+=======
+            enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+            if (enviou) {
+                if (parameterValue.equals("on")) {
+                    //txtestado.setText("ligado");
+                }
+                else {
+                    //txtestado.setText("desligado");
+                }
+                //setButton(txtestado.getText().toString());
+>>>>>>> 56c5b8646fb86a70146cf677b29309862c414193:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper/AccessActivity.java
 
                     if (enviou) {
                         if (parameterValue.equals("on")) {
@@ -238,9 +281,13 @@ public class AccessActivity extends ListESP {
             button_OFF.setEnabled(true);
             button_ON.setEnabled(true);
             switch_int.setEnabled(true);
+<<<<<<< HEAD:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper_teste/AccessActivity.java
             AccessActivity.busy = false;
             setButton(txtestado.getText().toString());
 
+=======
+            //setButton(txtestado.getText().toString());
+>>>>>>> 56c5b8646fb86a70146cf677b29309862c414193:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper/AccessActivity.java
             return true;
         }
         catch (Exception e) {
@@ -251,9 +298,13 @@ public class AccessActivity extends ListESP {
             button_OFF.setEnabled(true);
             button_ON.setEnabled(true);
             switch_int.setEnabled(true);
+<<<<<<< HEAD:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper_teste/AccessActivity.java
             AccessActivity.busy = false;
             setButton(txtestado.getText().toString());
 
+=======
+            //setButton(txtestado.getText().toString());
+>>>>>>> 56c5b8646fb86a70146cf677b29309862c414193:Android-App-HTTP-Helper-versao-tom/app/src/main/java/com/allaboutee/httphelper/AccessActivity.java
             return false;
         }
 
