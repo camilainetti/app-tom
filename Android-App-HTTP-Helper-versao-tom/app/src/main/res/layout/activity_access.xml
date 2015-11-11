@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,14 +64,21 @@
         android:switchMinWidth="200dp"
         android:layout_gravity="center" />
 
-    <!--Button
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:id="@+id/button_back"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="bottom"
-        android:text="@string/back"
-        /-->
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_interruptor"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/pos1"/>
+
+        <!--Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:id="@+id/button_back"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="bottom"
+            android:text="@string/back"
+            /-->
 
     </LinearLayout>
 </ScrollView>

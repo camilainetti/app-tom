@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,8 +19,9 @@ public class AccessActivity extends ListESP {
     private TextView txtestado, txtestado_2;
     private Switch switch_int;
 
-    private Button button_ON, button_OFF;
-    String nome;
+    private Button button_ON;
+    private ImageButton button_interruptor;
+    String estado_int;
     String portNumber = "80";
     Boolean enviou = false;
 
@@ -33,6 +35,8 @@ public class AccessActivity extends ListESP {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_access);
+
+        button_interruptor = (ImageButton) findViewById(R.id.button_interruptor);
 
         switch_int = (Switch) findViewById(R.id.switch_int);
         switch_int.setTextOn("");
@@ -57,15 +61,29 @@ public class AccessActivity extends ListESP {
             System.out.println("estado_2 " + estado_2);
             String[] parts_2 = estado_2.split("_");
             String est_2 = parts_2[1];
+            createUI("192.168.1.95");
 
             if (est_2.equals("ligado")) {
                 txtestado_2.setText("Azul");
                 switch_int.setChecked(true);
+                estado_int = "Azul";
+                //setar imagem 1
+                button_interruptor.setBackgroundResource(R.drawable.pos1);
+
             }
             else if (est_2.equals("desligado")) {
                 txtestado_2.setText("Cinza");
                 switch_int.setChecked(false);
+                estado_int="Cinza";
+                //setar imagem 2
+                button_interruptor.setBackgroundResource(R.drawable.pos2);
+
             }
+            else{
+                //imagem teste
+                button_interruptor.setBackgroundResource(R.drawable.ic_launcher);
+            }
+
             switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.v(TAG, "AccessActivity.last_actionint" + AccessActivity.last_action);
@@ -180,41 +198,71 @@ public class AccessActivity extends ListESP {
     @Override
     public void onClick(View view) {
         Log.v(TAG, "AccessActivity.last_actionbutton" + AccessActivity.last_action);
-        if (!AccessActivity.busy) {
-            if ((button_OFF.isEnabled() && !AccessActivity.last_action.equals("off")) ||
-                    (button_ON.isEnabled() && !AccessActivity.last_action.equals("on"))) {
 
-                if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
-                    AccessActivity.busy = true;
-                    button_OFF.setEnabled(false);
+        if (!AccessActivity.busy) {
+
+            if (view.getId() == button_ON.getId() && button_ON.isEnabled()){
+
+                AccessActivity.busy = true;
+                button_ON.setEnabled(false);
+                switch_int.setEnabled(false);
+
+                String parameterValue = button_ON.getText().toString();
+
+                enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+
+                if (enviou) {
+                    if (parameterValue.equals("on")) {
+                        AccessActivity.last_action = "on";
+                        txtestado.setText("ligado");
+                    } else {
+                        AccessActivity.last_action = "off";
+                        txtestado.setText("desligado");
+                    }
+                    setButton(txtestado.getText().toString());
+                }
+            }
+            else if (view.getId() == button_interruptor.getId() && button_interruptor.isEnabled()){
+
+                AccessActivity.busy = true;
+                button_ON.setEnabled(false);
+                switch_int.setEnabled(false);
+                button_interruptor.setEnabled(false);
+
+                if (!estado_int.equals("Azul") && !AccessActivity.last_action.equals("Azul")) {
+                    Log.v(TAG, "Azul");
+                    estado_int = "Azul";
                     button_ON.setEnabled(false);
                     switch_int.setEnabled(false);
-                    String parameterValue = "";
 
-                    //Rotinas botoes on e off
-                    if (view.getId() == button_ON.getId()) {
-                        parameterValue = "on";
+                    AccessActivity.busy = true;
 
-
-                    } else if (view.getId() == button_OFF.getId()) {
-                        parameterValue = "off";
-
-                    }
-
-                    enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+                    enviou = enviarHTTP("on", switch_int.getContext(), "192.168.1.95");
 
                     if (enviou) {
-                        if (parameterValue.equals("on")) {
-                            AccessActivity.last_action = "on";
-                            txtestado.setText("ligado");
-                        } else {
-                            AccessActivity.last_action = "off";
-                            txtestado.setText("desligado");
-                        }
-                        setButton(txtestado.getText().toString());
+                        txtestado_2.setText("Azul");
+                        AccessActivity.last_action = "Azul";
+                        //setar imagem 1
+                        button_interruptor.setBackgroundResource(R.drawable.pos1);
 
                     }
+                } else if (!estado_int.equals("Cinza") && !AccessActivity.last_action.equals("Cinza")) {
+                    Log.v(TAG, "Cinza");
+                    estado_int = "Cinza";
+                    button_ON.setEnabled(false);
+                    switch_int.setEnabled(false);
 
+                    AccessActivity.busy = true;
+
+                    enviou = enviarHTTP("off", switch_int.getContext(), "192.168.1.95");
+
+                    if (enviou) {
+                        txtestado_2.setText("Cinza");
+                        AccessActivity.last_action = "Cinza";
+                        //setar imagem 2
+                        button_interruptor.setBackgroundResource(R.drawable.pos2);
+
+                    }
                 }
             }
         }
@@ -234,7 +282,6 @@ public class AccessActivity extends ListESP {
             Toast.makeText(AccessActivity.this,
                     "Comando enviado!",
                     Toast.LENGTH_LONG).show();
-            button_OFF.setEnabled(true);
             button_ON.setEnabled(true);
             switch_int.setEnabled(true);
             AccessActivity.busy = false;
@@ -247,7 +294,6 @@ public class AccessActivity extends ListESP {
                     "Comando não enviado! Tente novamente",
                     Toast.LENGTH_LONG).show();
             Log.v(TAG, "2-erro no envio: " + e);
-            button_OFF.setEnabled(true);
             button_ON.setEnabled(true);
             switch_int.setEnabled(true);
             AccessActivity.busy = false;

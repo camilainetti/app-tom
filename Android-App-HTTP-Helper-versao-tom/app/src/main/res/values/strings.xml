@@ -36,6 +36,7 @@
     <string name="eg_IP_address">e.g. 192.168.0.10</string>
     <string name="port_number">Port Number:</string>
     <string name="eg_port_number">eg. 80</string>
+    <string name="button_OFF">off</string>
 
     <string name="lista">Para encontrar redes, clique no botão Procurar</string>
     <string name="title_activity_list_esp">ListESP</string>
