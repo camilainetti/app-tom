@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TOM 2015</string>
+    <string name="app_name">TESTE - TOM 2015</string>
 
     <string name="help">Clique em "Procurar" e selecione seu dispositivo para configurar.</string>
     <string name="disp">Dispositivo escolhido:</string>
@@ -25,12 +25,11 @@
     <string name="eg_nome">Ex: Lâmpada da cozinha</string>
     <string name="button_SET">Enviar</string>
 
-    <string name="nome_escolhido">Tomada está</string>
+    <string name="nome_escolhido">Tomada</string>
     <string name="estado">%s</string>
-    <string name="nome_escolhido_2">Interruptor no estado</string>
+    <string name="nome_escolhido_2">Interruptor</string>
     <string name="estado_2">%s</string>
-    <string name="button_ON">ON</string>
-    <string name="button_OFF">OFF</string>
+    <string name="button_ON">%s</string>
     <string name="back">Voltar</string>
 
     <string name="IP_address">IP Address:</string>

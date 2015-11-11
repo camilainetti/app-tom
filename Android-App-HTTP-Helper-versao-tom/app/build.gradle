@@ -4,7 +4,7 @@ android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
     defaultConfig {
-        applicationId "com.allaboutee.httphelper"
+        applicationId 'com.allaboutee.httphelperteste'
         minSdkVersion 17
         targetSdkVersion 20
         versionCode 1
