@@ -1,7 +1,6 @@
-package com.allaboutee.httphelper_teste;
+package com.iothome;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AccessActivity extends ListESP {
+public class AccessActivity extends MainActivity {
 
     private static final String TAG = "AccessActivity";
 

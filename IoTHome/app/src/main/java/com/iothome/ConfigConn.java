@@ -1,4 +1,4 @@
-package com.allaboutee.httphelper_teste;
+package com.iothome;
 
 
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class ConfigConn extends ListESP{
+public class ConfigConn extends MainActivity{
 
 
     private Button button_SET;
@@ -25,7 +25,7 @@ public class ConfigConn extends ListESP{
         Log.v(TAG, "::");
 
         Intent intent_nomeWifi = getIntent();
-        nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE4);
+        nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE2);
         Log.v(TAG, "nome Wifi:" + nomeWifi + "::");
 
         ConectarWIFI.conectar(getApplicationContext(), nomeWifi);
@@ -51,7 +51,7 @@ public class ConfigConn extends ListESP{
 
             //Recebe nome do dispositivo selecionado na tela principal
             Intent intent_nomeWifi = getIntent();
-            nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE4);
+            nomeWifi = intent_nomeWifi.getStringExtra(EXTRA_MESSAGE2);
 
             String parameterValue;
             String ssid = editTextSSID.getText().toString().trim();
@@ -98,7 +98,7 @@ public class ConfigConn extends ListESP{
             editor.commit();
 
             //Volta para tela inicial e envia nome escolhido para dispositivo
-            Intent intentESP = new Intent(this, ListESP.class);
+            Intent intentESP = new Intent(this, MainActivity.class);
             intentESP.putExtra(EXTRA_MESSAGE2, nome_carinhoso);
             startActivity(intentESP);
 
