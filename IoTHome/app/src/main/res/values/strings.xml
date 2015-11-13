@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TESTE - TOM 2015</string>
+    <string name="app_name">IoT Home</string>
 
-    <string name="help">Clique em "Procurar" e selecione seu dispositivo para configurar.</string>
-    <string name="disp">Dispositivo escolhido:</string>
-    <string name="disp_escolhido"> Selecione um dispositivo</string>
-    <string name="button_find">Procurar</string>
-    <string name="button_connect">Configurar</string>
-    <string name="button_Con">Configurar</string>
-    <string name="button_access">Acessar</string>
+    <string name="help_1">Selcione um local para acessar seus dispositivos.</string>
+    <string name="esp">Local escolhido:</string>
+    <string name="esp_escolhido"> Selecione um dispositivo</string>
+    <string name="help_2">Selcione um dispositivo para configurar.</string>
+    <string name="wifi">Dispositivo escolhido:</string>
+    <string name="wifi_escolhido"> Selecione um dispositivo</string>
+    <string name="button_enter">Entrar</string>
+    <string name="button_config">Configurar</string>
+
+
     <string name="info_conn">Insira o SSID (nome) da rede Wifi da sua casa e a senha.
         Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
 

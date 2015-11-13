@@ -14,7 +14,7 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="12dp"
             android:gravity="center"
-            android:hint="@string/help"
+            android:hint="@string/help_1"
             android:textAlignment="center"
             android:textColor="#000"
             android:textSize="14dp"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:layout_marginTop="12dp"
-                android:hint="@string/disp"
+                android:hint="@string/esp"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="14dp"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
                 android:layout_marginTop="12dp"
-                android:hint="@string/disp_escolhido"
+                android:hint="@string/esp_escolhido"
                 android:textAlignment="center"
                 android:textColor="#000"
                 android:textSize="14dp"
@@ -68,19 +68,19 @@
             android:id="@+id/button_find"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_find" />
+            android:text="@string/button_config" />
 
         <Button
             android:id="@+id/button_config"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_connect" />
+            android:text="@string/button_config" />
 
         <Button
             android:id="@+id/button_access"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_access" />
+            android:text="@string/button_enter" />
 
         <Button
             android:id="@+id/button_teste"

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Android-App-HTTP-Helper-versao-tom.iml" filepath="$PROJECT_DIR$/Android-App-HTTP-Helper-versao-tom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IoTHome.iml" filepath="$PROJECT_DIR$/IoTHome.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
