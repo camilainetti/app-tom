@@ -74,8 +74,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         //Botões
         button_enter = (Button)findViewById(R.id.button_enter);
         button_enter.setOnClickListener(this);
@@ -86,9 +84,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
 
         //Botão procurar: abre rotina de busca e exibicao de dispositivos
-
-
-
 
         //Botão entrar: acessa dispositivos ligados à rede selecionada
         if (view.getId() == button_enter.getId()) {
@@ -267,6 +262,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     String answer = "";
                     DataOutputStream dos = new DataOutputStream(s.getOutputStream());
                     dos.writeUTF(data);
+
                     //read input stream
                     InputStreamReader inputStreamReader = new InputStreamReader(s.getInputStream());
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
