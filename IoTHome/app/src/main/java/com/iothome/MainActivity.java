@@ -13,13 +13,13 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,32 +31,36 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
-    private ListView listESP;
-    private ListView listwifi;
+    private static final int SERVERPORT = 9090;
+    private static final String SERVER_IP = "192.168.1.179";
+    private Socket socket;
 
-    private Button button_enter, button_config;
-    private TextView esp_escolhido, wifi_escolhido;
 
-    private ArrayAdapter<String> adapter;
-    ArrayList<String> arrayList = new ArrayList<String>();
+    private Button button_enter;
 
-    List<ScanResult> scanList;
 
-    String esp, wifi;
-
-    public final static String EXTRA_MESSAGE = "wifi_entrar";
     public final static String EXTRA_MESSAGE2 = "esp_config";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to
@@ -68,71 +72,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_esp);
-
-        //ConectarWIFI.conectar(getApplicationContext(), "lsitec-tom");
-
-        sharedPreferences = getSharedPreferences("IoTHome", Context.MODE_PRIVATE);
+        setContentView(R.layout.activity_main);
 
 
-        //ListView de ESPs não configurados (em modo AP)
-        listESP = findWifiNetwork();
-        //listESP = (ListView)findViewById(com.iothome.R.id.listWeb);
-        adapter = new ArrayAdapter<String>(getApplicationContext(),
-                R.layout.wifi_list_item,
-                arrayList);
-
-        listESP.setAdapter(adapter);
-        arrayList.clear();
-        int length = Integer.getInteger(sharedPreferences.getString("SSID", "0"));
-        if (length > 0) {
-            for (Integer i = 0; i < length; i++)
-                arrayList.add(sharedPreferences.getString("SSID_"+i.toString(), ""));
-        }
-
-        listESP.setItemsCanFocus(true);
-        listESP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                Integer i = (int) (long) id;
-                System.out.println("esp selecionado: " + arrayList.get(i));
-                esp = arrayList.get(i);
-                esp_escolhido.setText(esp);
-
-            }
-
-        });
-
-        //ListView de ESPs não configurados (em modo AP)
-        listwifi = (ListView)findViewById(R.id.listWifi);
-        listwifi.setItemsCanFocus(true);
-        listwifi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                Integer i = (int) (long) id;
-                System.out.println("Local selecionado: " + arrayList.get(i));
-                wifi = arrayList.get(i);
-                wifi_escolhido.setText(wifi);
-
-            }
-
-        });
-
-        //ESP escolhido
-        esp_escolhido= (TextView)findViewById(R.id.disp_escolhido);
-
-        //wifi escolhido
-        wifi_escolhido= (TextView)findViewById(R.id.disp_escolhido);
 
         //Botões
-        button_enter = (Button)findViewById(R.id.button_find);
+        button_enter = (Button)findViewById(R.id.button_enter);
         button_enter.setOnClickListener(this);
-
-        button_config = (Button)findViewById(R.id.button_find);
-        button_config.setOnClickListener(this);
-
 
     }
 
@@ -142,26 +88,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //Botão procurar: abre rotina de busca e exibicao de dispositivos
 
 
-        //Botão configurar: conecta e configura o dispositivo desejado
-        if (view.getId() == button_config.getId()) {
-            String ultimo_selecionado = esp_escolhido.getText().toString();
-            if (ultimo_selecionado!="") {
-                Intent intent = new Intent(this, ConfigConn.class);
-                intent.putExtra(EXTRA_MESSAGE2, ultimo_selecionado);
-                startActivity(intent);
-            }
-            else{
-                Toast.makeText(MainActivity.this,
-                        "Selecione um dispositivo o qual deseja configurar ou reconfigurar.",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
+
 
         //Botão entrar: acessa dispositivos ligados à rede selecionada
         if (view.getId() == button_enter.getId()) {
             Intent intentwifi = new Intent(this, AccessActivity.class);
-            String ultimo_selecionado = wifi_escolhido.getText().toString();
-            intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
+            //String ultimo_selecionado = wifi_escolhido.getText().toString();
+            //intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
             startActivity(intentwifi);
 
         }
@@ -285,8 +218,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private ListView findWifiNetwork(){
-        listESP = (ListView)findViewById(com.iothome.R.id.listWeb);
+    private void findWifiNetwork(){
+        //listESP = (ListView)findViewById(com.iothome.R.id.listWeb);
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
@@ -299,30 +232,61 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
 
                 Context tmpContext = getApplicationContext();
-                adapter = new ArrayAdapter<String>(getApplicationContext(),
-                        R.layout.wifi_list_item,
-                        arrayList);
+                //adapter = new ArrayAdapter<String>(getApplicationContext(),
+                  //      R.layout.wifi_list_item,
+                    //    arrayList);
 
-                listESP.setAdapter(adapter);
+                //listESP.setAdapter(adapter);
 
                 WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
                 if (!tmpManager.isWifiEnabled())
                     wifiManager.setWifiEnabled(true);
 
-                scanList = wifiManager.getScanResults();
-                arrayList.clear();
+                //scanList = wifiManager.getScanResults();
+                //arrayList.clear();
 
-                for (int i = 0; i < scanList.size(); i++) {
-                    if (scanList.get(i).SSID.contains("")) {
-                        arrayList.add((scanList.get(i).SSID));
-                    }
-                }
+                //for (int i = 0; i < scanList.size(); i++) {
+                  //  if (scanList.get(i).SSID.contains("")) {
+                    //    arrayList.add((scanList.get(i).SSID));
+                    //}
+                //}
             }
 
         }, filter);
 
         wifiManager.startScan();
-        return listESP;
+        //return listESP;
+    }
+
+    public void sendSocket(final String data) {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Socket s = new Socket("192.168.1.179", 9090);
+                    String answer = "";
+                    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                    dos.writeUTF(data);
+                    //read input stream
+                    InputStreamReader inputStreamReader = new InputStreamReader(s.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
+                    bufferedReader.ready();
+                    answer = bufferedReader.readLine();
+                    Globals.getInstance().setData(answer);
+                    Log.v(TAG, "answer::" + answer + "::");
+                    bufferedReader.close();
+                    inputStreamReader.close();
+                    dos.close();
+                    s.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        t.start();
+        while (t.isAlive()) {}
+        Log.v(TAG, "aqui::");
     }
 
     public String getInfoWifi(int iInformationType){

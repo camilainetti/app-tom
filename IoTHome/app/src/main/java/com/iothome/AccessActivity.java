@@ -2,6 +2,7 @@ package com.iothome;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,113 +45,17 @@ public class AccessActivity extends MainActivity {
         txtestado = (TextView)findViewById(R.id.estado);
         txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
-        /*new HttpRequestAsyncTask(
-                getApplicationContext(), "=" + "estado", "192.168.1.97", ":" + portNumber, "/?"
-        ).execute();*/
-        //interruptor
-        try {
-            new HttpRequestAsyncTask(
-                    getApplicationContext(), "=" + "estado", "192.168.1.95", ":" + portNumber, "/?"
-            ).execute().get();
-            String estado_2 = Globals.getInstance().getData(1);
-            System.out.println("estado_2 " + estado_2);
-            String[] parts_2 = estado_2.split("_");
-            String est_2 = parts_2[1];
-
-            if (est_2.equals("ligado")) {
-                txtestado_2.setText("Azul");
-                switch_int.setChecked(true);
-            }
-            else if (est_2.equals("desligado")) {
-                txtestado_2.setText("Cinza");
-                switch_int.setChecked(false);
-            }
-            switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.v(TAG, "AccessActivity.last_actionint" + AccessActivity.last_action);
-                    Log.v(TAG, "AccessActivity.busy" + Boolean.toString(AccessActivity.busy));
-                    Log.v(TAG, "switch_int.isEnabled()" + Boolean.toString(switch_int.isEnabled()));
-                    if (!AccessActivity.busy) {
-                        if (switch_int.isEnabled()) {
-                            if (isChecked && !AccessActivity.last_action.equals("Azul")) {
-                                Log.v(TAG, "aqui!");
-                                button_OFF.setEnabled(false);
-                                button_ON.setEnabled(false);
-                                switch_int.setEnabled(false);
-                                AccessActivity.busy = true;
-                                enviou = enviarHTTP("on", switch_int.getContext(), "192.168.1.95");
-                                if (enviou) {
-                                    txtestado_2.setText("Azul");
-                                    AccessActivity.last_action = "Azul";
-                                }
-                            } else if (!isChecked && !AccessActivity.last_action.equals("Cinza")) {
-                                enviou = enviarHTTP("off", switch_int.getContext(), "192.168.1.95");
-                                if (enviou) {
-                                    txtestado_2.setText("Cinza");
-                                    AccessActivity.last_action = "Cinza";
-                                }
-                            }
-                            else {
-                                switch_int.toggle();
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        catch (Exception e) {
-            Log.v(TAG, "erro no envio: "+e);
-            txtestado_2.setText("Desativado! Volte ao início e tente novamente!");
-        }
-
-
-        //tomada
-        try {
-            new HttpRequestAsyncTask(
-                    getApplicationContext(), "=" + "estado", "192.168.1.96", ":" + portNumber, "/?"
-            ).execute().get();
-            String estado = Globals.getInstance().getData(1);
-            System.out.println("estado " + estado);
-            String[] parts = estado.split("_");
-            String est = parts[1];
-
-            txtestado.setText(est);
-            createUI("192.168.1.96");
-            setButton(est);
-        }
-        catch (Exception e){
-            Log.v(TAG, "erro no envio: "+e);
-            txtestado.setText("Desativado! Volte ao início e tente novamente!");
-        }
-
-
-
-        /*switch_int.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //if (!AccessActivity.busy || switch_int.isEnabled()) {
-                if (switch_int.isEnabled()) {
-                    AccessActivity.busy = true;
-
-                    button_OFF.setEnabled(false);
-                    button_ON.setEnabled(false);
-                    switch_int.setEnabled(false);
-
-                    if (isChecked) {
-                        enviou = enviarHTTP("on", getApplicationContext(), "192.168.1.95");
-                        if (enviou) {
-                            txtestado_2.setText("Azul");
-                        }
-                    } else {
-                        enviou = enviarHTTP("off", getApplicationContext(), "192.168.1.95");
-                        if (enviou) {
-                            txtestado_2.setText("Cinza");
-                        }
-
-                    }
-                }
-            }
-        });
-        createUI("192.168.1.96");*/
+        button_ON.setEnabled(false);
+        button_OFF.setEnabled(false);
+        String parameterValue = "estado";
+        sendSocket(parameterValue);
+        while (Globals.getInstance().getData(1).equals("")) {}
+        //String estado = Globals.getInstance().getData(1);
+        String estado = Globals.getInstance().getData(1);
+        Log.v(TAG, "estado "+estado);
+        txtestado.setText(estado);
+        createUI("192.168.1.96");
+        setButton(estado);
 
     }
 
@@ -188,6 +93,7 @@ public class AccessActivity extends MainActivity {
                     (button_ON.isEnabled() && !AccessActivity.last_action.equals("on"))) {
 
                 if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+                    Log.v(TAG, "aqui");
                     AccessActivity.busy = true;
                     button_OFF.setEnabled(false);
                     button_ON.setEnabled(false);
@@ -203,20 +109,20 @@ public class AccessActivity extends MainActivity {
                         parameterValue = "off";
 
                     }
+                    sendSocket(parameterValue);
+                    //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
 
-                    enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
 
-                    if (enviou) {
-                        if (parameterValue.equals("on")) {
-                            AccessActivity.last_action = "on";
-                            txtestado.setText("ligado");
-                        } else {
-                            AccessActivity.last_action = "off";
-                            txtestado.setText("desligado");
-                        }
-                        setButton(txtestado.getText().toString());
-
+                    if (parameterValue.equals("on")) {
+                        AccessActivity.last_action = "on";
+                        txtestado.setText("ligado");
+                    } else {
+                        AccessActivity.last_action = "off";
+                        txtestado.setText("desligado");
                     }
+                    setButton(txtestado.getText().toString());
+
+                    AccessActivity.busy = false;
 
                 }
             }
