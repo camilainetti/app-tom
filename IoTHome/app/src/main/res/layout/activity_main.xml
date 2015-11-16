@@ -4,22 +4,28 @@
     android:id="@+id/Tela_Inicial"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#C0C0C0"
+    >
+
     <TextView
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2sp"
-        android:layout_marginTop="12sp"
-        android:gravity="center"
         android:hint="@string/app_name"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textColor="#000"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_margin="120dp"
+        android:layout_gravity="center"
+        />
+
     <Button
         android:id="@+id/button_enter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_enter" />
-</LinearLayout>
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="@string/button_enter"
+        android:layout_gravity="center_vertical|center"
+        />
 
+</LinearLayout>
