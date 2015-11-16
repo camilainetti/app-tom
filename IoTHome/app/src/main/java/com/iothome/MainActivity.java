@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -59,17 +60,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Socket socket;
 
 
-    private TextView txtestado, txtestado_2;
+    private TextView txtestado;
 
-    private Button button_ON, button_OFF;
+    private Button button_ONOFF;
+    private ImageButton button_int;
     String nome;
     String portNumber = "80";
     String estado = "";
 
     Boolean enviou = false;
-
-    private static boolean busy = false;
-    private static String last_action = "";
 
 
     public final static String EXTRA_MESSAGE2 = "esp_config";
@@ -83,94 +82,108 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_access);
+        setContentView(R.layout.activity_main);
 
         //boolean conectou = ConectarWIFI.conectar(getApplicationContext(), "CITI-guest");
         //while(!conectou) {}
 
-        button_ON = (Button)findViewById(R.id.button_ON);
-        button_OFF = (Button)findViewById(R.id.button_OFF);
+        button_ONOFF = (Button)findViewById(R.id.button_ONOFF);
+        button_int = (ImageButton)findViewById(R.id.button_int);
 
 
         txtestado = (TextView)findViewById(R.id.estado);
-        txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
-        button_ON.setEnabled(false);
-        button_OFF.setEnabled(false);
         String parameterValue = "estado";
         sendSocket(parameterValue);
         while (Globals.getInstance().getData(1).equals("")) {}
         estado = Globals.getInstance().getData(1);
-        Log.v(TAG, "estado "+estado);
+        Log.v(TAG, "estado " + estado);
         txtestado.setText(estado);
         createUI("192.168.1.96");
         setButton(estado);
+        //button_ONOFF.setText("OFF");
+
+        sendSocket(parameterValue);
+        while (Globals.getInstance().getData(1).equals("")) {}
+        estado = Globals.getInstance().getData(1);
+        Log.v(TAG, "estado 2 " + estado);
+        createUI("192.168.1.95");
+        button_int.setBackgroundResource(R.drawable.pos1);
+
+
+
     }
 
     public void setButton(String state) {
         Log.v(TAG, "state: "+state);
         if (state.equals("ligado")) {
-            button_ON.setEnabled(false);
-            button_OFF.setEnabled(true);
+            button_ONOFF.setText("OFF");
         }
         else {
-            button_OFF.setEnabled(false);
-            button_ON.setEnabled(true);
+            button_ONOFF.setText("ON");
         }
-
     }
 
     public void createUI(String ip) {
+        if(ip.equals("192.168.1.95")) {
+            //Nome do dispositivo e botoes
+            button_int.setOnClickListener(this);
+        }
         if(ip.equals("192.168.1.96")) {
             //Nome do dispositivo e botoes
-            button_ON.setOnClickListener(this);
-            button_OFF.setOnClickListener(this);
+            button_ONOFF.setOnClickListener(this);
         }
     }
 
     @Override
     public void onClick(View view) {
-        Log.v(TAG, "AccessActivity.last_actionbutton" + MainActivity.last_action);
-        if (!MainActivity.busy) {
-            if ((button_OFF.isEnabled() && !MainActivity.last_action.equals("off")) ||
-                    (button_ON.isEnabled() && !MainActivity.last_action.equals("on"))) {
+        String parameterValue = "";
+        if (button_ONOFF.isEnabled()) {
+            if (view.getId() == button_ONOFF.getId()) {
+                Log.v(TAG, "aqui");
+                button_ONOFF.setEnabled(false);
+                button_int.setEnabled(false);
 
-                if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
-                    Log.v(TAG, "aqui");
-                    MainActivity.busy = true;
-                    button_OFF.setEnabled(false);
-                    button_ON.setEnabled(false);
-                    String parameterValue = "";
-
-                    //Rotinas botoes on e off
-                    if (view.getId() == button_ON.getId()) {
-                        parameterValue = "on";
+                //Rotinas botoes on e off
+                if (button_ONOFF.getText().equals("ON")) {
+                    parameterValue = "on";
 
 
-                    } else if (view.getId() == button_OFF.getId()) {
-                        parameterValue = "off";
-
-                    }
-                    sendSocket(parameterValue);
-                    //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
-
-
-                    if (parameterValue.equals("on")) {
-                        MainActivity.last_action = "on";
-                        txtestado.setText("ligado");
-                    } else {
-                        MainActivity.last_action = "off";
-                        txtestado.setText("desligado");
-                    }
-                    setButton(txtestado.getText().toString());
-
-                    MainActivity.busy = false;
+                } else {
+                    parameterValue = "off";
 
                 }
+                sendSocket(parameterValue);
+                //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+
+
+                if (parameterValue.equals("on")) {
+                    txtestado.setText("ligado");
+                } else {
+                    txtestado.setText("desligado");
+                }
+                setButton(txtestado.getText().toString());
             }
         }
 
+        if (button_int.isEnabled()) {
+            if (view.getId() == button_int.getId()) {
+                button_ONOFF.setEnabled(false);
+                button_int.setEnabled(false);
+                if (button_int.isActivated()) {
+                    parameterValue = "on";
+                    button_int.setBackgroundResource(R.drawable.pos2);
+                }
+                else {
+                    parameterValue = "off";
+                    button_int.setBackgroundResource(R.drawable.pos1);
+                }
 
+                sendSocket(parameterValue);
+                button_ONOFF.setEnabled(true);
+                button_int.setEnabled(true);
+            }
+        }
     }
 
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {

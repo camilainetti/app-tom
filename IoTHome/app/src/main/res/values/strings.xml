@@ -32,9 +32,7 @@
     <string name="estado">%s</string>
     <string name="nome_escolhido_2">Interruptor</string>
     <string name="estado_2">%s</string>
-    <string name="button_ON">ON</string>
-    <string name="button_OFF">OFF</string>
-    <string name="back">Voltar</string>
+    <string name="button_ONOFF">%s</string>
 
     <string name="IP_address">IP Address:</string>
     <string name="eg_IP_address">e.g. 192.168.0.10</string>
