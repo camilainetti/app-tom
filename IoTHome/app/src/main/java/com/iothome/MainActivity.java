@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +59,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Socket socket;
 
 
-    private Button button_enter;
+    private TextView txtestado, txtestado_2;
+
+    private Button button_ON, button_OFF;
+    String nome;
+    String portNumber = "80";
+    String estado = "";
+
+    Boolean enviou = false;
+
+    private static boolean busy = false;
+    private static String last_action = "";
 
 
     public final static String EXTRA_MESSAGE2 = "esp_config";
@@ -72,32 +83,94 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_access);
+
+        //boolean conectou = ConectarWIFI.conectar(getApplicationContext(), "CITI-guest");
+        //while(!conectou) {}
+
+        button_ON = (Button)findViewById(R.id.button_ON);
+        button_OFF = (Button)findViewById(R.id.button_OFF);
 
 
+        txtestado = (TextView)findViewById(R.id.estado);
+        txtestado_2 = (TextView)findViewById(R.id.estado_2);
 
-        //Botões
-        button_enter = (Button)findViewById(R.id.button_enter);
-        button_enter.setOnClickListener(this);
+        button_ON.setEnabled(false);
+        button_OFF.setEnabled(false);
+        String parameterValue = "estado";
+        sendSocket(parameterValue);
+        while (Globals.getInstance().getData(1).equals("")) {}
+        estado = Globals.getInstance().getData(1);
+        Log.v(TAG, "estado "+estado);
+        txtestado.setText(estado);
+        createUI("192.168.1.96");
+        setButton(estado);
+    }
 
+    public void setButton(String state) {
+        Log.v(TAG, "state: "+state);
+        if (state.equals("ligado")) {
+            button_ON.setEnabled(false);
+            button_OFF.setEnabled(true);
+        }
+        else {
+            button_OFF.setEnabled(false);
+            button_ON.setEnabled(true);
+        }
+
+    }
+
+    public void createUI(String ip) {
+        if(ip.equals("192.168.1.96")) {
+            //Nome do dispositivo e botoes
+            button_ON.setOnClickListener(this);
+            button_OFF.setOnClickListener(this);
+        }
     }
 
     @Override
     public void onClick(View view) {
+        Log.v(TAG, "AccessActivity.last_actionbutton" + MainActivity.last_action);
+        if (!MainActivity.busy) {
+            if ((button_OFF.isEnabled() && !MainActivity.last_action.equals("off")) ||
+                    (button_ON.isEnabled() && !MainActivity.last_action.equals("on"))) {
 
-        //Botão procurar: abre rotina de busca e exibicao de dispositivos
+                if (view.getId() == button_OFF.getId() || view.getId() == button_ON.getId()) {
+                    Log.v(TAG, "aqui");
+                    MainActivity.busy = true;
+                    button_OFF.setEnabled(false);
+                    button_ON.setEnabled(false);
+                    String parameterValue = "";
+
+                    //Rotinas botoes on e off
+                    if (view.getId() == button_ON.getId()) {
+                        parameterValue = "on";
 
 
+                    } else if (view.getId() == button_OFF.getId()) {
+                        parameterValue = "off";
+
+                    }
+                    sendSocket(parameterValue);
+                    //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
 
 
-        //Botão entrar: acessa dispositivos ligados à rede selecionada
-        if (view.getId() == button_enter.getId()) {
-            Intent intentwifi = new Intent(this, AccessActivity.class);
-            //String ultimo_selecionado = wifi_escolhido.getText().toString();
-            //intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
-            startActivity(intentwifi);
+                    if (parameterValue.equals("on")) {
+                        MainActivity.last_action = "on";
+                        txtestado.setText("ligado");
+                    } else {
+                        MainActivity.last_action = "off";
+                        txtestado.setText("desligado");
+                    }
+                    setButton(txtestado.getText().toString());
 
+                    MainActivity.busy = false;
+
+                }
+            }
         }
+
+
     }
 
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
@@ -233,8 +306,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 Context tmpContext = getApplicationContext();
                 //adapter = new ArrayAdapter<String>(getApplicationContext(),
-                  //      R.layout.wifi_list_item,
-                    //    arrayList);
+                //      R.layout.wifi_list_item,
+                //    arrayList);
 
                 //listESP.setAdapter(adapter);
 
@@ -246,9 +319,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 //arrayList.clear();
 
                 //for (int i = 0; i < scanList.size(); i++) {
-                  //  if (scanList.get(i).SSID.contains("")) {
-                    //    arrayList.add((scanList.get(i).SSID));
-                    //}
+                //  if (scanList.get(i).SSID.contains("")) {
+                //    arrayList.add((scanList.get(i).SSID));
+                //}
                 //}
             }
 
