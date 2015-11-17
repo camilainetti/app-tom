@@ -85,6 +85,17 @@
                 android:text="@string/back"
                 /-->
 
+            <ListView
+                android:id="@+id/listWeb"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_weight="1"
+                android:divider="@null"
+
+                android:dividerHeight="0dp"
+                android:longClickable="false"
+                android:textAlignment="center" />
         </LinearLayout>
     </ScrollView>
     <LinearLayout
@@ -99,6 +110,10 @@
             android:layout_weight="1"
             android:layout_height="80dp"
             android:text="Button 1"
+            android:background="@drawable/bottom_button_shape"
+            android:id="@+id/button_devices"
+            android:src="@drawable/house0"
+            android:scaleType="fitCenter"
 
             />
 
@@ -106,7 +121,11 @@
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="80dp"
+            android:id="@+id/button_confs"
             android:text="Button 2"
+            android:background="@drawable/bottom_button_shape"
+            android:src="@drawable/gear"
+            android:scaleType="fitCenter"
 
             />
 
@@ -114,7 +133,13 @@
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="80dp"
-            android:text="Button 3"/>
+            android:id="@+id/button_other"
+            android:text="Button 3"
+            android:background="@drawable/bottom_button_shape"
+            android:src="@drawable/points"
+            android:scaleType="fitCenter"
+            />
+
     </LinearLayout>
 
 </RelativeLayout>

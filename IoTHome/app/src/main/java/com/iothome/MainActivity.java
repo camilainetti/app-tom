@@ -20,7 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +60,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Socket socket;
 
 
-    private Button button_enter;
+    private TextView txtestado;
+
+    private Button button_ONOFF, button_enter;
+    private ImageButton button_int;
+    String nome;
+    String portNumber = "80";
+    String estado = "";
+
+    Boolean enviou = false;
 
 
     public final static String EXTRA_MESSAGE2 = "esp_config";
@@ -77,13 +87,71 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //Botões
         button_enter = (Button)findViewById(R.id.button_enter);
         button_enter.setOnClickListener(this);
+        //boolean conectou = ConectarWIFI.conectar(getApplicationContext(), "CITI-guest");
+        //while(!conectou) {}
 
+        button_ONOFF = (Button)findViewById(R.id.button_onoff);
+        button_int = (ImageButton)findViewById(R.id.button_interruptor);
+
+
+        txtestado = (TextView)findViewById(R.id.estado);
+
+        String parameterValue = "estado";
+        //sendSocket(parameterValue);
+        enviarHTTP("estado",getApplicationContext(),"192.168.1.97");
+
+        while (Globals.getInstance().getData(1).equals("")) {}
+        estado = Globals.getInstance().getData(1);
+        Log.v(TAG, "estado " + estado);
+        txtestado.setText(estado);
+        createUI("192.168.1.96");
+        setButton(estado);
+        //button_ONOFF.setText("OFF");
+
+        sendSocket(parameterValue);
+        while (Globals.getInstance().getData(1).equals("")) {}
+        estado = Globals.getInstance().getData(1);
+        Log.v(TAG, "estado 2 " + estado);
+        createUI("192.168.1.95");
+        button_int.setBackgroundResource(R.drawable.pos1);
+
+    }
+
+    public void setButton(String state) {
+        Log.v(TAG, "state: "+state);
+        if (state.equals("ligado")) {
+            button_ONOFF.setText("OFF");
+        }
+        else {
+            button_ONOFF.setText("ON");
+        }
+    }
+
+    public void createUI(String ip) {
+        if(ip.equals("192.168.1.95")) {
+            //Nome do dispositivo e botoes
+            button_int.setOnClickListener(this);
+        }
+        if(ip.equals("192.168.1.96")) {
+            //Nome do dispositivo e botoes
+            button_ONOFF.setOnClickListener(this);
+        }
     }
 
     @Override
     public void onClick(View view) {
 
-        //Botão procurar: abre rotina de busca e exibicao de dispositivos
+        String parameterValue = "";
+        if (button_ONOFF.isEnabled()) {
+
+            if (view.getId() == button_ONOFF.getId()) {
+                Log.v(TAG, "aqui");
+                button_ONOFF.setEnabled(false);
+                button_int.setEnabled(false);
+
+                //Rotinas botoes on e off
+                if (button_ONOFF.getText().equals("ON")) {
+                    parameterValue = "on";
 
         //Botão entrar: acessa dispositivos ligados à rede selecionada
         if (view.getId() == button_enter.getId()) {
@@ -91,8 +159,40 @@ public class MainActivity extends Activity implements View.OnClickListener {
             //String ultimo_selecionado = wifi_escolhido.getText().toString();
             //intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
             startActivity(intentwifi);
+                } else {
+                    parameterValue = "off";
 
+                }
+                sendSocket(parameterValue);
+                //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+                if (parameterValue.equals("on")) {
+                    txtestado.setText("ligado");
+                } else {
+                    txtestado.setText("desligado");
+                }
+                setButton(txtestado.getText().toString());
+            }
         }
+
+        if (button_int.isEnabled()) {
+            if (view.getId() == button_int.getId()) {
+                button_ONOFF.setEnabled(false);
+                button_int.setEnabled(false);
+                if (button_int.isActivated()) {
+                    parameterValue = "on";
+                    button_int.setBackgroundResource(R.drawable.pos2);
+                }
+                else {
+                    parameterValue = "off";
+                    button_int.setBackgroundResource(R.drawable.pos1);
+                }
+
+                sendSocket(parameterValue);
+                button_ONOFF.setEnabled(true);
+                button_int.setEnabled(true);
+            }
+        }
+    }
     }
 
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {
@@ -228,8 +328,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 Context tmpContext = getApplicationContext();
                 //adapter = new ArrayAdapter<String>(getApplicationContext(),
-                  //      R.layout.wifi_list_item,
-                    //    arrayList);
+                //      R.layout.wifi_list_item,
+                //    arrayList);
 
                 //listESP.setAdapter(adapter);
 
@@ -241,9 +341,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 //arrayList.clear();
 
                 //for (int i = 0; i < scanList.size(); i++) {
-                  //  if (scanList.get(i).SSID.contains("")) {
-                    //    arrayList.add((scanList.get(i).SSID));
-                    //}
+                //  if (scanList.get(i).SSID.contains("")) {
+                //    arrayList.add((scanList.get(i).SSID));
+                //}
                 //}
             }
 
@@ -258,7 +358,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void run() {
                 try {
-                    Socket s = new Socket("192.168.1.179", 9090);
+                    Socket s = new Socket("192.168.1.128", 9090);
                     String answer = "";
                     DataOutputStream dos = new DataOutputStream(s.getOutputStream());
                     dos.writeUTF(data);
@@ -345,6 +445,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         else {
             return "";
+        }
+
+    }
+
+    //Envia comando HTTP GET para o ESP
+    public boolean enviarHTTP(String parameterValue, Context ctx, String ip) {
+
+        String portNumber = "80";
+        Log.v(TAG, "ip server:" + ip + "::" + "parameterValue" + parameterValue);
+
+        // execute HTTP request
+        try {
+            new HttpRequestAsyncTask(
+                    ctx, "=" + parameterValue, ip, ":" + portNumber, "/?pin"
+            ).execute();//.get() para esperar
+
+
+            return true;
+        }
+        catch (Exception e) {
+
+
+            return false;
         }
 
     }

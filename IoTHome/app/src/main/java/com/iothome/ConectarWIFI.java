@@ -8,10 +8,10 @@ import android.util.Log;
  */
 public class ConectarWIFI {
 
-    public static void conectar(final Context ctx, final String wifi) {
+    public synchronized static boolean conectar(final Context ctx, final String wifi) {
         Thread t = new Thread(new Runnable() {
             @Override
-            public void run() {
+            public synchronized void run() {
 
                 ConnectNetwork.getInstance().setContext(ctx);
                 if (ConnectNetwork.getInstance().conectarRede(wifi)){
@@ -23,8 +23,16 @@ public class ConectarWIFI {
                     //Toast.makeText(ctx, "NÃO conectou na rede", Toast.LENGTH_LONG);
                     Log.i("teste", "NÃO Conectou");
                 }
+                notifyAll();
             }
         });
         t.start();
+        try {
+            t.wait();
+        } catch (Exception e) {
+            Log.i("e2: ", e.toString());
+            return false;
+        }
+        return true;
     }
 }
