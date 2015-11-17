@@ -14,6 +14,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -61,6 +62,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
     private TextView txtestado;
+    int comluz = R.drawable.comluz;
+    int semluz = R.drawable.semluz;
+
+    private long lastClickTime = 0;
 
     private Button button_ONOFF;
     private ImageButton button_int;
@@ -94,23 +99,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         txtestado = (TextView)findViewById(R.id.estado);
 
         String parameterValue = "estado";
+        Log.v(TAG, "começou:" +SystemClock.elapsedRealtime());
         sendSocket(parameterValue);
         while (Globals.getInstance().getData(1).equals("")) {}
         estado = Globals.getInstance().getData(1);
         Log.v(TAG, "estado " + estado);
+        estado = estado.split("_")[1];
         txtestado.setText(estado);
         createUI("192.168.1.96");
         setButton(estado);
-        //button_ONOFF.setText("OFF");
 
-        sendSocket(parameterValue);
+        //sendSocket(parameterValue);
         while (Globals.getInstance().getData(1).equals("")) {}
         estado = Globals.getInstance().getData(1);
         Log.v(TAG, "estado 2 " + estado);
         createUI("192.168.1.95");
-        button_int.setBackgroundResource(R.drawable.pos1);
-
-
+        button_int.setBackgroundResource(comluz);
 
     }
 
@@ -137,13 +141,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        String parameterValue = "";
-        if (button_ONOFF.isEnabled()) {
+        Log.v(TAG, "SystemClock.elapsedRealtime():" +SystemClock.elapsedRealtime());
+        Log.v(TAG, "lastClickTime:" +lastClickTime);
+        if (SystemClock.elapsedRealtime() - lastClickTime > 2000) {
+            lastClickTime = SystemClock.elapsedRealtime();
+            String parameterValue;
+
             if (view.getId() == button_ONOFF.getId()) {
                 Log.v(TAG, "aqui");
-                button_ONOFF.setEnabled(false);
                 button_int.setEnabled(false);
-
+                button_ONOFF.setEnabled(false);
                 //Rotinas botoes on e off
                 if (button_ONOFF.getText().equals("ON")) {
                     parameterValue = "on";
@@ -153,9 +160,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     parameterValue = "off";
 
                 }
+
                 sendSocket(parameterValue);
                 //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
-
 
                 if (parameterValue.equals("on")) {
                     txtestado.setText("ligado");
@@ -164,24 +171,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 setButton(txtestado.getText().toString());
             }
-        }
 
-        if (button_int.isEnabled()) {
+
             if (view.getId() == button_int.getId()) {
-                button_ONOFF.setEnabled(false);
-                button_int.setEnabled(false);
-                if (button_int.isActivated()) {
-                    parameterValue = "on";
-                    button_int.setBackgroundResource(R.drawable.pos2);
-                }
-                else {
+
+                if (button_int.getBackground().getIntrinsicHeight() == getResources().getDrawable(comluz).getIntrinsicHeight()) {
                     parameterValue = "off";
-                    button_int.setBackgroundResource(R.drawable.pos1);
+                } else {
+                    parameterValue = "on";
                 }
 
                 sendSocket(parameterValue);
-                button_ONOFF.setEnabled(true);
-                button_int.setEnabled(true);
+
+                if (parameterValue.equals("on")) {
+                    button_int.setBackgroundResource(R.drawable.comluz);
+                } else {
+                    button_int.setBackgroundResource(R.drawable.semluz);
+                }
             }
         }
     }
@@ -349,12 +355,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void run() {
                 try {
-                    Socket s = new Socket("192.168.1.179", 9090);
-                    String answer = "";
-                    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-                    dos.writeUTF(data);
+                    socket = new Socket("192.168.1.97", 80);
+                    String answer;
+                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                    dos.writeBytes(data);
                     //read input stream
-                    InputStreamReader inputStreamReader = new InputStreamReader(s.getInputStream());
+                    InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
                     bufferedReader.ready();
                     answer = bufferedReader.readLine();
@@ -363,7 +369,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     bufferedReader.close();
                     inputStreamReader.close();
                     dos.close();
-                    s.close();
+                    socket.close();
+                    Log.v(TAG, "terminou:" + SystemClock.elapsedRealtime());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -371,7 +378,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         };
         t.start();
-        while (t.isAlive()) {}
+        if (data.equals("estado")) {
+            while (t.isAlive()) {
+            }
+        }
+        button_int.setEnabled(true);
+        button_ONOFF.setEnabled(true);
         Log.v(TAG, "aqui::");
     }
 

@@ -61,7 +61,7 @@
             android:layout_margin="15sp"
             android:id="@+id/button_int"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/pos1"/>
+            android:background="@drawable/comluz"/>
     </LinearLayout>
 
 </ScrollView>
