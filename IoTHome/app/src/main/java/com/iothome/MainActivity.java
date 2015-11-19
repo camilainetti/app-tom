@@ -87,17 +87,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //Botões
         button_enter = (Button)findViewById(R.id.button_enter);
         button_enter.setOnClickListener(this);
-        //boolean conectou = ConectarWIFI.conectar(getApplicationContext(), "CITI-guest");
-        //while(!conectou) {}
 
         button_ONOFF = (Button)findViewById(R.id.button_onoff);
         button_int = (ImageButton)findViewById(R.id.button_interruptor);
 
-
         txtestado = (TextView)findViewById(R.id.estado);
 
-        String parameterValue = "estado";
-        //sendSocket(parameterValue);
+        /*String parameterValue = "estado";
+
+        sendSocket(parameterValue);
         enviarHTTP("estado",getApplicationContext(),"192.168.1.97");
 
         while (Globals.getInstance().getData(1).equals("")) {}
@@ -113,7 +111,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         estado = Globals.getInstance().getData(1);
         Log.v(TAG, "estado 2 " + estado);
         createUI("192.168.1.95");
-        button_int.setBackgroundResource(R.drawable.pos1);
+        button_int.setBackgroundResource(R.drawable.pos1);*/
 
     }
 
@@ -141,58 +139,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        String parameterValue = "";
-        if (button_ONOFF.isEnabled()) {
-
-            if (view.getId() == button_ONOFF.getId()) {
-                Log.v(TAG, "aqui");
-                button_ONOFF.setEnabled(false);
-                button_int.setEnabled(false);
-
-                //Rotinas botoes on e off
-                if (button_ONOFF.getText().equals("ON")) {
-                    parameterValue = "on";
-
         //Botão entrar: acessa dispositivos ligados à rede selecionada
         if (view.getId() == button_enter.getId()) {
             Intent intentwifi = new Intent(this, AccessActivity.class);
-            //String ultimo_selecionado = wifi_escolhido.getText().toString();
-            //intentwifi.putExtra(EXTRA_MESSAGE, ultimo_selecionado);
             startActivity(intentwifi);
-                } else {
-                    parameterValue = "off";
 
-                }
-                sendSocket(parameterValue);
-                //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
-                if (parameterValue.equals("on")) {
-                    txtestado.setText("ligado");
-                } else {
-                    txtestado.setText("desligado");
-                }
-                setButton(txtestado.getText().toString());
-            }
         }
-
-        if (button_int.isEnabled()) {
-            if (view.getId() == button_int.getId()) {
-                button_ONOFF.setEnabled(false);
-                button_int.setEnabled(false);
-                if (button_int.isActivated()) {
-                    parameterValue = "on";
-                    button_int.setBackgroundResource(R.drawable.pos2);
-                }
-                else {
-                    parameterValue = "off";
-                    button_int.setBackgroundResource(R.drawable.pos1);
-                }
-
-                sendSocket(parameterValue);
-                button_ONOFF.setEnabled(true);
-                button_int.setEnabled(true);
-            }
-        }
-    }
     }
 
     public String sendRequest(String parameterValue, String ipAddress, String portNumber, String parameterName) {

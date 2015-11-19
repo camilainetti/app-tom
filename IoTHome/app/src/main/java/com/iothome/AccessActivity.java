@@ -1,6 +1,7 @@
 package com.iothome;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -18,7 +19,7 @@ public class AccessActivity extends MainActivity {
 
     private TextView txtestado, txtestado_2;
     private Button button_ON;
-    private ImageButton button_int;
+    private ImageButton button_int,button_devices, button_confs, button_other;
 
     Integer estado_int;
     String portNumber = "80";
@@ -41,7 +42,6 @@ public class AccessActivity extends MainActivity {
 
         //interruptor
         txtestado_2 = (TextView)findViewById(R.id.estado_2);
-
         button_int = (ImageButton)findViewById(R.id.button_interruptor);
 
         String parameterValue = "estado";
@@ -59,8 +59,15 @@ public class AccessActivity extends MainActivity {
 
         createUI("192.168.1.95");
         setButton(estado);
-    }
 
+        //menu inferior
+        button_devices = (ImageButton)findViewById(R.id.button_devices);
+        button_devices.setOnClickListener(this);
+        button_confs = (ImageButton)findViewById(R.id.button_confs);
+        button_confs.setOnClickListener(this);
+        button_other = (ImageButton)findViewById(R.id.button_other);
+        button_other.setOnClickListener(this);
+    }
 
     public void setButton(String state) {
         Log.v(TAG, "state: "+state);
@@ -94,76 +101,85 @@ public class AccessActivity extends MainActivity {
     @Override
     public void onClick(View view) {
 
-        Log.v(TAG, "AccessActivity.last_actionbutton" + AccessActivity.last_action);
+        if (view.getId() == button_confs.getId()) {
+            Intent intentconf = new Intent(this, ConfigConn.class);
+            startActivity(intentconf);
+        }else if (view.getId() == button_devices.getId()) {
+            Toast.makeText(AccessActivity.this,
+                    "Tela Devices Ativa",
+                    Toast.LENGTH_LONG).show();
+        }else{
+            Log.v(TAG, "AccessActivity.last_actionbutton" + AccessActivity.last_action);
 
-        if (!AccessActivity.busy) {
+            if (!AccessActivity.busy) {
 
-            if (view.getId() == button_ON.getId() && button_ON.isEnabled() && !AccessActivity.last_action.equals(button_ON.getText())) {
-                Log.v(TAG, "parametro que sera enviado: "+button_ON.getText());
+                if (view.getId() == button_ON.getId() && button_ON.isEnabled() && !AccessActivity.last_action.equals(button_ON.getText())) {
+                    Log.v(TAG, "parametro que sera enviado: "+button_ON.getText());
 
-                AccessActivity.busy = true;
+                    AccessActivity.busy = true;
 
-                button_ON.setEnabled(false);
-                button_int.setEnabled(false);
-
-                String parameterValue = "";
-                parameterValue = button_ON.getText().toString();
-
-                sendSocket(parameterValue);
-                //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
-
-                if (parameterValue.equals("on")) {
-                    AccessActivity.last_action = "on";
-                    txtestado.setText("ligado");
-                } else {
-                    AccessActivity.last_action = "off";
-                    txtestado.setText("desligado");
-                }
-                setButton(txtestado.getText().toString());
-
-                AccessActivity.busy = false;
-                button_int.setEnabled(true);
-
-            }
-            else if (view.getId() == button_int.getId() && button_int.isEnabled()) {
-
-                Log.v(TAG, "acionando interruptor");
-                Integer state_button_onoff;
-
-                if (button_ON.isEnabled()){
-                    state_button_onoff = 1;
-                }
-                else{
-                    state_button_onoff = 0;
-                }
-
-                if(estado_int==1){
                     button_ON.setEnabled(false);
                     button_int.setEnabled(false);
 
-                    Log.v(TAG, "mandando on");
-                    button_int.setBackgroundResource(R.drawable.pos2);
-                    //enviar on
+                    String parameterValue = "";
+                    parameterValue = button_ON.getText().toString();
 
-                    estado_int=2;
+                    sendSocket(parameterValue);
+                    //enviou = enviarHTTP(parameterValue, view.getContext(), "192.168.1.96");
+
+                    if (parameterValue.equals("on")) {
+                        AccessActivity.last_action = "on";
+                        txtestado.setText("ligado");
+                    } else {
+                        AccessActivity.last_action = "off";
+                        txtestado.setText("desligado");
+                    }
+                    setButton(txtestado.getText().toString());
+
+                    AccessActivity.busy = false;
                     button_int.setEnabled(true);
-                    if(state_button_onoff==1){
-                        button_ON.setEnabled(true);
+
+                }
+                else if (view.getId() == button_int.getId() && button_int.isEnabled()) {
+
+                    Log.v(TAG, "acionando interruptor");
+                    Integer state_button_onoff;
+
+                    if (button_ON.isEnabled()){
+                        state_button_onoff = 1;
+                    }
+                    else{
+                        state_button_onoff = 0;
                     }
 
-                }
-                else{
-                    button_ON.setEnabled(false);
-                    button_int.setEnabled(false);
+                    if(estado_int==1){
+                        button_ON.setEnabled(false);
+                        button_int.setEnabled(false);
 
-                    Log.v(TAG, "mandando off");
-                    button_int.setBackgroundResource(R.drawable.pos1);
-                    //enviar off
+                        Log.v(TAG, "mandando on");
+                        button_int.setBackgroundResource(R.drawable.pos2);
+                        //enviar on
 
-                    estado_int=1;
-                    button_int.setEnabled(true);
-                    if(state_button_onoff==1){
-                        button_ON.setEnabled(true);
+                        estado_int=2;
+                        button_int.setEnabled(true);
+                        if(state_button_onoff==1){
+                            button_ON.setEnabled(true);
+                        }
+
+                    }
+                    else{
+                        button_ON.setEnabled(false);
+                        button_int.setEnabled(false);
+
+                        Log.v(TAG, "mandando off");
+                        button_int.setBackgroundResource(R.drawable.pos1);
+                        //enviar off
+
+                        estado_int=1;
+                        button_int.setEnabled(true);
+                        if(state_button_onoff==1){
+                            button_ON.setEnabled(true);
+                        }
                     }
                 }
             }
