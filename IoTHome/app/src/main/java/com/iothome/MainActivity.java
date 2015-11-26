@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +53,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
@@ -64,6 +65,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView txtestado;
     int comluz = R.drawable.comluz;
     int semluz = R.drawable.semluz;
+
+    ListView list;
+    private ArrayAdapter<ItemListView> adapter;
+    ArrayList<ItemListView> arrayList = new ArrayList<ItemListView>();
 
     private long lastClickTime = 0;
 
@@ -89,33 +94,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //boolean conectou = ConectarWIFI.conectar(getApplicationContext(), "CITI-guest");
-        //while(!conectou) {}
-
-        button_ONOFF = (Button)findViewById(R.id.button_ONOFF);
-        button_int = (ImageButton)findViewById(R.id.button_int);
-
-
-        txtestado = (TextView)findViewById(R.id.estado);
-
         String parameterValue = "estado";
-        Log.v(TAG, "começou:" +SystemClock.elapsedRealtime());
-        sendSocket(parameterValue);
-        while (Globals.getInstance().getData(1).equals("")) {}
-        estado = Globals.getInstance().getData(1);
-        Log.v(TAG, "estado " + estado);
-        estado = estado.split("_")[1];
-        txtestado.setText(estado);
-        createUI("192.168.1.96");
-        setButton(estado);
-
+        Log.v(TAG, "começou:" + SystemClock.elapsedRealtime());
         //sendSocket(parameterValue);
-        while (Globals.getInstance().getData(1).equals("")) {}
-        estado = Globals.getInstance().getData(1);
-        Log.v(TAG, "estado 2 " + estado);
-        createUI("192.168.1.95");
-        button_int.setBackgroundResource(comluz);
+        enviarHTTP(parameterValue, this, "192.168.1.97");
 
+
+        /*TableLayout table = (TableLayout) findViewById(R.id.tableforitems);
+        for (int i = 0; i < 6; i++){
+            TableRow tableRow = new TableRow(this);
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+            TextView nome_disp = new TextView(this);
+            nome_disp.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+            nome_disp.setText("tomada");
+            nome_disp.setTextSize(20.0f);
+            nome_disp.setGravity(Gravity.CENTER);
+            tableRow.addView(nome_disp);
+            Button b = new Button(this);
+            b.setMinimumWidth(100);
+            b.setMinimumHeight(200);
+            b.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+            b.setText("ON");
+            tableRow.addView(b);
+            table.addView(tableRow);*/
     }
 
     public void setButton(String state) {
@@ -204,7 +208,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.v(TAG, "http://" + ipAddress + portNumber + parameterName + parameterValue);
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
+            Log.v(TAG, "dado pronto para enviar:" + SystemClock.elapsedRealtime());
             HttpResponse response = httpclient.execute(getRequest); // execute the request
+            Log.v(TAG, "resposta recebida:" +SystemClock.elapsedRealtime());
             Log.v(TAG, "response::"+response.toString()+"::");
             // get the ip address server's reply
             InputStream content;
@@ -268,6 +274,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         @Override
         protected Void doInBackground(Void... voids) {
             requestReply = sendRequest(parameterValue,ipAddress,portNumber, parameter);
+            Log.v(TAG, "resposta 2:" +SystemClock.elapsedRealtime());
             Globals.getInstance().setData(requestReply);
             return null;
         }
@@ -288,6 +295,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     alertDialog.dismiss();
                 }
             }
+            Log.v(TAG, "aqui:" +SystemClock.elapsedRealtime());
         }
 
         /**
@@ -310,44 +318,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private void findWifiNetwork(){
-        //listESP = (ListView)findViewById(com.iothome.R.id.listWeb);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+    //Envia comando HTTP GET para o ESP
+    public boolean enviarHTTP(String parameterValue, Context ctx, String ip) {
 
-        final WifiManager wifiManager =
-                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(new BroadcastReceiver() {
+        String portNumber = "80";
+        Log.v(TAG, "ip server:" + ip + "::" + "parameterValue" + parameterValue);
 
-            @SuppressLint("UseValueOf")
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                Context tmpContext = getApplicationContext();
-                //adapter = new ArrayAdapter<String>(getApplicationContext(),
-                //      R.layout.wifi_list_item,
-                //    arrayList);
-
-                //listESP.setAdapter(adapter);
-
-                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
-                if (!tmpManager.isWifiEnabled())
-                    wifiManager.setWifiEnabled(true);
-
-                //scanList = wifiManager.getScanResults();
-                //arrayList.clear();
-
-                //for (int i = 0; i < scanList.size(); i++) {
-                //  if (scanList.get(i).SSID.contains("")) {
-                //    arrayList.add((scanList.get(i).SSID));
-                //}
-                //}
-            }
-
-        }, filter);
-
-        wifiManager.startScan();
-        //return listESP;
+        // execute HTTP request
+        try {
+            new HttpRequestAsyncTask(
+                    ctx, "=" + parameterValue, ip, ":" + portNumber, "/?pin"
+            ).execute().get();
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     public void sendSocket(final String data) {
@@ -358,12 +344,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     socket = new Socket("192.168.1.97", 80);
                     String answer;
                     DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                    Log.v(TAG, "dado pronto para enviar:" +SystemClock.elapsedRealtime());
                     dos.writeBytes(data);
+                    Log.v(TAG, "enviou:" + SystemClock.elapsedRealtime());
                     //read input stream
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
                     bufferedReader.ready();
                     answer = bufferedReader.readLine();
+                    Log.v(TAG, "recebeu resposta:" +SystemClock.elapsedRealtime());
                     Globals.getInstance().setData(answer);
                     Log.v(TAG, "answer::" + answer + "::");
                     bufferedReader.close();
@@ -382,8 +371,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             while (t.isAlive()) {
             }
         }
-        button_int.setEnabled(true);
-        button_ONOFF.setEnabled(true);
         Log.v(TAG, "aqui::");
     }
 
@@ -449,6 +436,46 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return "";
         }
 
+    }
+
+    private void findWifiNetwork(){
+        //listESP = (ListView)findViewById(com.iothome.R.id.listWeb);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+
+        final WifiManager wifiManager =
+                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        registerReceiver(new BroadcastReceiver() {
+
+            @SuppressLint("UseValueOf")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Context tmpContext = getApplicationContext();
+                //adapter = new ArrayAdapter<String>(getApplicationContext(),
+                //      R.layout.wifi_list_item,
+                //    arrayList);
+
+                //listESP.setAdapter(adapter);
+
+                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                if (!tmpManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(true);
+
+                //scanList = wifiManager.getScanResults();
+                //arrayList.clear();
+
+                //for (int i = 0; i < scanList.size(); i++) {
+                //  if (scanList.get(i).SSID.contains("")) {
+                //    arrayList.add((scanList.get(i).SSID));
+                //}
+                //}
+            }
+
+        }, filter);
+
+        wifiManager.startScan();
+        //return listESP;
     }
 
 }

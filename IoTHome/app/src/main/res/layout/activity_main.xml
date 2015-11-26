@@ -1,67 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/Tela_Inicial"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2sp"
-            android:layout_marginTop="12sp"
-            android:gravity="center"
-            android:hint="@string/app_name"
-            android:textAlignment="center"
-            android:textSize="50sp"
-            android:textStyle="bold" />
-        <TextView
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="40sp"
-            android:layout_marginTop="20sp"
-            android:hint="@string/nome_escolhido"
-            android:id="@+id/nome_escolhido"
-            android:layout_gravity="center"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginTop="20sp"
-            android:hint="@string/estado"
-            android:id="@+id/estado"
-            android:layout_gravity="center"/>
+            <TableLayout
+                android:id="@+id/tableforitems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+            </TableLayout>
 
-        <Button
-            android:layout_width="200sp"
-            android:layout_height="100sp"
-            android:layout_marginTop="20sp"
-            android:text="@string/button_ONOFF"
-            android:id="@+id/button_ONOFF"
-            android:layout_gravity="center" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="40sp"
-            android:layout_marginTop="20sp"
-            android:hint="@string/nome_escolhido_2"
-            android:id="@+id/nome_escolhido_2"
-            android:layout_gravity="center"/>
 
-        <ImageButton
-            android:layout_width="200sp"
-            android:layout_height="100sp"
-            android:layout_margin="15sp"
-            android:id="@+id/button_int"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/comluz"/>
-    </LinearLayout>
 
-</ScrollView>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <ImageButton
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bottom_button_shape"
+                    android:id="@+id/button_devices"
+                    android:src="@drawable/house0"
+                    android:scaleType="fitCenter"
+
+                    />
+
+                <ImageButton
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="80dp"
+                    android:id="@+id/button_confs"
+                    android:background="@drawable/bottom_button_shape"
+                    android:src="@drawable/gear"
+                    android:scaleType="fitCenter"
+
+                    />
+
+                <ImageButton
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="80dp"
+                    android:id="@+id/button_other"
+                    android:background="@drawable/bottom_button_shape"
+                    android:src="@drawable/points"
+                    android:scaleType="fitCenter"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
