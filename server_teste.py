@@ -1,5 +1,6 @@
 from socket import *
 import signal
+from time import sleep
 
 #Capture SIGINT for cleanup when the script is aborted
 def end_listen(signal,frame):
@@ -31,6 +32,7 @@ try:
         else:
             reply = "oi?"
         #reply = raw_input("Reply: ") #server's reply to the client
+        sleep(5)
         conn.sendall(reply)
         conn.close()
 except :

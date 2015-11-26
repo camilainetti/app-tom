@@ -25,10 +25,8 @@ public class AccessActivity extends MainActivity {
     String portNumber = "80";
     Boolean enviou = false;
 
-
     private static boolean busy = false;
     private static String last_action = "";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
