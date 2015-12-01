@@ -26,6 +26,9 @@
     <string name="eg_ip">Ex: 192.168.x.x</string>
     <string name="nome">Nome do dispositivo inteligente</string>
     <string name="eg_nome">Ex: Lâmpada da cozinha</string>
+    <string name="tipo">Tipo de dispositivo inteligente</string>
+    <string name="eg_tipoint">Interruptor</string>
+    <string name="eg_tipotom">Tomada</string>
     <string name="button_SET">Enviar</string>
 
     <string name="nome_escolhido">Tomada</string>
