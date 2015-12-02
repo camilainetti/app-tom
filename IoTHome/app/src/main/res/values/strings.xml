@@ -14,7 +14,7 @@
 
 
     <string name="info_conn">Insira o SSID (nome) da rede Wifi da sua casa e a senha.
-        Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
+        Defina o IP, Máscara da rede e o Gateway e escolha um nome e o tipo para o dispositivo inteligente que você está configurando.</string>
 
     <string name="ssid">SSID</string>
     <string name="senha">Senha</string>
@@ -26,6 +26,9 @@
     <string name="eg_ip">Ex: 192.168.x.x</string>
     <string name="nome">Nome do dispositivo inteligente</string>
     <string name="eg_nome">Ex: Lâmpada da cozinha</string>
+    <string name="tipo">Tipo de dispositivo inteligente</string>
+    <string name="eg_tipoint">Interruptor</string>
+    <string name="eg_tipotom">Tomada</string>
     <string name="button_SET">Enviar</string>
 
     <string name="nome_escolhido">Tomada</string>

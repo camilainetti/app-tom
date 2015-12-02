@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
@@ -85,16 +85,40 @@
             android:hint="@string/eg_nome"
             android:id="@+id/eg_nome" />
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/tipo"
+            android:id="@+id/tipo" />
+
+        <RadioGroup
+            android:id="@+id/eg_tipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/radioint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/eg_tipoint"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radiotom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/eg_tipotom" />
+
+        </RadioGroup>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/button_SET"
             android:id="@+id/button_SET" />
-        <!--Button
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/back"
-            android:id="@+id/button_back" /-->
+
+
     </LinearLayout>
 
 

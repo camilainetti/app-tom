@@ -80,6 +80,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     Boolean enviou = false;
 
+    SharedPreferences.Editor editor_dev;
+    SharedPreferences sharedPreferences_dev;
+
 
     public final static String EXTRA_MESSAGE2 = "esp_config";
 
