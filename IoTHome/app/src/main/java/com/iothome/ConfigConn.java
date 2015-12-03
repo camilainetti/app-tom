@@ -13,6 +13,8 @@ import android.widget.RadioGroup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 public class ConfigConn extends MainActivity{
 
 
@@ -37,7 +39,7 @@ public class ConfigConn extends MainActivity{
         editTextmask = (EditText)findViewById(R.id.eg_mask);
         editTextnome = (EditText)findViewById(R.id.eg_nome);
         editTextnome = (EditText)findViewById(R.id.eg_nome);
-        radiotipo = (RadioGroup)findViewById(R.id.tipo);
+        radiotipo = (RadioGroup)findViewById(R.id.eg_tipo);
 
         //Botao Enviar
         button_SET = (Button)findViewById(R.id.button_SET);
@@ -49,6 +51,7 @@ public class ConfigConn extends MainActivity{
     public void onClick(View view) {
         if (view.getId() == button_SET.getId()) {
 
+            //Entrada de dados do dispositivo
             String ssid = editTextSSID.getText().toString().trim();
             String senha = editTextsenha.getText().toString().trim();
             String gateway = editTextgateway.getText().toString().trim();
@@ -56,25 +59,52 @@ public class ConfigConn extends MainActivity{
             String ip = editTextip.getText().toString().trim();
             String nome_carinhoso = editTextnome.getText().toString().trim();
 
-            String tipo = "";
-
+            //Verifica tipo de dispositivo
             int selectedId = radiotipo.getCheckedRadioButtonId();
             radioesc = (RadioButton) findViewById(selectedId);
+            String tipo = radioesc.getText().toString();
 
-            System.out.println(selectedId);
-
+            //Cria json de dados
             JSONObject json = writeJSON(ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
 
+            //Salva dados do device
             editor_dev = sharedPreferences_dev.edit();
 
+            //1. Registra dados usando a chave IP para cada device
             editor_dev.putString(ip, json.toString());
             editor_dev.commit();
 
-            String devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
+            //2. Registra todos IPs programados
+            String devices_programados = "";
 
-            editor_dev.putString("lista_de_ips", devices_programados + "," + ip);
+            if (!sharedPreferences_dev.getString("lista_de_ips","").equals("") || !sharedPreferences_dev.getString("lista_de_ips","").equals(null)){
+                //Caso ja tenha dispositivos configurados
+                devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
+                editor_dev.putString("lista_de_ips", devices_programados + "," + ip);
+            }
+            else{
+                //Caso nao tenha dispositivos configurados
+                editor_dev.putString("lista_de_ips", ip);
+            }
             editor_dev.commit();
 
+            //Printa ips programados
+            System.out.print("lista de ips " + sharedPreferences_dev.getString("lista_de_ips", ""));
+
+            //Procura devices programados pelos ips
+            devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
+            String ips[] = devices_programados.split(Pattern.quote(","));
+
+            //Printa devices programados
+            for (int i=0; ips.length>i; i++){
+                System.out.print("dispositivos salvos " + sharedPreferences_dev.getString(ips[i], ""));
+            }
+
+            //3. Limpa registros
+            //editor_dev.clear();
+            //editor_dev.commit();
+
+            //Volta para a lista de devices
             Intent devices = new Intent(this, AccessActivity.class);
             startActivity(devices);
         }
