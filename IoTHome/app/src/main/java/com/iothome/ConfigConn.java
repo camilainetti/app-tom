@@ -64,6 +64,9 @@ public class ConfigConn extends MainActivity{
             radioesc = (RadioButton) findViewById(selectedId);
             String tipo = radioesc.getText().toString();
 
+            //Atesta existencia do dispositivo
+            boolean existe = false;
+
             //Cria json de dados
             JSONObject json = writeJSON(ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
 
@@ -71,25 +74,33 @@ public class ConfigConn extends MainActivity{
             editor_dev = sharedPreferences_dev.edit();
 
             //1. Registra dados usando a chave IP para cada device
-            editor_dev.putString(ip, json.toString());
+            if (sharedPreferences_dev.getString(ip, "").equals(null) || sharedPreferences_dev.getString(ip, "").equals("")){
+                editor_dev.putString(ip, json.toString());
+            }
+            else{
+                editor_dev.remove(ip);
+                editor_dev.commit();
+                editor_dev.putString(ip, json.toString());
+                existe = true;
+            }
             editor_dev.commit();
 
             //2. Registra todos IPs programados
             String devices_programados = "";
 
-            if (!sharedPreferences_dev.getString("lista_de_ips","").equals("") || !sharedPreferences_dev.getString("lista_de_ips","").equals(null)){
+            if ((!sharedPreferences_dev.getString("lista_de_ips","").equals("") && !sharedPreferences_dev.getString("lista_de_ips","").equals(null)) && existe == false){
                 //Caso ja tenha dispositivos configurados
                 devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
                 editor_dev.putString("lista_de_ips", devices_programados + "," + ip);
             }
-            else{
+            else if (existe == false){
                 //Caso nao tenha dispositivos configurados
                 editor_dev.putString("lista_de_ips", ip);
             }
             editor_dev.commit();
 
             //Printa ips programados
-            System.out.print("lista de ips " + sharedPreferences_dev.getString("lista_de_ips", ""));
+            System.out.print("lista de ips " + sharedPreferences_dev.getString("lista_de_ips", "") + "\n");
 
             //Procura devices programados pelos ips
             devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
@@ -97,7 +108,7 @@ public class ConfigConn extends MainActivity{
 
             //Printa devices programados
             for (int i=0; ips.length>i; i++){
-                System.out.print("dispositivos salvos " + sharedPreferences_dev.getString(ips[i], ""));
+                System.out.print("dispositivos salvos " + sharedPreferences_dev.getString(ips[i], "") + "\n");
             }
 
             //3. Limpa registros
