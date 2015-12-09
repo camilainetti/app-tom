@@ -16,6 +16,7 @@
     <string name="info_conn">Insira o SSID (nome) da rede Wifi da sua casa e a senha.
         Defina o IP, Máscara da rede e o Gateway e escolha um nome para o dispositivo inteligente que você está configurando.</string>
 
+    <string name="esp_c">Escolha um dispositivo para configurar:</string>
     <string name="ssid">SSID</string>
     <string name="senha">Senha</string>
     <string name="gateway">Gateway</string>

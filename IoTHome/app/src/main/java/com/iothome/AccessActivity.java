@@ -61,18 +61,30 @@ public class AccessActivity extends MainActivity {
         String ips[] = devices.split(Pattern.quote(","));
 
         //Printa devices programados
-        for (int i=0; ips.length>i; i++){
-            String details[] = sharedPreferences_dev.getString(ips[i], "").split(Pattern.quote(","));
-            for (int j=0; details.length>j; j++){
-                String infos[] = details[j].split(Pattern.quote(":"));
-                infos[1] = infos[1].replaceAll("\"", "");
-                if (infos[1].contains("}")){
-                    infos[1] = infos[1].replace("}", "");
-                }
-                details[j] = infos[1];
+        if(ips.length==1){
+            if(ips[0].equals("") || ips[0].equals(null)){
+                System.out.print("Nenhum device associado");
             }
-            arrayList_d.add(details[4]+"\n"+details[5]+"\n"+"IP associado: "+details[6]);
+            else{
+                for (int i=0; ips.length>i; i++){
+                    String details[] = sharedPreferences_dev.getString(ips[i], "").split(Pattern.quote(","));
+                    //System.out.print("ips: "+ips[i]+"\n");
+                    //System.out.print("quantidade de ips: "+ips.length+"\n");
+
+                    for (int j=0; details.length>j; j++){
+                        System.out.print(details[j]+"\n");
+                        String infos[] = details[j].split(Pattern.quote(":"));
+                        infos[1] = infos[1].replaceAll("\"", "");
+                        if (infos[1].contains("}")){
+                            infos[1] = infos[1].replace("}", "");
+                        }
+                        details[j] = infos[1];
+                    }
+                    arrayList_d.add(details[4]+"\n"+details[5]+"\n"+"IP associado: "+details[6]);
+                }
+            }
         }
+
     }
 
     @Override

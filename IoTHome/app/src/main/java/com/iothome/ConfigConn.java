@@ -1,18 +1,27 @@
 package com.iothome;
 
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ConfigConn extends MainActivity{
@@ -22,6 +31,11 @@ public class ConfigConn extends MainActivity{
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
     private RadioButton radioint, radiotom, radioesc;
     private RadioGroup radiotipo;
+    private Spinner spin_esps;
+
+    //Variáveis do WifiScan
+    List<ScanResult> scanList;
+    public String nomeWifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +44,9 @@ public class ConfigConn extends MainActivity{
 
         //Devices Salvos
         sharedPreferences_dev = getSharedPreferences("Devices_salvos", Context.MODE_PRIVATE);
+
+        //Spinners
+        spin_esps = (Spinner)findViewById(R.id.spin_esps);
 
         //TextBoxes
         editTextSSID = (EditText)findViewById(R.id.eg_ssid);
@@ -44,6 +61,8 @@ public class ConfigConn extends MainActivity{
         //Botao Enviar
         button_SET = (Button)findViewById(R.id.button_SET);
         button_SET.setOnClickListener(this);
+
+        addItemsOnSpinner();
 
     }
 
@@ -121,6 +140,47 @@ public class ConfigConn extends MainActivity{
         }
     }
 
+    // add items into spinner dynamically
+    private void addItemsOnSpinner(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+
+        final WifiManager wifiManager =
+                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        registerReceiver(new BroadcastReceiver() {
+
+            @SuppressLint("UseValueOf")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Context tmpContext = getApplicationContext();
+
+                List<String> list = new ArrayList<String>();
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(tmpContext,
+                        R.layout.spinner_item,
+                        list);
+
+                spin_esps.setAdapter(dataAdapter);
+                //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                if (!tmpManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(true);
+
+                scanList = wifiManager.getScanResults();
+                arrayList.clear();
+
+                for (int i = 0; i < scanList.size(); i++) {
+                    list.add((scanList.get(i).SSID));
+                    //Só para ESPs
+                    /*if (scanList.get(i).SSID.contains("ESP")) {
+                        list.add((scanList.get(i).SSID));
+                    }*/
+                }
+            }
+        }, filter);
+        wifiManager.startScan();
+    }
+
     public JSONObject writeJSON(String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
         JSONObject object = new JSONObject();
         try {
@@ -138,4 +198,5 @@ public class ConfigConn extends MainActivity{
         System.out.println(object);
         return (object);
     }
+
 }

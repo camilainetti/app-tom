@@ -16,11 +16,22 @@
             android:hint="@string/info_conn"
             android:id="@+id/info_conn" />
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="20dp"
+            android:hint="@string/esp_c"
+            android:id="@+id/esp" />
+
+        <Spinner
+            android:id="@+id/spin_esps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:hint="@string/ssid"
             android:id="@+id/ssid" />
 
