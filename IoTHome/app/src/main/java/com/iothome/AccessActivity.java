@@ -80,7 +80,7 @@ public class AccessActivity extends MainActivity {
                         }
                         details[j] = infos[1];
                     }
-                    arrayList_d.add(details[4]+"\n"+details[5]+"\n"+"IP associado: "+details[6]);
+                    arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
                 }
             }
         }

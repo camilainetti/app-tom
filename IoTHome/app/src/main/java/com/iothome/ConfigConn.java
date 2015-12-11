@@ -6,16 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +36,10 @@ public class ConfigConn extends MainActivity{
     private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
     private RadioButton radioint, radiotom, radioesc;
     private RadioGroup radiotipo;
-    private Spinner spin_esps;
+    private Spinner spin_esps, spinTextSSID;
+
+    List<String> list_esp = new ArrayList<String>();
+    List<String> list = new ArrayList<String>();
 
     //Variáveis do WifiScan
     List<ScanResult> scanList;
@@ -47,9 +55,34 @@ public class ConfigConn extends MainActivity{
 
         //Spinners
         spin_esps = (Spinner)findViewById(R.id.spin_esps);
+        spin_esps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spin_esps.setSelection(position, true);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                System.out.print("não clicou");
+            }
+        });
+        //dataAdapter.setDropDownViewResource(android.R.layout.simple_list_item_checked);
+        spinTextSSID = (Spinner)findViewById(R.id.eg_ssid);
+        spinTextSSID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinTextSSID.setSelection(position, true);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                System.out.print("não clicou");
+            }
+        });
 
         //TextBoxes
-        editTextSSID = (EditText)findViewById(R.id.eg_ssid);
         editTextsenha = (EditText)findViewById(R.id.eg_senha);
         editTextip = (EditText)findViewById(R.id.eg_ip);
         editTextgateway = (EditText)findViewById(R.id.eg_gateway);
@@ -71,72 +104,90 @@ public class ConfigConn extends MainActivity{
         if (view.getId() == button_SET.getId()) {
 
             //Entrada de dados do dispositivo
-            String ssid = editTextSSID.getText().toString().trim();
+            String esp = "";
+            if (spin_esps.getSelectedItem() == null) {
+                spin_esps.setSelection(0);
+            } else {
+                esp = spin_esps.getSelectedItem().toString().trim();
+            }
+
+            String ssid = "";
+            if (spinTextSSID.getSelectedItem() == null) {
+                spinTextSSID.setSelection(0);
+            } else {
+                ssid = spinTextSSID.getSelectedItem().toString().trim();
+            }
+
             String senha = editTextsenha.getText().toString().trim();
             String gateway = editTextgateway.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
             String nome_carinhoso = editTextnome.getText().toString().trim();
 
-            //Verifica tipo de dispositivo
-            int selectedId = radiotipo.getCheckedRadioButtonId();
-            radioesc = (RadioButton) findViewById(selectedId);
-            String tipo = radioesc.getText().toString();
+            if (ssid.equals("") || senha.equals("") || gateway.equals("") || mask.equals("") || ip.equals("") || nome_carinhoso.equals("")) {
+                Toast.makeText(ConfigConn.this,
+                        "Insira os dados faltantes",
+                        Toast.LENGTH_LONG).show();
+            } else {
 
-            //Atesta existencia do dispositivo
-            boolean existe = false;
+                //Verifica tipo de dispositivo
+                int selectedId = radiotipo.getCheckedRadioButtonId();
+                radioesc = (RadioButton) findViewById(selectedId);
+                String tipo = radioesc.getText().toString();
 
-            //Cria json de dados
-            JSONObject json = writeJSON(ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
+                //Atesta existencia do dispositivo
+                boolean existe = false;
 
-            //Salva dados do device
-            editor_dev = sharedPreferences_dev.edit();
+                //Cria json de dados
+                JSONObject json = writeJSON(esp, ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
 
-            //1. Registra dados usando a chave IP para cada device
-            if (sharedPreferences_dev.getString(ip, "").equals(null) || sharedPreferences_dev.getString(ip, "").equals("")){
-                editor_dev.putString(ip, json.toString());
-            }
-            else{
-                editor_dev.remove(ip);
+                //Salva dados do device
+                editor_dev = sharedPreferences_dev.edit();
+
+                //1. Registra dados usando a chave IP para cada device
+                if (sharedPreferences_dev.getString(ip, "").equals(null) || sharedPreferences_dev.getString(ip, "").equals("")) {
+                    editor_dev.putString(ip, json.toString());
+                } else {
+                    editor_dev.remove(ip);
+                    editor_dev.commit();
+                    editor_dev.putString(ip, json.toString());
+                    existe = true;
+                }
                 editor_dev.commit();
-                editor_dev.putString(ip, json.toString());
-                existe = true;
+
+                //2. Registra todos IPs programados
+                String devices_programados = "";
+
+                if ((!sharedPreferences_dev.getString("lista_de_ips", "").equals("") && !sharedPreferences_dev.getString("lista_de_ips", "").equals(null)) && existe == false) {
+                    //Caso ja tenha dispositivos configurados
+                    devices_programados = sharedPreferences_dev.getString("lista_de_ips", "");
+                    editor_dev.putString("lista_de_ips", devices_programados + "," + ip);
+                } else if (existe == false) {
+                    //Caso nao tenha dispositivos configurados
+                    editor_dev.putString("lista_de_ips", ip);
+                }
+                editor_dev.commit();
+
+                //Printa ips programados
+                System.out.print("lista de ips " + sharedPreferences_dev.getString("lista_de_ips", "") + "\n");
+
+                //Procura devices programados pelos ips
+                devices_programados = sharedPreferences_dev.getString("lista_de_ips", "");
+                String ips[] = devices_programados.split(Pattern.quote(","));
+
+                //Printa devices programados
+                for (int i = 0; ips.length > i; i++) {
+                    System.out.print("dispositivos salvos " + sharedPreferences_dev.getString(ips[i], "") + "\n");
+                }
+
+                //3. Limpa registros
+                //editor_dev.clear();
+                //editor_dev.commit();
+
+                //Volta para a lista de devices
+                Intent devices = new Intent(this, AccessActivity.class);
+                startActivity(devices);
             }
-            editor_dev.commit();
-
-            //2. Registra todos IPs programados
-            String devices_programados = "";
-
-            if ((!sharedPreferences_dev.getString("lista_de_ips","").equals("") && !sharedPreferences_dev.getString("lista_de_ips","").equals(null)) && existe == false){
-                //Caso ja tenha dispositivos configurados
-                devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
-                editor_dev.putString("lista_de_ips", devices_programados + "," + ip);
-            }
-            else if (existe == false){
-                //Caso nao tenha dispositivos configurados
-                editor_dev.putString("lista_de_ips", ip);
-            }
-            editor_dev.commit();
-
-            //Printa ips programados
-            System.out.print("lista de ips " + sharedPreferences_dev.getString("lista_de_ips", "") + "\n");
-
-            //Procura devices programados pelos ips
-            devices_programados = sharedPreferences_dev.getString("lista_de_ips","");
-            String ips[] = devices_programados.split(Pattern.quote(","));
-
-            //Printa devices programados
-            for (int i=0; ips.length>i; i++){
-                System.out.print("dispositivos salvos " + sharedPreferences_dev.getString(ips[i], "") + "\n");
-            }
-
-            //3. Limpa registros
-            //editor_dev.clear();
-            //editor_dev.commit();
-
-            //Volta para a lista de devices
-            Intent devices = new Intent(this, AccessActivity.class);
-            startActivity(devices);
         }
     }
 
@@ -152,17 +203,20 @@ public class ConfigConn extends MainActivity{
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
+
                 Context tmpContext = getApplicationContext();
 
-                List<String> list = new ArrayList<String>();
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(tmpContext,
+                ArrayAdapter<String> dataAdapter_esp = new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.spinner_item,
+                        list_esp);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(),
                         R.layout.spinner_item,
                         list);
-
-                spin_esps.setAdapter(dataAdapter);
-                //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spin_esps.setAdapter(dataAdapter_esp);
+                spinTextSSID.setAdapter(dataAdapter);
 
                 WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+
                 if (!tmpManager.isWifiEnabled())
                     wifiManager.setWifiEnabled(true);
 
@@ -172,16 +226,16 @@ public class ConfigConn extends MainActivity{
                 for (int i = 0; i < scanList.size(); i++) {
                     list.add((scanList.get(i).SSID));
                     //Só para ESPs
-                    /*if (scanList.get(i).SSID.contains("ESP")) {
-                        list.add((scanList.get(i).SSID));
-                    }*/
+                    if (scanList.get(i).SSID.contains("ESP")) {
+                        list_esp.add((scanList.get(i).SSID));
+                    }
                 }
             }
         }, filter);
         wifiManager.startScan();
     }
 
-    public JSONObject writeJSON(String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
+    public JSONObject writeJSON(String esp, String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
         JSONObject object = new JSONObject();
         try {
             object.put("SSID", ssid);
