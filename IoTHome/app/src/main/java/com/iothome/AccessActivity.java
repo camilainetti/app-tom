@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -31,6 +32,10 @@ public class AccessActivity extends MainActivity {
     private ArrayAdapter<String> adapter_devices;
     ArrayList<String> arrayList_d = new ArrayList<String>();
 
+    //teste
+    private Button button;
+    private ImageButton interruptor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,6 +44,17 @@ public class AccessActivity extends MainActivity {
 
         //lista de devices
         listDevices = (ListView)findViewById(R.id.listDevices);
+        listDevices.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position,
+                                    long arg3)
+            {
+                String value = (String)adapter.getItemAtPosition(position);
+                System.out.print(value);
+
+            }
+        });
 
         //menu inferior
         button_devices = (ImageButton)findViewById(R.id.button_devices);
@@ -80,7 +96,14 @@ public class AccessActivity extends MainActivity {
                         }
                         details[j] = infos[1];
                     }
-                    arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
+                    //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
+                    arrayList_d.add(details[5]+"\n"+details[3]+"\n"+"IP Associado: "+details[6]);
+                    if (details[3].equals("Interruptor")){
+                        //add switch
+                    }
+                    else{
+                        //add button
+                    }
                 }
             }
         }
@@ -91,13 +114,21 @@ public class AccessActivity extends MainActivity {
     public void onClick(View view) {
 
         if (view.getId() == button_confs.getId()) {
-            Intent intentconf = new Intent(this, ConfigConn.class);
-            startActivity(intentconf);
+            String rede = ConnectNetwork.getInstance().verificaRede(getApplicationContext());
+            if(!rede.equals("0esp")){
+                Intent intentconf = new Intent(this, ConfigConn.class);
+                intentconf.putExtra(EXTRA_MESSAGE, rede);
+                startActivity(intentconf);
+            }
+            Toast.makeText(AccessActivity.this,
+                    "Conecte-se a uma rede ESP para configurar seu dispositivo."+"\n\n"+"(Note que se seu ESP já tiver sido configurado, " +
+                            "é necessário reiniciá-lo antes de conectar-se a ele).",
+                    Toast.LENGTH_LONG).show();
         }
 
         else if (view.getId() == button_devices.getId()) {
             Toast.makeText(AccessActivity.this,
-                    "Devices sendo exibidos",
+                    "Dispositivos sendo exibidos",
                     Toast.LENGTH_LONG).show();
         }
     }

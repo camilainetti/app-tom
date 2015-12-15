@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button button_ONOFF, button_enter;
     private ImageButton button_int;
-
+    public final static String EXTRA_MESSAGE = "esp";
     public final static String EXTRA_MESSAGE2 = "esp_config";
 
     // shared preferences objects used to save the IP address and port so that the user doesn't have to

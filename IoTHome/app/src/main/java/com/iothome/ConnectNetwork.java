@@ -34,6 +34,22 @@ public class ConnectNetwork {
         this.sync=new Object();
     }
 
+    public String verificaRede(Context ctx) {
+        String rede = "";
+        wifiManager = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
+        if(!wifiManager.getConnectionInfo().getSSID().equals(null)){
+            rede = wifiManager.getConnectionInfo().getSSID();
+        }
+        if(rede.contains("ESP")){
+            System.out.println("Conectado em "+ rede);
+            return rede;
+        }
+        //correta:
+        //return "0esp";
+        //fase de testes
+        return rede;
+    }
+
     public boolean conectarRede(String ssid) {
         this.desiredSSID=ssid;
         if(isSSDEqual(wifiManager.getConnectionInfo().getSSID(), this.desiredSSID)){

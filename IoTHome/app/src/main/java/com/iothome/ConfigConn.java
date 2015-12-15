@@ -31,19 +31,17 @@ import java.util.regex.Pattern;
 
 public class ConfigConn extends MainActivity{
 
-
     private Button button_SET;
-    private EditText editTextSSID, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
-    private RadioButton radioint, radiotom, radioesc;
+    private EditText text_esps, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
+    private RadioButton radioesc;
     private RadioGroup radiotipo;
-    private Spinner spin_esps, spinTextSSID;
+    private Spinner spinTextSSID;
 
-    List<String> list_esp = new ArrayList<String>();
     List<String> list = new ArrayList<String>();
 
     //Variáveis do WifiScan
     List<ScanResult> scanList;
-    public String nomeWifi;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,20 +52,6 @@ public class ConfigConn extends MainActivity{
         sharedPreferences_dev = getSharedPreferences("Devices_salvos", Context.MODE_PRIVATE);
 
         //Spinners
-        spin_esps = (Spinner)findViewById(R.id.spin_esps);
-        spin_esps.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spin_esps.setSelection(position, true);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                System.out.print("não clicou");
-            }
-        });
-        //dataAdapter.setDropDownViewResource(android.R.layout.simple_list_item_checked);
         spinTextSSID = (Spinner)findViewById(R.id.eg_ssid);
         spinTextSSID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -83,6 +67,7 @@ public class ConfigConn extends MainActivity{
         });
 
         //TextBoxes
+        text_esps = (EditText)findViewById(R.id.text_esps);
         editTextsenha = (EditText)findViewById(R.id.eg_senha);
         editTextip = (EditText)findViewById(R.id.eg_ip);
         editTextgateway = (EditText)findViewById(R.id.eg_gateway);
@@ -95,6 +80,10 @@ public class ConfigConn extends MainActivity{
         button_SET = (Button)findViewById(R.id.button_SET);
         button_SET.setOnClickListener(this);
 
+        //Completando esp e redes
+        Intent intentconf = getIntent();
+        text_esps.setText(intentconf.getStringExtra(AccessActivity.EXTRA_MESSAGE).replaceAll("\"", ""));
+        text_esps.setEnabled(false);
         addItemsOnSpinner();
 
     }
@@ -104,27 +93,20 @@ public class ConfigConn extends MainActivity{
         if (view.getId() == button_SET.getId()) {
 
             //Entrada de dados do dispositivo
-            String esp = "";
-            if (spin_esps.getSelectedItem() == null) {
-                spin_esps.setSelection(0);
-            } else {
-                esp = spin_esps.getSelectedItem().toString().trim();
-            }
-
             String ssid = "";
             if (spinTextSSID.getSelectedItem() == null) {
-                spinTextSSID.setSelection(0);
+                //nada
             } else {
                 ssid = spinTextSSID.getSelectedItem().toString().trim();
             }
-
+            String esp = text_esps.getText().toString().trim();
             String senha = editTextsenha.getText().toString().trim();
             String gateway = editTextgateway.getText().toString().trim();
             String mask = editTextmask.getText().toString().trim();
             String ip = editTextip.getText().toString().trim();
             String nome_carinhoso = editTextnome.getText().toString().trim();
 
-            if (ssid.equals("") || senha.equals("") || gateway.equals("") || mask.equals("") || ip.equals("") || nome_carinhoso.equals("")) {
+            if (esp.equals("") || ssid.equals("") || senha.equals("") || gateway.equals("") || mask.equals("") || ip.equals("") || nome_carinhoso.equals("")) {
                 Toast.makeText(ConfigConn.this,
                         "Insira os dados faltantes",
                         Toast.LENGTH_LONG).show();
@@ -206,13 +188,9 @@ public class ConfigConn extends MainActivity{
 
                 Context tmpContext = getApplicationContext();
 
-                ArrayAdapter<String> dataAdapter_esp = new ArrayAdapter<String>(getApplicationContext(),
-                        R.layout.spinner_item,
-                        list_esp);
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(),
                         R.layout.spinner_item,
                         list);
-                spin_esps.setAdapter(dataAdapter_esp);
                 spinTextSSID.setAdapter(dataAdapter);
 
                 WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
@@ -225,10 +203,6 @@ public class ConfigConn extends MainActivity{
 
                 for (int i = 0; i < scanList.size(); i++) {
                     list.add((scanList.get(i).SSID));
-                    //Só para ESPs
-                    if (scanList.get(i).SSID.contains("ESP")) {
-                        list_esp.add((scanList.get(i).SSID));
-                    }
                 }
             }
         }, filter);
@@ -238,6 +212,7 @@ public class ConfigConn extends MainActivity{
     public JSONObject writeJSON(String esp, String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
         JSONObject object = new JSONObject();
         try {
+            object.put("ESP", esp);
             object.put("SSID", ssid);
             object.put("Senha", senha);
             object.put("gateway", gateway);

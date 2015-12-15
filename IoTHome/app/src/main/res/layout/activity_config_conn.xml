@@ -23,8 +23,8 @@
             android:hint="@string/esp_c"
             android:id="@+id/esp" />
 
-        <Spinner
-            android:id="@+id/spin_esps"
+        <EditText
+            android:id="@+id/text_esps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
