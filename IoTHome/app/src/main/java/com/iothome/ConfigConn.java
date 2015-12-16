@@ -11,6 +11,8 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
+import android.text.method.CharacterPickerDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -54,12 +56,12 @@ public class ConfigConn extends MainActivity{
         //Spinners
         spinTextSSID = (Spinner)findViewById(R.id.eg_ssid);
         spinTextSSID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinTextSSID.setSelection(position, true);
+                Log.i("ItemSelected","antes");
+                spinTextSSID.setSelection(position, false);
+                Log.i("ItemSelected","depois");
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 System.out.print("não clicou");
@@ -121,7 +123,7 @@ public class ConfigConn extends MainActivity{
                 boolean existe = false;
 
                 //Cria json de dados
-                JSONObject json = writeJSON(esp, ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
+                JSONObject json = writeJSON(ssid, senha, gateway, mask, ip, nome_carinhoso, tipo);
 
                 //Salva dados do device
                 editor_dev = sharedPreferences_dev.edit();
@@ -166,9 +168,14 @@ public class ConfigConn extends MainActivity{
                 //editor_dev.clear();
                 //editor_dev.commit();
 
+                //4. Envia dados pro esp
+                sendSocket(json.toString(),"192.168.4.1");
+                // /SSID=CITI-Terreo/SENHA=1cbe991a14/IP=192.168.1.95/MASCARA=255.255.255.0/GATEWAY=192.168.2.15/NOME=madrugs/TIPO=tomada/
+
                 //Volta para a lista de devices
                 Intent devices = new Intent(this, AccessActivity.class);
                 startActivity(devices);
+
             }
         }
     }
@@ -209,17 +216,17 @@ public class ConfigConn extends MainActivity{
         wifiManager.startScan();
     }
 
-    public JSONObject writeJSON(String esp, String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
+    public JSONObject writeJSON(String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
         JSONObject object = new JSONObject();
         try {
-            object.put("ESP", esp);
+            //object.put("ESP", esp);
             object.put("SSID", ssid);
-            object.put("Senha", senha);
-            object.put("gateway", gateway);
-            object.put("mask", mask);
-            object.put("ip", ip);
-            object.put("apelido", nome_carinhoso);
-            object.put("tipo", tipo);
+            object.put("SENHA", senha);
+            object.put("IP", ip);
+            object.put("MASCARA", mask);
+            object.put("GATEWAY", gateway);
+            object.put("NOME", nome_carinhoso);
+            object.put("TIPO", tipo);
 
         } catch (JSONException e) {
             e.printStackTrace();

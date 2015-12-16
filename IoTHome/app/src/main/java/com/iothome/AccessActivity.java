@@ -51,7 +51,8 @@ public class AccessActivity extends MainActivity {
                                     long arg3)
             {
                 String value = (String)adapter.getItemAtPosition(position);
-                System.out.print(value);
+                String ip[] = value.split("IP Associado:");
+                System.out.print(ip[1]);
 
             }
         });
@@ -96,8 +97,13 @@ public class AccessActivity extends MainActivity {
                         }
                         details[j] = infos[1];
                     }
+                    String ip = details[6].replaceAll("\"", "");
+                    sendSocket("?=estado",ip);
+                    //Como receber resposta?
+
+
                     //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
-                    arrayList_d.add(details[5]+"\n"+details[3]+"\n"+"IP Associado: "+details[6]);
+                    arrayList_d.add(details[4]+"\n"+details[1]+"\n"+"IP Associado: "+details[6]);
                     if (details[3].equals("Interruptor")){
                         //add switch
                     }
@@ -107,7 +113,35 @@ public class AccessActivity extends MainActivity {
                 }
             }
         }
+        else{
+            for (int i=0; ips.length>i; i++){
+                String details[] = sharedPreferences_dev.getString(ips[i], "").split(Pattern.quote(","));
+                //System.out.print("ips: "+ips[i]+"\n");
+                //System.out.print("quantidade de ips: "+ips.length+"\n");
 
+                for (int j=0; details.length>j; j++){
+                    System.out.print(details[j]+"\n");
+                    String infos[] = details[j].split(Pattern.quote(":"));
+                    infos[1] = infos[1].replaceAll("\"", "");
+                    if (infos[1].contains("}")){
+                        infos[1] = infos[1].replace("}", "");
+                    }
+                    details[j] = infos[1];
+                }
+                String ip = details[6].replaceAll("\"", "");
+                sendSocket("?=estado",ip);
+                //Como receber resposta?
+
+                //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
+                arrayList_d.add(details[4]+"\n"+details[1]+"\n"+"IP Associado: "+details[6]);
+                if (details[3].equals("Interruptor")){
+                    //add switch
+                }
+                else{
+                    //add button
+                }
+            }
+        }
     }
 
     @Override

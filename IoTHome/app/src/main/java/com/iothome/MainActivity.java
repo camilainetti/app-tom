@@ -243,12 +243,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void sendSocket(final String data) {
+    public void sendSocket(final String data, final String ip) {
         Thread t = new Thread() {
             @Override
             public void run() {
                 try {
-                    socket = new Socket("192.168.1.97", 80);
+                    socket = new Socket(ip, 80);
                     String answer;
                     DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                     Log.v(TAG, "dado pronto para enviar:" +SystemClock.elapsedRealtime());
