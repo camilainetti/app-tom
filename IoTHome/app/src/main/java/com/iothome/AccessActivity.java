@@ -2,10 +2,14 @@ package com.iothome;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,7 +20,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.jar.JarEntry;
 import java.util.regex.Pattern;
 
 public class AccessActivity extends MainActivity {
@@ -52,7 +59,11 @@ public class AccessActivity extends MainActivity {
             {
                 String value = (String)adapter.getItemAtPosition(position);
                 String ip[] = value.split("IP Associado:");
-                System.out.print(ip[1]);
+                //System.out.print(ip[0] + "////////////" + ip[1]);
+                Log.i("estado",ip[1].replaceAll(" ",""));
+                Log.i("estado sovietico","marx");
+                sendSocket("?=estado", ip[1].replaceAll(" ", ""));
+                //Log.i("estado sovietico", sharedPreferences.getString("resposta"+ip[1].replaceAll(" ",""), ""));
 
             }
         });
@@ -99,11 +110,24 @@ public class AccessActivity extends MainActivity {
                     }
                     String ip = details[6].replaceAll("\"", "");
                     sendSocket("?=estado",ip);
+                    String estado = "";
                     //Como receber resposta?
+                    try {
+                        estado = sharedPreferences.getString("resposta"+ip, "");
+                    } catch (Exception e) {
+                        estado = "Aguardando estado...";
+                    }
+                    /*
+                    if(!sharedPreferences.getString("resposta"+ip, "").equals(null) && !sharedPreferences.getString("resposta"+ip, "").equals("")){
+                        estado = sharedPreferences.getString("resposta"+ip, "");
+                    }
+                    else{
+                        estado = "Aguardando estado...";
+                    }*/
 
 
                     //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
-                    arrayList_d.add(details[4]+"\n"+details[1]+"\n"+"IP Associado: "+details[6]);
+                    arrayList_d.add(details[4] + "\n" + details[1] + "\n"+ estado +"\n"+ "IP Associado: " + details[6] );
                     if (details[3].equals("Interruptor")){
                         //add switch
                     }
@@ -130,10 +154,23 @@ public class AccessActivity extends MainActivity {
                 }
                 String ip = details[6].replaceAll("\"", "");
                 sendSocket("?=estado",ip);
+                String estado = "";
                 //Como receber resposta?
+                try {
+                    estado = sharedPreferences.getString("resposta"+ip, "");
+                } catch (Exception e) {
+                    estado = "Aguardando estado...";
+                }
+
+                /*if(!sharedPreferences.getString("resposta"+ip, "").equals(null) && !sharedPreferences.getString("resposta"+ip, "").equals("")){
+                    estado = sharedPreferences.getString("resposta"+ip, "");
+                }
+                else{
+                    estado = "Aguardando estado...";
+                }*/
 
                 //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
-                arrayList_d.add(details[4]+"\n"+details[1]+"\n"+"IP Associado: "+details[6]);
+                arrayList_d.add(details[4]+"\n"+details[1]+"\n"+estado+"\n"+"IP Associado: "+details[6]);
                 if (details[3].equals("Interruptor")){
                     //add switch
                 }

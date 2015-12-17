@@ -83,6 +83,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Devices Salvos
+        sharedPreferences = getSharedPreferences("infos", Context.MODE_PRIVATE);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -259,6 +262,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
                     bufferedReader.ready();
                     answer = bufferedReader.readLine();
+                    Log.i("resposta",answer);
+                    editor = sharedPreferences.edit();
+                    editor.putString("resposta"+ip,answer);
+                    editor.commit();
                     Log.v(TAG, "recebeu resposta:" +SystemClock.elapsedRealtime());
                     Globals.getInstance().setData(answer);
                     Log.v(TAG, "answer::" + answer + "::");
