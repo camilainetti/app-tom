@@ -49,6 +49,8 @@ public class AccessActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_access);
 
+        sharedPreferences_dev = getSharedPreferences("Devices_salvos", Context.MODE_PRIVATE);
+
         //lista de devices
         listDevices = (ListView)findViewById(R.id.listDevices);
         listDevices.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -64,6 +66,12 @@ public class AccessActivity extends MainActivity {
                 Log.i("estado sovietico","marx");
                 sendSocket("?=estado", ip[1].replaceAll(" ", ""));
                 //Log.i("estado sovietico", sharedPreferences.getString("resposta"+ip[1].replaceAll(" ",""), ""));
+                try {
+                    sendSocket("?=estado", ip[1].replaceAll(" ", ""));
+                    Log.i("estado sovietico", sharedPreferences.getString("resposta" + ip[1].replaceAll(" ", ""), ""));
+                } catch (Exception e) {
+                    Log.i("sem resposta","sem resposta");
+                }
 
             }
         });
@@ -111,12 +119,17 @@ public class AccessActivity extends MainActivity {
                     String ip = details[6].replaceAll("\"", "");
                     sendSocket("?=estado",ip);
                     String estado = "";
+
                     //Como receber resposta?
                     try {
+                        editor = sharedPreferences.edit();
                         estado = sharedPreferences.getString("resposta"+ip, "");
+                        editor.remove("resposta"+ip);
+                        editor.commit();
                     } catch (Exception e) {
                         estado = "Aguardando estado...";
                     }
+
                     /*
                     if(!sharedPreferences.getString("resposta"+ip, "").equals(null) && !sharedPreferences.getString("resposta"+ip, "").equals("")){
                         estado = sharedPreferences.getString("resposta"+ip, "");
@@ -127,7 +140,7 @@ public class AccessActivity extends MainActivity {
 
 
                     //arrayList_d.add(sharedPreferences_dev.getString(ips[i], ""));
-                    arrayList_d.add(details[4] + "\n" + details[1] + "\n"+ estado +"\n"+ "IP Associado: " + details[6] );
+                    arrayList_d.add(details[4] + "\n" + details[1] + "\n" + estado + "\n" + "IP Associado: " + details[6]);
                     if (details[3].equals("Interruptor")){
                         //add switch
                     }
@@ -196,11 +209,16 @@ public class AccessActivity extends MainActivity {
                             "é necessário reiniciá-lo antes de conectar-se a ele).",
                     Toast.LENGTH_LONG).show();
         }
-
         else if (view.getId() == button_devices.getId()) {
             Toast.makeText(AccessActivity.this,
                     "Dispositivos sendo exibidos",
                     Toast.LENGTH_LONG).show();
         }
+        else if (view.getId() == button_other.getId()) {
+            editor_dev = sharedPreferences_dev.edit();
+            editor_dev.clear();
+            editor_dev.commit();
+        }
+
     }
 }

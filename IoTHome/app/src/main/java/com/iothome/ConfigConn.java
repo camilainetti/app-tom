@@ -172,10 +172,21 @@ public class ConfigConn extends MainActivity{
                 sendSocket(json.toString(),"192.168.4.1");
                 // /SSID=CITI-Terreo/SENHA=1cbe991a14/IP=192.168.1.95/MASCARA=255.255.255.0/GATEWAY=192.168.2.15/NOME=madrugs/TIPO=tomada/
 
-                //Volta para a lista de devices
-                Intent devices = new Intent(this, AccessActivity.class);
-                startActivity(devices);
+                String sucesso = "";
+                try {
+                    editor = sharedPreferences.edit();
+                    sucesso = sharedPreferences.getString("resposta192.168.4.1", "");
+                    editor.remove("resposta192.168.4.1");
+                    editor.commit();
+                } catch (Exception e) {
+                    sucesso = "Aguardando envio...";
+                }
 
+                //Verifica se enviou e volta para a lista de devices
+                if(!sucesso.equals("Aguardando envio...")){
+                    Intent devices = new Intent(this, AccessActivity.class);
+                    startActivity(devices);
+                }
             }
         }
     }
@@ -214,6 +225,7 @@ public class ConfigConn extends MainActivity{
             }
         }, filter);
         wifiManager.startScan();
+        spinTextSSID.setSelection(1, false);
     }
 
     public JSONObject writeJSON(String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {
