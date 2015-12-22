@@ -5,23 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.text.method.CharacterPickerDialog;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -34,16 +28,16 @@ import java.util.regex.Pattern;
 public class ConfigConn extends MainActivity{
 
     private Button button_SET;
-    private EditText text_esps, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome;
+    private EditText text_esps, editTextsenha, editTextip, editTextgateway, editTextmask, editTextnome, editssid;
     private RadioButton radioesc;
     private RadioGroup radiotipo;
-    private Spinner spinTextSSID;
-
     List<String> list = new ArrayList<String>();
 
     //Variáveis do WifiScan
     List<ScanResult> scanList;
 
+    public volatile Boolean flag;
+    private Boolean teste = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +47,9 @@ public class ConfigConn extends MainActivity{
         //Devices Salvos
         sharedPreferences_dev = getSharedPreferences("Devices_salvos", Context.MODE_PRIVATE);
 
-        //Spinners
-        spinTextSSID = (Spinner)findViewById(R.id.eg_ssid);
-        spinTextSSID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("ItemSelected","antes");
-                spinTextSSID.setSelection(position, false);
-                Log.i("ItemSelected","depois");
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                System.out.print("não clicou");
-            }
-        });
-
         //TextBoxes
         text_esps = (EditText)findViewById(R.id.text_esps);
+        editssid = (EditText)findViewById(R.id.eg_ssid);
         editTextsenha = (EditText)findViewById(R.id.eg_senha);
         editTextip = (EditText)findViewById(R.id.eg_ip);
         editTextgateway = (EditText)findViewById(R.id.eg_gateway);
@@ -86,8 +66,6 @@ public class ConfigConn extends MainActivity{
         Intent intentconf = getIntent();
         text_esps.setText(intentconf.getStringExtra(AccessActivity.EXTRA_MESSAGE).replaceAll("\"", ""));
         text_esps.setEnabled(false);
-        addItemsOnSpinner();
-
     }
 
     @Override
@@ -95,12 +73,8 @@ public class ConfigConn extends MainActivity{
         if (view.getId() == button_SET.getId()) {
 
             //Entrada de dados do dispositivo
-            String ssid = "";
-            if (spinTextSSID.getSelectedItem() == null) {
-                //nada
-            } else {
-                ssid = spinTextSSID.getSelectedItem().toString().trim();
-            }
+
+            String ssid = editssid.getText().toString().trim();
             String esp = text_esps.getText().toString().trim();
             String senha = editTextsenha.getText().toString().trim();
             String gateway = editTextgateway.getText().toString().trim();
@@ -112,8 +86,12 @@ public class ConfigConn extends MainActivity{
                 Toast.makeText(ConfigConn.this,
                         "Insira os dados faltantes",
                         Toast.LENGTH_LONG).show();
-            } else {
-
+            } else if (RedesAcessiveis(ssid) != true) {
+                Toast.makeText(ConfigConn.this,
+                        "Insira corretamente o nome da rede",
+                        Toast.LENGTH_LONG).show();
+            }
+            else{
                 //Verifica tipo de dispositivo
                 int selectedId = radiotipo.getCheckedRadioButtonId();
                 radioesc = (RadioButton) findViewById(selectedId);
@@ -173,45 +151,48 @@ public class ConfigConn extends MainActivity{
                 // /SSID=CITI-Terreo/SENHA=1cbe991a14/IP=192.168.1.95/MASCARA=255.255.255.0/GATEWAY=192.168.2.15/NOME=madrugs/TIPO=tomada/
 
                 String sucesso = "";
+
                 try {
-                    editor = sharedPreferences.edit();
                     sucesso = sharedPreferences.getString("resposta192.168.4.1", "");
-                    editor.remove("resposta192.168.4.1");
-                    editor.commit();
                 } catch (Exception e) {
+                    Toast.makeText(ConfigConn.this,
+                            "Aguardando envio",
+                            Toast.LENGTH_LONG).show();
                     sucesso = "Aguardando envio...";
                 }
 
                 //Verifica se enviou e volta para a lista de devices
-                if(!sucesso.equals("Aguardando envio...")){
+                if(sucesso.equals("falta: mais nada")){
+                    editor = sharedPreferences.edit();
+                    editor.remove("resposta192.168.4.1");
+                    editor.commit();
                     Intent devices = new Intent(this, AccessActivity.class);
                     startActivity(devices);
+                }
+                else{
+                    Toast.makeText(ConfigConn.this,
+                            "Tente novamente.",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
 
     // add items into spinner dynamically
-    private void addItemsOnSpinner(){
+    public boolean RedesAcessiveis(final String ssid){
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        ConfigConn.this.flag = false;
+        Log.i("AQUIIIIIIIIIIIIII", "acessei");
 
-        final WifiManager wifiManager =
-                (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        final WifiManager wifiManager =(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(new BroadcastReceiver() {
-
             @SuppressLint("UseValueOf")
             @Override
             public void onReceive(Context context, Intent intent) {
-
                 Context tmpContext = getApplicationContext();
 
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(),
-                        R.layout.spinner_item,
-                        list);
-                spinTextSSID.setAdapter(dataAdapter);
-
-                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(android.content.Context.WIFI_SERVICE);
+                WifiManager tmpManager = (WifiManager) tmpContext.getSystemService(Context.WIFI_SERVICE);
 
                 if (!tmpManager.isWifiEnabled())
                     wifiManager.setWifiEnabled(true);
@@ -220,12 +201,19 @@ public class ConfigConn extends MainActivity{
                 arrayList.clear();
 
                 for (int i = 0; i < scanList.size(); i++) {
-                    list.add((scanList.get(i).SSID));
+                    list.add(scanList.get(i).SSID);
+
+                    if (ssid.equals(scanList.get(i).SSID)) {
+                        ConfigConn.this.flag = true;
+                        Log.i("AQUIIIIIIIIIIIIII", scanList.get(i).SSID);
+                        Log.i(ssid, scanList.get(i).SSID);
+                    }
                 }
             }
         }, filter);
         wifiManager.startScan();
-        spinTextSSID.setSelection(1, false);
+        Log.i("AQUIIIIIIIIIIIIII", ConfigConn.this.flag.toString());
+        return ConfigConn.this.flag;
     }
 
     public JSONObject writeJSON(String ssid, String senha, String gateway, String mask, String ip, String nome_carinhoso, String tipo) {

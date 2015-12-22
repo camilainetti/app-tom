@@ -45,9 +45,9 @@ public class ConnectNetwork {
             return rede;
         }
         //correta:
-        //return "0esp";
+        return "0esp";
         //fase de testes
-        return rede;
+        //return rede;
     }
 
     public boolean conectarRede(String ssid) {

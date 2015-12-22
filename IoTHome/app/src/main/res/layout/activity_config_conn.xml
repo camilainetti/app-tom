@@ -35,10 +35,11 @@
             android:hint="@string/ssid"
             android:id="@+id/ssid" />
 
-        <Spinner
+        <EditText
+            android:id="@+id/eg_ssid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/eg_ssid" />
+            android:hint="Digite o nome da sua rede"/>
 
         <TextView
             android:layout_width="match_parent"

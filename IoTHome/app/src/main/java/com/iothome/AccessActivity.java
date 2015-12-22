@@ -63,7 +63,6 @@ public class AccessActivity extends MainActivity {
                 String ip[] = value.split("IP Associado:");
                 //System.out.print(ip[0] + "////////////" + ip[1]);
                 Log.i("estado",ip[1].replaceAll(" ",""));
-                Log.i("estado sovietico","marx");
                 sendSocket("?=estado", ip[1].replaceAll(" ", ""));
                 //Log.i("estado sovietico", sharedPreferences.getString("resposta"+ip[1].replaceAll(" ",""), ""));
                 try {

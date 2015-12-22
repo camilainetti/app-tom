@@ -262,7 +262,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // get the client message
                     bufferedReader.ready();
                     answer = bufferedReader.readLine();
-                    Log.i("resposta",answer);
+                    Log.v(TAG,"resposta: "+answer);
                     editor = sharedPreferences.edit();
                     editor.putString("resposta"+ip,answer);
                     editor.commit();
